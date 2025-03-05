@@ -1,0 +1,4 @@
+.app-container {
+    @apply w-full px-3 sm:px-4 lg:px-11 xl:px-20 2xl:px-32 mx-auto;
+  }
+  
