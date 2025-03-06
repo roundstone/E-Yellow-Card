@@ -1,13 +1,13 @@
 import PaymentSuccess from "@/components/pages/user/payment-success";
 import { ROUTES } from "@/config/route";
-import Register from "@/features/auth/register";
-import SetProfilePage from "@/features/auth/set-profile";
+import Register from "@/features/auth/user/register";
+import SetProfilePage from "@/features/auth/user/set-profile";
 import PaymentPage from "@/features/payment";
 import PaymentFailedPage from "@/features/payment/failed";
 import PaymentInvoicePage from "@/features/payment/invoice";
 import PaymentSuccessPage from "@/features/payment/success";
 import HomePage from "@/features/website/home";
-import UserAuthLayout from "@/assets/images/auth-layout";
+import UserAuthLayout from "@/layouts/auth-layout";
 import MainLayout from "@/layouts/main-layout";
 import React from "react";
 

@@ -3,6 +3,11 @@ export const ROUTES = {
     AUTH: {
         REGISTER: "/user/register",
         SET_PROFILE: "/user/set-profile",
+        DIRECTOR: {
+            LOGIN: "/director/login",
+            FORGET_PASSWORD: "/director/forget-password",
+            CHANGE_PASSWORD: "/director/change-password",
+        }
     },
     PAYMENT: "/user/payment-section",
     PAYMENT_SUCCESS: "/user/payment-success",

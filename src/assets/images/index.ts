@@ -6,6 +6,7 @@ import invoiceSample from './RECIEPT_330322557276 1.png';
 import jim from './jim.png';
 import jimPassport from './jim-passport.png';
 import nYellowCardIcon from './n-yellow-card-icon.png';
+import dAuthBg from './d-auth-bg.png';
 // 
 
 const IMAGES = {
@@ -15,7 +16,8 @@ const IMAGES = {
   invoiceSample,
   jim,
   jimPassport,
-  nYellowCardIcon
+  nYellowCardIcon,
+  dAuthBg
 };
 
 export default IMAGES;
