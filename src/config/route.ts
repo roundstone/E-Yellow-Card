@@ -1,9 +1,13 @@
 export const ROUTES = {
     HOME: "/",
     AUTH: {
-        REGISTER: "/register",
-        SET_PROFILE: "set-profile",
+        REGISTER: "/user/register",
+        SET_PROFILE: "/user/set-profile",
     },
+    PAYMENT: "/user/payment-section",
+    PAYMENT_SUCCESS: "/user/payment-success",
+    PAYMENT_FAILED: "/user/payment-failed",
+    PAYMENT_INVOICE: "/user/payment-invoice",
     UNAUTHORIZED: "/unauthorized",
     DASHBOARD: {
         SUPERADMIN: "/superadmin/dashboard",

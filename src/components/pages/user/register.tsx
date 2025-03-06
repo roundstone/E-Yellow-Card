@@ -8,7 +8,7 @@ const RegisterPage = () => {
   const [otp, setOtp] = useState("");
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background app-container">
+    <div className="flex items-center justify-center min-h-screen app-container">
       <div className="bg-white p-10 rounded-lg shadow-sm md:w-[566px] w-full border">
         <h2 className="text-2xl font-semibold mb-2">Create an account</h2>
         <p className=" text-base mb-4">

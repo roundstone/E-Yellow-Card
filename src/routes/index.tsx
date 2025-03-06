@@ -22,7 +22,11 @@ const AppRoutes = () => {
             key={index}
             path={route.path}
             element={
-              <RouteWrapper element={route.element} layout={route.layout} />
+              <RouteWrapper
+                element={route.element}
+                layout={route.layout}
+                layoutProps={route.layoutProps}
+              />
             }
           />
         ))}

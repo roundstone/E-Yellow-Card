@@ -5,6 +5,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import React from "react";
@@ -16,9 +17,15 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/config/route";
 
 const FormSchema = z.object({
-  nin: z.string().optional(),
-  phoneNumber: z.string().optional(),
-  otp: z.string().optional(),
+  nin: z.string().min(2, {
+    message: "NIN is required.",
+  }),
+  phoneNumber: z.string().min(2, {
+    message: "Phone number is required.",
+  }),
+  otp: z.string().min(2, {
+    message: "OTP is required.",
+  }),
 });
 
 const CreateAccountForm = () => {
@@ -34,6 +41,7 @@ const CreateAccountForm = () => {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    toast.success("Form submitted successfully!");
     navigate(ROUTES.AUTH.SET_PROFILE);
   }
 
@@ -57,6 +65,7 @@ const CreateAccountForm = () => {
               <FormControl>
                 <Input placeholder="Enter NIN" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -79,6 +88,7 @@ const CreateAccountForm = () => {
                   </Button>
                 </div>
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -92,6 +102,7 @@ const CreateAccountForm = () => {
               <FormControl>
                 <Input placeholder="Enter 6 digit code" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

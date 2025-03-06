@@ -1,18 +1,17 @@
 import IMAGES from "@/assets/images";
 import AppModal from "@/components/common/modal";
-import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/config/route";
 import React from "react";
 import { Link } from "react-router-dom";
 import UserQuery from "../modal(dialog)/query-user";
 import { useNavigation } from "@/utils/navigation";
 
-const MainHeader = () => {
+const AuthHeader = () => {
   const { goTo } = useNavigation();
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <header className="flex justify-between items-center p-6 bg-transparent">
+      <header className="flex justify-between items-center p-6 mb6 bg-white border-b app-container">
         {/* <Logo /> */}
         <Link to={ROUTES.HOME} className="flex gap-1 item-center">
           <img src={IMAGES.logo} width={56} height={47} alt="" />
@@ -24,7 +23,7 @@ const MainHeader = () => {
         </Link>
         <nav className="space-x-6">
           <Link
-            to="#"
+            to={ROUTES.HOME}
             className="text-text hover:text-opacity-75 transition-colors duration-200"
           >
             Home
@@ -32,29 +31,14 @@ const MainHeader = () => {
           <Link
             to="#"
             onClick={() => setOpen(true)}
-            className="text-text hover:text-opacity-75 transition-colors duration-200"
+            className="text-text hover:text-opacity-75 transition-colors duration-200 "
           >
             Get User Detail
           </Link>
-          <Link
-            to="#"
-            className="text-text hover:text-opacity-75 transition-colors duration-200"
-          >
-            Port Health Locations
-          </Link>
+          <div className="border-l inline-block px-10"> &nbsp;</div>
         </nav>
-        <Button
-          className="text-white"
-          onClick={() => goTo(ROUTES.AUTH.REGISTER)}
-        >
-          Register
-        </Button>
       </header>
-      <AppModal
-        open={open}
-        setOpen={setOpen}
-        title="QUERY USER"
-      >
+      <AppModal open={open} setOpen={setOpen} title="QUERY USER">
         <UserQuery />
       </AppModal>
       ;
@@ -62,4 +46,4 @@ const MainHeader = () => {
   );
 };
 
-export default MainHeader;
+export default AuthHeader;

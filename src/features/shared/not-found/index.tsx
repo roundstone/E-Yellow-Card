@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { useNavigation } from "@/utils/navigation";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
 const NotFoundPage = (props: Props) => {
-  const navigate = useNavigate();
+  const { goBack } = useNavigation();
   return (
     <div className="flex min-h-screen flex-col bg-[#F8FAFC]">
       <div className="flex grow items-center px-6 xl:px-10">
@@ -23,7 +23,7 @@ const NotFoundPage = (props: Props) => {
 
           <Button
             className="mt-8 !px-4 !py-2 !rounded-full !w-fit"
-            onClick={() => navigate(-1)}
+            onClick={goBack}
           >
             <span className="flex gap-2 items-center">
               {" "}

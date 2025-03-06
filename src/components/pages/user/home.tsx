@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowRight, UserIcon } from "lucide-react";
 import SearchYellowCardForm from "./forms/search-yellow-card";
 import MainHeader from "./header/main-header";
+import IMAGES from "@/assets/images";
 
 
 const YellowCardHomePage = () => {
@@ -37,7 +38,7 @@ const YellowCardHomePage = () => {
         </div>
         <div className="w-full self-center">
           <img
-            src="/yellow-card-image.png"
+            src={IMAGES.yellowCardImage}
             alt="Yellow Card"
             className="rounded-[50px] h-[532.85px] mx-auto"
           />
@@ -49,7 +50,9 @@ const YellowCardHomePage = () => {
         <h3 className="text-4xl font-bold text-center">How it works</h3>
         <div className="grid md:grid-cols-4 gap-6 mt-10">
           <div className="col-span-2">
-            <div className="bg-[#09340D78] h-[400px] rounded-2xl w-full"></div>
+            <div className="bg-[#09340D78] h-full overflow-hidden rounded-2xl shadow-md w-full">
+            <img src={IMAGES.jim} alt="" className="w-full h-full" />
+            </div>
           </div>
           <div className="bg-[#D3E5DB] border border-primary/50 rounded-2xl p-6 shadow-md space-y-10">
             <div className="flex justify-center items-center p-1 bg-primary w-fit rounded-lg">

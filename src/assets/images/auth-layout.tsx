@@ -1,3 +1,4 @@
+import AuthHeader from "@/components/pages/user/header/auth-header";
 import React from "react";
 
 interface UserAuthLayoutProps {
@@ -10,13 +11,11 @@ const UserAuthLayout = ({
   hasHeader = false,
 }: UserAuthLayoutProps) => {
   return (
-    <div className="flex flex-col min-h-screen bg-background app-container">
-      {hasHeader && (
-        <header className="bg-primary text-white p-4">
-          <h1 className="text-xl">Header Content</h1>
-        </header>
-      )}
-      {children}
+    <div className="">
+      {hasHeader && <AuthHeader />}
+      <div className="flex flex-col min-h-screen bg-background app-container">
+        {children}
+      </div>
     </div>
   );
 };

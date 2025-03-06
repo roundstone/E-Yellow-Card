@@ -16,7 +16,10 @@ export default {
         warning: '#FFC107',
         danger: '#DC3545',
         info: '#17A2B8',
-      }
+      },
+      fontFamily: {
+        'andale-mono': ['Andale Mono', 'monospace'], // Add Andale Mono
+      },
     },
   },
   plugins: [],
