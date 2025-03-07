@@ -20,7 +20,8 @@ export const ROUTES = {
         USER: "/user/dashboard",
         DIRECTOR: {
             HOME: `${directorPrefix}/dashboard`,
-            RANGE_LIST: `${directorPrefix}/range-list`
+            RANGE_LIST: `${directorPrefix}/range-list`,
+            RANGE_DISTRIBUTION: `${directorPrefix}/range-distribution`,
         },
         REGISTRAR: "/registrar/dashboard",
     },

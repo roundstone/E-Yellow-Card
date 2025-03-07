@@ -8,6 +8,7 @@ import nYellowCardIcon from './n-yellow-card-icon.png';
 import dAuthBg from './d-auth-bg.png';
 import profileIcon from './d-auth-bg.png';
 import multiYellowCard from './multi-yellow-card.png';
+import sBlock from './s-block.png';
 
 // 
 
@@ -21,7 +22,8 @@ const IMAGES = {
   nYellowCardIcon,
   dAuthBg,
   profileIcon,
-  multiYellowCard
+  multiYellowCard,
+  sBlock
 };
 
 export default IMAGES;
