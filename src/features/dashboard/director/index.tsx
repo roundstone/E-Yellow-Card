@@ -1,11 +1,10 @@
-import React from 'react'
+import DirectorDashboard from "@/components/pages/director/dashboard";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
-const DirectorDashboard = (props: Props) => {
-  return (
-    <div>Yellow Card DirectorDashboard</div>
-  )
-}
+const DirectorDashboardPage = (props: Props) => {
+  return <DirectorDashboard />;
+};
 
-export default DirectorDashboard
+export default DirectorDashboardPage;

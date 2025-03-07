@@ -1,20 +1,23 @@
 import React from "react";
 import {
   Dialog,
-  DialogClose,
-  DialogFooter,
-  DialogHeader,
-  DialogTrigger,
+  // DialogClose,
+  // DialogFooter,
+  // DialogHeader,
+  // DialogTrigger,
   DialogContent,
-  DialogDescription,
+  // DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface AppModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  title: string;
+  title?: string;
   children: React.ReactNode;
+  className?: string;
+  modal?: boolean;
 }
 
 const AppModal: React.FC<AppModalProps> = ({
@@ -22,13 +25,22 @@ const AppModal: React.FC<AppModalProps> = ({
   setOpen,
   title,
   children,
+  className,
+  modal = true,
 }) => {
   return (
-    <Dialog open={open} onOpenChange={setOpen} modal={true}>
-      <DialogContent className="smmax-w-md w[867px] w-full p-0 transition-all duration-300 ease-in-out">
-        <DialogTitle className="border-b px-6 py-3 text-base text-[#8E8E93]">
-          {title}
-        </DialogTitle>
+    <Dialog open={open} onOpenChange={setOpen} modal={modal} >
+      <DialogContent
+        className={cn(
+          "sm:max-w-lg w-ull p-0 transition-all duration-300 ease-in-out",
+          className
+        )}
+      >
+        {title && (
+          <DialogTitle className="border-b px-6 py-3 text-base text-[#8E8E93]">
+            {title}
+          </DialogTitle>
+        )}
         <div className="p-6"> {children}</div>
       </DialogContent>
     </Dialog>

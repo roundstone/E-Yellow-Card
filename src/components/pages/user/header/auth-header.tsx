@@ -37,8 +37,8 @@ const AuthHeader = () => {
           </Link>
           <div className="border-l inline-block px-10"> &nbsp;</div>
         </nav>
-      </header>
-      <AppModal open={open} setOpen={setOpen} title="QUERY USER">
+      </header>538
+      <AppModal open={open} setOpen={setOpen} title="QUERY USER" className="sm:max-w-[538px]">
         <UserQuery />
       </AppModal>
       ;

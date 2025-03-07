@@ -1,8 +1,22 @@
-import * as React from "react"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+interface InputProps extends React.ComponentProps<"input"> {
+  isNumber?: boolean; // Add this prop
+}
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({ className, type, isNumber, onChange, ...props }: InputProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isNumber) {
+      // Convert the input value to a number
+      const value = e.target.value === "" ? null : Number(e.target.value);
+      onChange?.(value as unknown as React.ChangeEvent<HTMLInputElement>); // Pass the converted value
+    } else {
+      // Pass the value as-is (string)
+      onChange?.(e);
+    }
+  };
+
   return (
     <input
       type={type}
@@ -13,9 +27,10 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
+      onChange={handleChange} // Use the custom handler
       {...props}
     />
-  )
+  );
 }
 
-export { Input }
+export { Input };

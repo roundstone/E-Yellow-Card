@@ -16,6 +16,7 @@ import { Mail, Lock } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/config/route";
+import { useNavigation } from "@/utils/navigation";
 
 const FormSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -23,6 +24,7 @@ const FormSchema = z.object({
 });
 
 const LoginForm = () => {
+  const { goTo } = useNavigation();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -34,6 +36,7 @@ const LoginForm = () => {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     toast.success("Login successful!");
     console.log(data);
+    goTo(ROUTES.DASHBOARD.DIRECTOR);
   }
 
   return (

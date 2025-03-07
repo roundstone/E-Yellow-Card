@@ -12,21 +12,29 @@ interface CustomRouteObject {
 
 import DirectorForgotPasswordPage from "@/features/auth/director/forgot-password";
 import DirectorChangePasswordPage from "@/features/auth/director/change-password";
+import DirectorDashboardPage from "@/features/dashboard/director";
+import DirectorMainLayout from "@/layouts/d-main-layout";
 
 export const directorRoutes: CustomRouteObject[] = [
-    {
-        path: ROUTES.AUTH.DIRECTOR.LOGIN,
-        element: <DirectorLoginPage />,
-        layout: DirectorAuthLayout,
-    },
-    {
-        path: ROUTES.AUTH.DIRECTOR.FORGET_PASSWORD,
-        element: <DirectorForgotPasswordPage />,
-        layout: DirectorAuthLayout,
-    },
-    {
-        path: ROUTES.AUTH.DIRECTOR.CHANGE_PASSWORD,
-        element: <DirectorChangePasswordPage />,
-        layout: DirectorAuthLayout,
-    },
+  {
+    path: ROUTES.AUTH.DIRECTOR.LOGIN,
+    element: <DirectorLoginPage />,
+    layout: DirectorAuthLayout,
+  },
+  {
+    path: ROUTES.AUTH.DIRECTOR.FORGET_PASSWORD,
+    element: <DirectorForgotPasswordPage />,
+    layout: DirectorAuthLayout,
+  },
+  {
+    path: ROUTES.AUTH.DIRECTOR.CHANGE_PASSWORD,
+    element: <DirectorChangePasswordPage />,
+    layout: DirectorAuthLayout,
+  },
+  // Auth
+  {
+    path: ROUTES.DASHBOARD.DIRECTOR,
+    element: <DirectorDashboardPage />,
+    layout: DirectorMainLayout,
+  },
 ];

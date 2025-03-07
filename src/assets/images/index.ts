@@ -1,5 +1,4 @@
-// src/assets/images/image.ts
-import logo from './Coat_of_arms_of_Nigeria.png';
+import logo from './coat_of_arms_of_nigeria.png';
 import vaccine from './vaccine.png';
 import yellowCardImage from './yellow-card-image.png';
 import invoiceSample from './RECIEPT_330322557276 1.png';
@@ -7,6 +6,9 @@ import jim from './jim.png';
 import jimPassport from './jim-passport.png';
 import nYellowCardIcon from './n-yellow-card-icon.png';
 import dAuthBg from './d-auth-bg.png';
+import profileIcon from './d-auth-bg.png';
+import multiYellowCard from './multi-yellow-card.png';
+
 // 
 
 const IMAGES = {
@@ -17,7 +19,9 @@ const IMAGES = {
   jim,
   jimPassport,
   nYellowCardIcon,
-  dAuthBg
+  dAuthBg,
+  profileIcon,
+  multiYellowCard
 };
 
 export default IMAGES;

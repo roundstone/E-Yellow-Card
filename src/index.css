@@ -4,6 +4,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* src/index.css or src/App.css */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./../public/fonts/Satoshi/Satoshi-Black.otf') format('opentype');
+  font-weight: 900; /* Black */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./../public/fonts/Satoshi/Satoshi-Bold.otf') format('opentype');
+  font-weight: 700; /* Bold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./../public/fonts/Satoshi/Satoshi-Medium.otf') format('opentype');
+  font-weight: 500; /* Medium */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./../public/fonts/Satoshi/Satoshi-Regular.otf') format('opentype');
+  font-weight: 400; /* Regular */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./../public/fonts/Satoshi/Satoshi-Light.otf') format('opentype');
+  font-weight: 300; /* Light */
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "Andale Mono";
   src: url("./../public/fonts/ANDALEMO.woff") format("woff");
@@ -12,9 +53,31 @@
   font-display: swap;
 }
 
-body {
-  @apply font-sans;
+@layer base {
+  :root {
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
+
 body {
+  font-family: 'Satoshi', sans-serif;
   color: #101928;
 }

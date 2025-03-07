@@ -14,6 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
 import React from "react";
+import { useNavigation } from "@/utils/navigation";
+import { ROUTES } from "@/config/route";
 
 const ChangePasswordSchema = z
   .object({
@@ -27,6 +29,7 @@ const ChangePasswordSchema = z
   });
 
 const ChangePasswordForm = () => {
+  const { goTo } = useNavigation();
   const form = useForm<z.infer<typeof ChangePasswordSchema>>({
     resolver: zodResolver(ChangePasswordSchema),
     defaultValues: {
@@ -39,6 +42,7 @@ const ChangePasswordForm = () => {
   function onSubmit(data: z.infer<typeof ChangePasswordSchema>) {
     toast.success("Password changed successfully!");
     console.log(data);
+    goTo(ROUTES.AUTH.DIRECTOR.LOGIN);
   }
 
   return (
@@ -53,7 +57,10 @@ const ChangePasswordForm = () => {
               <FormLabel>Current Password</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 text-gray-400" size={18} />
+                  <Lock
+                    className="absolute left-3 top-3 text-gray-400"
+                    size={18}
+                  />
                   <Input
                     type="password"
                     placeholder="Enter current password"
@@ -76,7 +83,10 @@ const ChangePasswordForm = () => {
               <FormLabel>New Password</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 text-gray-400" size={18} />
+                  <Lock
+                    className="absolute left-3 top-3 text-gray-400"
+                    size={18}
+                  />
                   <Input
                     type="password"
                     placeholder="Enter new password"
@@ -99,7 +109,10 @@ const ChangePasswordForm = () => {
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 text-gray-400" size={18} />
+                  <Lock
+                    className="absolute left-3 top-3 text-gray-400"
+                    size={18}
+                  />
                   <Input
                     type="password"
                     placeholder="Confirm new password"
@@ -114,7 +127,10 @@ const ChangePasswordForm = () => {
         />
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full bg-green-700 hover:bg-green-800 text-white">
+        <Button
+          type="submit"
+          className="w-full bg-green-700 hover:bg-green-800 text-white"
+        >
           Change Password
         </Button>
       </form>

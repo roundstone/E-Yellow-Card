@@ -19,6 +19,7 @@ export default {
       },
       fontFamily: {
         'andale-mono': ['Andale Mono', 'monospace'], // Add Andale Mono
+        satoshi: ['Satoshi', 'sans-serif'],
       },
     },
   },
