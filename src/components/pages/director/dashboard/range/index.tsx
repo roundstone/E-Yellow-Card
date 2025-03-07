@@ -95,7 +95,7 @@ const DirectorRangeList = () => {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="py-5">
+                    <TableHead key={header.id} className="px-0 py-3">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -137,7 +137,11 @@ const DirectorRangeList = () => {
       </div>
 
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-[#9FA2B4] text-sm">Showing 1-6 entries of 24</div>
+        <div className="text-[#9FA2B4] text-sm">
+          Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
+          {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getCoreRowModel().rows.length)} 
+          {" "} entries of {table.getCoreRowModel().rows.length}
+        </div>
         <Button
           variant="ghost"
           size="sm"

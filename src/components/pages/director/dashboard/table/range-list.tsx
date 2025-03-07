@@ -65,7 +65,7 @@ export const rangeListColumns: ColumnDef<RangeItem>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          No.
           <ArrowUpDown />
         </Button>
       );
