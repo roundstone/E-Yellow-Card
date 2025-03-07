@@ -36,7 +36,7 @@ const LoginForm = () => {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     toast.success("Login successful!");
     console.log(data);
-    goTo(ROUTES.DASHBOARD.DIRECTOR);
+    goTo(ROUTES.DASHBOARD.DIRECTOR.HOME);
   }
 
   return (

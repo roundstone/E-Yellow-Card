@@ -14,6 +14,7 @@ import DirectorForgotPasswordPage from "@/features/auth/director/forgot-password
 import DirectorChangePasswordPage from "@/features/auth/director/change-password";
 import DirectorDashboardPage from "@/features/dashboard/director";
 import DirectorMainLayout from "@/layouts/d-main-layout";
+import DirectorRangeListPage from "@/features/dashboard/director/range-list";
 
 export const directorRoutes: CustomRouteObject[] = [
   {
@@ -33,8 +34,13 @@ export const directorRoutes: CustomRouteObject[] = [
   },
   // Auth
   {
-    path: ROUTES.DASHBOARD.DIRECTOR,
+    path: ROUTES.DASHBOARD.DIRECTOR.HOME,
     element: <DirectorDashboardPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.DIRECTOR.RANGE_LIST,
+    element: <DirectorRangeListPage />,
     layout: DirectorMainLayout,
   },
 ];

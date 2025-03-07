@@ -14,9 +14,9 @@ interface DirectorMainLayoutProps {
 
 const DirectorMainLayout = ({ children }: DirectorMainLayoutProps) => {
   return (
-    <SidebarProvider className="flex gap-[277px]">
+    <SidebarProvider className="flex gap-[277px] bg-[#F6F7F6]">
       <AppSidebar />
-      <SidebarInset className="bg-[#F6F7F6] flex-1 p-6 overflow-auto">
+      <SidebarInset className="bg-white flex-1 p-6 overflow-auto">
         {/* <SidebarTrigger /> */}
         <AppDashboardNav />
         {children}

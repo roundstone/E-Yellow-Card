@@ -1,3 +1,4 @@
+const directorPrefix = "/director"
 export const ROUTES = {
     HOME: "/",
     AUTH: {
@@ -17,7 +18,10 @@ export const ROUTES = {
     DASHBOARD: {
         SUPERADMIN: "/superadmin/dashboard",
         USER: "/user/dashboard",
-        DIRECTOR: "/director/dashboard",
+        DIRECTOR: {
+            HOME: `${directorPrefix}/dashboard`,
+            RANGE_LIST: `${directorPrefix}/range-list`
+        },
         REGISTRAR: "/registrar/dashboard",
     },
     PROFILE: "/profile",

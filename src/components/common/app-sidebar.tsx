@@ -20,7 +20,7 @@ import IMAGES from "@/assets/images";
 const items = [
   {
     title: "Dashboard",
-    url: ROUTES.DASHBOARD.DIRECTOR,
+    url: ROUTES.DASHBOARD.DIRECTOR.HOME,
     icon: Home,
   },
   {
@@ -35,7 +35,7 @@ const items = [
   },
   {
     title: "Range List",
-    url: "#",
+    url: ROUTES.DASHBOARD.DIRECTOR.RANGE_LIST,
     icon: Search,
   },
   {
