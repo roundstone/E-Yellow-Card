@@ -61,7 +61,7 @@ const DirectorRangeList = () => {
   });
 
   return (
-    <div className="p-6">
+    <div className="p6">
       {/* Search Input */}
       <div className="mt-4 flex justify-between items-center">
         <div>

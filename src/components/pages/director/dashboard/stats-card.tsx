@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { UserRoundPlusIcon } from "lucide-react";
+import { CircleAlert, CircleUserRound, UserRoundPlusIcon } from "lucide-react";
 import React from "react";
 import {
   ArrowUpRight,
@@ -81,7 +81,7 @@ const DashboardStats = () => {
         value={775400}
         change={40}
         isPositive={true}
-        icon={<UserRoundPlusIcon className="text-black w-5 h-5" />}
+        icon={<CircleUserRound className="text-black w-5 h-5" />}
       />
       <StatCard
         title="Distributed Yellow Cards"
@@ -103,7 +103,7 @@ const DashboardStats = () => {
         value={75}
         change={20}
         isPositive={true}
-        icon={<ExternalLink className="text-black w-5 h-5" />}
+        icon={<CircleAlert className="text-black w-5 h-5" />}
       />
     </div>
   );

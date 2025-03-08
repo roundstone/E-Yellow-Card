@@ -147,7 +147,7 @@ const CardIssuance = () => {
           {/* Banner */}
           <div className="bg-black text-white p-4 rounded-md flex items-center justify-between relative">
             <span>Card Availability & Distribution</span>
-            <div className="absolute right-20 bottom-0">
+            <div className="absolute right-[10%] bottom-[0%]">
               <svg
                 width="135"
                 height="49"

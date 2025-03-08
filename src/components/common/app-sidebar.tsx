@@ -1,7 +1,11 @@
 import {
   Calendar,
+  ExternalLink,
+  FileChartColumnIncreasingIcon,
+  FileText,
   Home,
   Inbox,
+  LayoutGrid,
   LockIcon,
   Search,
   Settings,
@@ -24,42 +28,37 @@ import { ROUTES } from "@/config/route";
 import IMAGES from "@/assets/images";
 import AppModal from "./modal";
 import ResetPassword from "../pages/director/dashboard/modal/rest-password";
+import { cn } from "@/lib/utils";
 
 // Menu items.
 const items = [
   {
     title: "Dashboard",
     url: ROUTES.DASHBOARD.DIRECTOR.HOME,
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    icon: LayoutGrid,
   },
   {
     title: "Range Distribution",
     url: ROUTES.DASHBOARD.DIRECTOR.RANGE_DISTRIBUTION,
-    icon: Calendar,
+    icon: ExternalLink,
   },
   {
     title: "Range List",
     url: ROUTES.DASHBOARD.DIRECTOR.RANGE_LIST,
-    icon: Search,
-  },
-  {
-    title: "Card Distribution History",
-    url: "#",
-    icon: Settings,
+    icon: FileText,
   },
   {
     title: "Reports",
     url: "#",
-    icon: Settings,
+    icon: FileChartColumnIncreasingIcon,
   },
 ];
 
 export function AppSidebar() {
+  const navIsActive = (url: string) => {
+    return window.location.pathname === url;
+  };
+  // const navIsActive =  window.location.pathname === item.url;
   return (
     <Sidebar className="p-6">
       <SidebarContent>
@@ -72,16 +71,20 @@ export function AppSidebar() {
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      isActive={window.location.pathname === item.url}
-                      className={`px-3 py-5 ${
-                        window.location.pathname === item.url
-                          ? "bg-primary/90 text-white rounded-lg"
-                          : ""
-                      }`}
+                      isActive={navIsActive(item.url)}
+                      className={cn(
+                        "px-3 py-5",
+                        navIsActive(item.url) && "bg-primary/90 text-white rounded-lg"
+                      )}
                       asChild
                     >
                       <Link to={item.url}>
-                        <item.icon />
+                        <item.icon
+                          className={cn(
+                            "text-primary/90",
+                            navIsActive(item.url) && "text-white"
+                          )}
+                        />
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>

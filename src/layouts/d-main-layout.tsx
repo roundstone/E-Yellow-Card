@@ -14,12 +14,12 @@ interface DirectorMainLayoutProps {
 
 const DirectorMainLayout = ({ children }: DirectorMainLayoutProps) => {
   return (
-    <SidebarProvider className="flex gap-[277px] bg-[#F6F7F6]">
+    <SidebarProvider className="flex gap-[285px] bg-[#F6F7F6]">
       <AppSidebar />
-      <SidebarInset className="bg-white flex-1 p-6 overflow-auto">
+      <SidebarInset className="bg-white flex-1 overflow-auto">
         {/* <SidebarTrigger /> */}
         <AppDashboardNav />
-        {children}
+        <main className="p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

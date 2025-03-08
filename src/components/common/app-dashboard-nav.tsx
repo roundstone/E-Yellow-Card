@@ -1,76 +1,106 @@
-import { Settings } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+  ArrowDown,
+  ArrowUp,
+  ChevronDown,
+  Lock,
+  Settings,
+  UserCircle,
+} from "lucide-react";
+
 import React from "react";
 import IMAGES from "@/assets/images";
-import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
 import { appAtom } from "@/stores/app";
 
+const data = [
+  [
+    {
+      label: "Profile",
+      icon: UserCircle,
+    },
+    {
+      label: "Password Manager",
+      icon: Lock,
+    },
+  ],
+  [
+    {
+      label: "Import",
+      icon: ArrowUp,
+    },
+    {
+      label: "Export",
+      icon: ArrowDown,
+    },
+  ],
+];
+
 export function AppDashboardNav() {
   const [app] = useAtom(appAtom);
+
   return (
-    <nav className="flex justify-between pb-10">
+    <nav className="flex justify-between pb10 p-6 border-b">
       <div className="text-lg font-normal">
         {app.dashboardTitle || "Dashboard"}
       </div>
 
-      <NavigationMenu>
-        <NavigationMenuList className="gap-4">
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="gap-3 bg-transparent">
-              <img
-                src={IMAGES.profileIcon}
-                alt=""
-                className="w-6 h-6 rounded-full"
-              />{" "}
-              Port Health Director
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="w-full">
-                <ListItem href="/docs" title="Profile"></ListItem>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
+      <div className="space-x-3 flex">
+        <Popover>
+          <PopoverTrigger className="flex gap-3 items-center">
+            <img
+              src={IMAGES.profileIcon}
+              alt=""
+              className="w-6 h-6 rounded-full"
+            />
+            <span className=""> Port Health Director </span>
+            <ChevronDown className="w-5 h-5 self-center" />
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-56 overflow-hidden rounded-lg p-0"
+            align="end"
+          >
+            <Sidebar collapsible="none" className="bg-white">
+              <SidebarContent>
+                {data.map((group, index) => (
+                  <SidebarGroup
+                    key={index}
+                    className="border-b last:border-none"
+                  >
+                    <SidebarGroupContent className="gap-0">
+                      <SidebarMenu>
+                        {group.map((item, index) => (
+                          <SidebarMenuItem key={index}>
+                            <SidebarMenuButton>
+                              <item.icon /> <span>{item.label}</span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                ))}
+              </SidebarContent>
+            </Sidebar>
+          </PopoverContent>
+        </Popover>
 
-          <NavigationMenuItem>
-            <Settings />
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+        <Settings className="cursor-pointer" />
+      </div>
     </nav>
   );
 }
-
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
-ListItem.displayName = "ListItem";
