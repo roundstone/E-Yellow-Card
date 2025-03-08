@@ -1,36 +1,8 @@
 import IMAGES from "@/assets/images";
 import { Input } from "@/components/ui/input";
+import { mockUser, UserDetails } from "@/data/mock-user";
 import React from "react";
 import { useState } from "react";
-
-interface UserDetails {
-  passportNumber: string;
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  age: number;
-  stateOfOrigin: string;
-  yellowCardNumber: string;
-  vaccinations: { name: string; expiresOn: string }[];
-  imageUrl: string;
-}
-
-const mockUser: UserDetails = {
-  passportNumber: "A02737829",
-  firstName: "Emmanuel",
-  lastName: "Gambo",
-  middleName: "John",
-  age: 28,
-  stateOfOrigin: "Nasarawa",
-  yellowCardNumber: "A234568",
-  vaccinations: [
-    { name: "COVID-19", expiresOn: "2/10/2028" },
-    { name: "Flu (influenza)", expiresOn: "2/10/2028" },
-    { name: "Hepatitis A", expiresOn: "2/10/2028" },
-    { name: "Hepatitis B", expiresOn: "2/10/2028" },
-  ],
-  imageUrl: IMAGES.jimPassport, // Replace with actual image URL
-};
 
 const UserQuery = () => {
   const [query, setQuery] = useState(mockUser.passportNumber);

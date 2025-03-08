@@ -129,10 +129,10 @@ const CardIssuance = () => {
 
   return (
     <>
-      <Card className=" bg-white ">
+      <Card className=" bg-white p-0">
         {/* Header */}
-        <CardHeader className="flex-row items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Card Issuance</CardTitle>
+        <CardHeader className="flex-row items-center justify-between py-3">
+          <CardTitle className="text-sm font-semibold">Card Issuance</CardTitle>
           <div>
             <button onClick={() => setOpen(true)} className="flex items-center space-x-1 text-sm font-medium text-black">
               <span>Requests</span>

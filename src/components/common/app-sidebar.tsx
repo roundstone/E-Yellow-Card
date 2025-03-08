@@ -23,42 +23,80 @@ import {
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ROUTES } from "@/config/route";
 import IMAGES from "@/assets/images";
 import AppModal from "./modal";
 import ResetPassword from "../pages/director/dashboard/modal/rest-password";
 import { cn } from "@/lib/utils";
+import { UserType } from "@/interface/user";
 
 // Menu items.
-const items = [
-  {
-    title: "Dashboard",
-    url: ROUTES.DASHBOARD.DIRECTOR.HOME,
-    icon: LayoutGrid,
-  },
-  {
-    title: "Range Distribution",
-    url: ROUTES.DASHBOARD.DIRECTOR.RANGE_DISTRIBUTION,
-    icon: ExternalLink,
-  },
-  {
-    title: "Range List",
-    url: ROUTES.DASHBOARD.DIRECTOR.RANGE_LIST,
-    icon: FileText,
-  },
-  {
-    title: "Reports",
-    url: "#",
-    icon: FileChartColumnIncreasingIcon,
-  },
-];
+const items = {
+  DIRECTOR: [
+    {
+      title: "Dashboard",
+      url: ROUTES.DASHBOARD.DIRECTOR.HOME,
+      icon: LayoutGrid,
+    },
+    {
+      title: "Range Distribution",
+      url: ROUTES.DASHBOARD.DIRECTOR.RANGE_DISTRIBUTION,
+      icon: ExternalLink,
+    },
+    {
+      title: "Range List",
+      url: ROUTES.DASHBOARD.DIRECTOR.RANGE_LIST,
+      icon: FileText,
+    },
+    {
+      title: "Reports",
+      url: "#",
+      icon: FileChartColumnIncreasingIcon,
+    },
+  ],
+  REGISTRAR: [
+    {
+      title: "Dashboard",
+      url: ROUTES.DASHBOARD.REGISTRAR.HOME,
+      icon: LayoutGrid,
+    },
+    {
+      title: "Manage Vaccines",
+      url: ROUTES.DASHBOARD.REGISTRAR.MANAGE_VACCINES,
+      icon: ExternalLink,
+    },
+    {
+      title: "Assign Yellow Card",
+      url: ROUTES.DASHBOARD.REGISTRAR.ASSIGN_YELLOW_CARD,
+      icon: FileText,
+    },
+    {
+      title: "User List",
+      url: ROUTES.DASHBOARD.REGISTRAR.USER_LIST,
+      icon: Home,
+    },
+    {
+      title: "Activity Log",
+      url: ROUTES.DASHBOARD.REGISTRAR.ACTIVITY_LOG,
+      icon: Inbox,
+    },
+  ],
+};
+
+const getUserRoleFromPath = (pathname: string) => {
+  const roleKeys = Object.keys(items); // Get all available roles
+  return (
+    roleKeys.find((role) => pathname.includes(role.toLowerCase())) || "DEFAULT"
+  ); // Fallback role
+};
 
 export function AppSidebar() {
-  const navIsActive = (url: string) => {
-    return window.location.pathname === url;
-  };
-  // const navIsActive =  window.location.pathname === item.url;
+  const location = useLocation();
+  const userRole = getUserRoleFromPath(location.pathname); // Extract the role dynamically
+  const menuItems = items[userRole] || []; // Get the menu for the role
+
+  const navIsActive = (url: string) => window.location.pathname === url;
   return (
     <Sidebar className="p-6">
       <SidebarContent>
@@ -66,30 +104,37 @@ export function AppSidebar() {
         <SidebarGroup>
           {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
           <SidebarGroupContent>
-            <React.Suspense fallback={<SidebarSkeleton />}>
+            <React.Suspense
+              fallback={<SidebarSkeleton menuItems={menuItems} />}
+            >
               <SidebarMenu className="space-y-2">
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      isActive={navIsActive(item.url)}
-                      className={cn(
-                        "px-3 py-5",
-                        navIsActive(item.url) && "bg-primary/90 text-white rounded-lg"
-                      )}
-                      asChild
-                    >
-                      <Link to={item.url}>
-                        <item.icon
-                          className={cn(
-                            "text-primary/90",
-                            navIsActive(item.url) && "text-white"
-                          )}
-                        />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {menuItems.length > 0 ? (
+                  menuItems.map((item: any) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        isActive={navIsActive(item.url)}
+                        className={cn(
+                          "px-3 py-5",
+                          navIsActive(item.url) &&
+                            "bg-primary/90 text-white rounded-lg"
+                        )}
+                        asChild
+                      >
+                        <Link to={item.url}>
+                          <item.icon
+                            className={cn(
+                              "text-primary/90",
+                              navIsActive(item.url) && "text-white"
+                            )}
+                          />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No menu available</p>
+                )}
               </SidebarMenu>
               <SecurityAlertCard />
             </React.Suspense>
@@ -115,10 +160,10 @@ const AppSidebarHeader: React.FC = () => {
   );
 };
 
-const SidebarSkeleton: React.FC = () => {
+const SidebarSkeleton: React.FC<{ menuItems: any[] }> = ({ menuItems }) => {
   return (
     <SidebarMenu>
-      {items.map((_, index) => (
+      {menuItems.map((_, index) => (
         <SidebarMenuItem key={index}>
           <SidebarMenuSkeleton />
         </SidebarMenuItem>

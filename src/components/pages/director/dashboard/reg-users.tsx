@@ -61,9 +61,9 @@ const RegisteredUsers = () => {
   );
 
   return (
-    <Card className=" bg-white h-full">
-      <CardHeader className="flex-row justify-between items-center border-b px- pb-3">
-        <CardTitle className="text-lg font-semibold">
+    <Card className=" bg-white h-full p-0">
+      <CardHeader className="flex-row justify-between items-center border-b px- py-3">
+        <CardTitle className="text-sm font-semibold">
           Registered Users
         </CardTitle>
         <div className="flex gap-2">

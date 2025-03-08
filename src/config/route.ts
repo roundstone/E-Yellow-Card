@@ -1,4 +1,5 @@
-const directorPrefix = "/director"
+const directorPrefix = "/director";
+const registrarPrefix = "/registrar";
 export const ROUTES = {
     HOME: "/",
     AUTH: {
@@ -23,8 +24,18 @@ export const ROUTES = {
             RANGE_LIST: `${directorPrefix}/range-list`,
             RANGE_DISTRIBUTION: `${directorPrefix}/range-distribution`,
         },
-        REGISTRAR: "/registrar/dashboard",
+        REGISTRAR: {
+            HOME: `${registrarPrefix}/dashboard`,
+            MANAGE_VACCINES: `${registrarPrefix}/manager-vaccines`,
+            ASSIGN_YELLOW_CARD: `${registrarPrefix}/assign-yellow-card`,
+            USER_LIST: `${registrarPrefix}/user-list`,
+            ACTIVITY_LOG: `${registrarPrefix}/activity-log`,
+        },
     },
     PROFILE: "/profile",
     SETTINGS: "/settings",
 };
+
+
+
+

@@ -35,9 +35,9 @@ const alerts: Alert[] = [
 
 const AlertNotifications: React.FC = () => {
   return (
-    <Card className="col-span-3 w-full h-full bg-white">
-      <CardHeader className="bg-background- border-b">
-        <CardTitle className="text-xl font-semibold">
+    <Card className="col-span-3 w-full h-full bg-white p-0">
+      <CardHeader className="bg-background- border-b py-3">
+        <CardTitle className="text-sm  font-semibold">
           Alerts & Notifications
         </CardTitle>
       </CardHeader>

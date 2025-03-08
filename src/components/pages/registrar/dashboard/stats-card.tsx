@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { CircleAlert, CircleUserRound, UserRoundPlusIcon } from "lucide-react";
+import { CircleAlert, CircleUserRound, RefreshCcw, UserRoundPlusIcon } from "lucide-react";
 import React from "react";
 import {
   ArrowUpRight,
@@ -28,26 +28,7 @@ const trendDown = [
 
 const DashboardStats = () => {
   return (
-    <div className="grid md:grid-cols-4 gap-4 mt-6">
-      <StatCard
-        title="Registered Users"
-        value={775400}
-        change={40}
-        isPositive={true}
-        icon={<CircleUserRound className="text-black w-5 h-5" />}
-        trendUp={trendUp}
-        trendDown={trendDown}
-      />
-      <StatCard
-        title="Distributed Yellow Cards"
-        value={800000}
-        change={20}
-        isPositive={true}
-        icon={<ExternalLink className="text-black w-5 h-5" />}
-        trendUp={trendUp}
-        trendDown={trendDown}
-      />
-
+    <div className="grid md:grid-cols-4 gap-4">
       <StatCard
         title="Yellow Cards Issued"
         value={122190}
@@ -56,6 +37,14 @@ const DashboardStats = () => {
         icon={<BookOpen className="text-black w-5 h-5" />}
         trendUp={trendUp}
         trendDown={trendDown}
+      />
+
+      <StatCard
+        title="Vaccinated Users"
+        value={775400}
+        change={40}
+        isPositive={true}
+        icon={<CircleUserRound className="text-black w-5 h-5" />}
       />
       <StatCard
         title="Voided Yellow Cards"
@@ -66,6 +55,18 @@ const DashboardStats = () => {
         trendUp={trendUp}
         trendDown={trendDown}
       />
+      <StatCard
+        title="Most Issued Vaccine"
+        value={"Yellow Fever"}
+        change={20}
+        isPositive={true}
+        icon={<RefreshCcw className="text-black w-5 h-5" />}
+        trendUp={trendUp}
+        trendDown={trendDown}
+      />
+
+      
+      
     </div>
   );
 };

@@ -11,6 +11,7 @@ import { ROUTES } from "@/config/route";
 import { userRoutes } from "./user-route";
 import RouteWrapper from "@/components/route/wrapper";
 import { directorRoutes } from "./director-route";
+import { registrarRoutes } from "./registrar-route";
 
 const AppRoutes = () => {
   const userType = UserType.SUPERADMIN;
@@ -34,6 +35,21 @@ const AppRoutes = () => {
 
         {/* Director routes */}
         {directorRoutes.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            element={
+              <RouteWrapper
+                element={route.element}
+                layout={route.layout}
+                layoutProps={route.layoutProps}
+              />
+            }
+          />
+        ))}
+
+        {/* registrarRoutes */}
+        {registrarRoutes.map((route, index) => (
           <Route
             key={index}
             path={route.path}

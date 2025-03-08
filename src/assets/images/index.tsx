@@ -9,6 +9,8 @@ import dAuthBg from './d-auth-bg.png';
 import profileIcon from './d-auth-bg.png';
 import multiYellowCard from './multi-yellow-card.png';
 import sBlock from './s-block.png';
+import noResultBlock from './no-result-block.png';
+import pendingBlock from './pending-block.png';
 
 // 
 
@@ -23,7 +25,9 @@ const IMAGES = {
   dAuthBg,
   profileIcon,
   multiYellowCard,
-  sBlock
+  sBlock,
+  noResultBlock,
+  pendingBlock
 };
 
 export default IMAGES;

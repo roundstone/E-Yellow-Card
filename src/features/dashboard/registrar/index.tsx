@@ -1,11 +1,10 @@
-import React from 'react'
+import RegistrarDashboard from "@/components/pages/registrar/dashboard";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
-const RegistrarDashboard = (props: Props) => {
-  return (
-    <div>Yellow Card RegistrarDashboard</div>
-  )
-}
+const RegistrarDashboardPage = (props: Props) => {
+  return <RegistrarDashboard />;
+};
 
-export default RegistrarDashboard
+export default RegistrarDashboardPage;
