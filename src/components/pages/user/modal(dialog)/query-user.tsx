@@ -34,7 +34,7 @@ const mockUser: UserDetails = {
 
 const UserQuery = () => {
   const [query, setQuery] = useState(mockUser.passportNumber);
-  const [user, setUser] = useState<UserDetails | null>(mockUser);
+  const [user] = useState<UserDetails | null>(mockUser);
 
   return (
     <div className="flex justify-center items-center w-full">
@@ -48,8 +48,8 @@ const UserQuery = () => {
               USER DETAILS
             </h3>
 
-            <div className="w-full flex gap-10 items-cente">
-              <div className="w-full">
+            <div className="w-full fle grid grid-cols-3 gap-10 justify- items-cente">
+              <div className="w-full col-span-2">
                 <div className="grid grid-cols-2 gap-4 mb-4 mt-6">
                   <div className="text-gray-500 text-left text-sm pr-3">
                     First Name{" "}
@@ -85,38 +85,15 @@ const UserQuery = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-[111px]">
-                <div className="bg-black w-full h-full rounded-lg overflow-hidden">
+                <div className="w-full col-span-1 flex justify-end">
+                <div className="bg-black w-32 h-32 rounded-lg overflow-hidden">
                   <img
-                    src={user.imageUrl}
-                    alt="User"
-                    className="w-full h-full rounded-md object-cover"
+                  src={user.imageUrl}
+                  alt="User"
+                  className="w-full h-full object-cover"
                   />
                 </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 mt-2 hidden">
-              {/* User Image */}
-              <img
-                src={user.imageUrl}
-                alt="User"
-                className="w-20 h-20 rounded-md object-cover"
-              />
-
-              {/* Name & Info */}
-              <div>
-                <p className="font-semibold text-lg">
-                  {user.firstName} {user.middleName} {user.lastName}
-                </p>
-                <p className="text-gray-500 text-sm">Age: {user.age}yrs</p>
-                <p className="text-gray-500 text-sm">
-                  State of Origin: {user.stateOfOrigin}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  Passport Number: {user.passportNumber}
-                </p>
-              </div>
+                </div>
             </div>
 
             <div className="w-full border-t border-b border-dotted pb-5 mt-8 space-y-4">

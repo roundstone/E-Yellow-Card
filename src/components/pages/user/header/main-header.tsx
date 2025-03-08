@@ -54,6 +54,7 @@ const MainHeader = () => {
         open={open}
         setOpen={setOpen}
         title="QUERY USER"
+        className="sm:max-w-[567px] bg-white"
       >
         <UserQuery />
       </AppModal>
