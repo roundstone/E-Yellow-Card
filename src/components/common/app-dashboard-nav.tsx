@@ -26,6 +26,7 @@ import React from "react";
 import IMAGES from "@/assets/images";
 import { useAtom } from "jotai";
 import { appAtom } from "@/stores/app";
+import { useLocation } from "react-router-dom";
 
 const data = [
   [
@@ -53,6 +54,8 @@ const data = [
 export function AppDashboardNav() {
   const [app] = useAtom(appAtom);
 
+  const location = useLocation();
+
   return (
     <nav className="flex justify-between pb10 p-6 border-b">
       <div className="text-lg font-normal">
@@ -67,7 +70,16 @@ export function AppDashboardNav() {
               alt=""
               className="w-6 h-6 rounded-full"
             />
-            <span className=""> Port Health Director </span>
+            {/* For test: a proper middleware or authorization logic to handle this */}
+            <span className="">
+              {location.pathname.includes("director")
+                ? "Port Health Director"
+                : location.pathname.includes("admin")
+                ? "Admin"
+                : location.pathname.includes("registrar")
+                ? "Registrar"
+                : ""}
+            </span>
             <ChevronDown className="w-5 h-5 self-center" />
           </PopoverTrigger>
           <PopoverContent

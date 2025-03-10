@@ -12,6 +12,7 @@ import { userRoutes } from "./user-route";
 import RouteWrapper from "@/components/route/wrapper";
 import { directorRoutes } from "./director-route";
 import { registrarRoutes } from "./registrar-route";
+import { superadminRoutes } from "./admin-route";
 
 const AppRoutes = () => {
   const userType = UserType.SUPERADMIN;
@@ -63,20 +64,22 @@ const AppRoutes = () => {
           />
         ))}
 
-        {/* Role-Based Route Example */}
-        <Route
-          element={
-            <RoleBasedRoute
-              userType={userType}
-              allowedRoles={[UserType.SUPERADMIN]}
-            />
-          }
-        >
+        {/* registrarRoutes */}
+        {superadminRoutes.map((route, index) => (
           <Route
-            path={ROUTES.DASHBOARD.SUPERADMIN}
-            element={<SuperadminDashboard />}
+            key={index}
+            path={route.path}
+            element={
+              <RouteWrapper
+                element={route.element}
+                layout={route.layout}
+                layoutProps={route.layoutProps}
+              />
+            }
           />
-        </Route>
+        ))}
+
+       
 
         {/* Unauthorized Route */}
         <Route path={ROUTES.UNAUTHORIZED} element={<UnauthorizedPage />} />

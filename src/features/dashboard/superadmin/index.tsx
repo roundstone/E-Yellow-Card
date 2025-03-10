@@ -1,11 +1,9 @@
-import React from 'react'
+import React from "react";
 
-type Props = {}
+type Props = {};
 
-const SuperadminDashboard = (props: Props) => {
-  return (
-    <div>Yellow Card SuperadminDashboard</div>
-  )
-}
+const SuperadminDashboardPage = (props: Props) => {
+  return <div>Dashboard</div>;
+};
 
-export default SuperadminDashboard
+export default SuperadminDashboardPage;

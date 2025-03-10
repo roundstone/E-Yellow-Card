@@ -1,17 +1,19 @@
 import {
+  BadgeCheck,
   BookOpen,
-  Calendar,
+  ClipboardList,
+  CreditCard,
   ExternalLink,
+  FileChartColumn,
   FileChartColumnIncreasingIcon,
   FileText,
-  Home,
-  Inbox,
   LayoutGrid,
   LockIcon,
+  Maximize2,
   Menu,
-  Search,
-  Settings,
+  RefreshCcw,
   Syringe,
+  Users,
 } from "lucide-react";
 
 import {
@@ -32,7 +34,7 @@ import IMAGES from "@/assets/images";
 import AppModal from "./modal";
 import ResetPassword from "../pages/director/dashboard/modal/rest-password";
 import { cn } from "@/lib/utils";
-import { UserType } from "@/interface/user";
+import { getUserRoleFromPath } from "@/utils/navigation";
 
 // Menu items.
 const items = {
@@ -85,18 +87,73 @@ const items = {
       icon: Menu,
     },
   ],
-};
-
-const getUserRoleFromPath = (pathname: string) => {
-  const roleKeys = Object.keys(items); // Get all available roles
-  return (
-    roleKeys.find((role) => pathname.includes(role.toLowerCase())) || "DEFAULT"
-  ); // Fallback role
+  ADMIN: [
+    {
+      title: "Dashboard",
+      url: ROUTES.DASHBOARD.SUPERADMIN.HOME,
+      icon: LayoutGrid,
+    },
+    {
+      title: "Import Applications",
+      url: ROUTES.DASHBOARD.SUPERADMIN.IMPORT_APPLICATIONS,
+      icon: ExternalLink,
+    },
+    {
+      title: "Local Govt List",
+      url: ROUTES.DASHBOARD.SUPERADMIN.LOCAL_GOVT_LIST,
+      icon: ClipboardList,
+    },
+    {
+      title: "Remita Transactions",
+      url: ROUTES.DASHBOARD.SUPERADMIN.REMITA_TRANSACTIONS,
+      icon: CreditCard,
+    },
+    {
+      title: "State List",
+      url: ROUTES.DASHBOARD.SUPERADMIN.STATE_LIST,
+      icon: FileText,
+    },
+    {
+      title: "Manage Ports",
+      url: ROUTES.DASHBOARD.SUPERADMIN.MANAGE_PORTS,
+      icon: FileChartColumn,
+    },
+    {
+      title: "Vaccines",
+      url: ROUTES.DASHBOARD.SUPERADMIN.VACCINES,
+      icon: Syringe,
+    },
+    {
+      title: "Update Vaccine Inventory",
+      url: ROUTES.DASHBOARD.SUPERADMIN.UPDATE_VACCINE_INVENTORY,
+      icon: RefreshCcw,
+    },
+    {
+      title: "Users",
+      url: ROUTES.DASHBOARD.SUPERADMIN.USERS,
+      icon: Users,
+    },
+    {
+      title: "Yellow Card Range",
+      url: ROUTES.DASHBOARD.SUPERADMIN.YELLOW_CARD_RANGE,
+      icon: Maximize2,
+    },
+    {
+      title: "All Events History",
+      url: ROUTES.DASHBOARD.SUPERADMIN.ALL_EVENTS_HISTORY,
+      icon: Menu,
+    },
+    {
+      title: "Verify Yellow Cards",
+      url: ROUTES.DASHBOARD.SUPERADMIN.VERIFY_YELLOW_CARDS,
+      icon: BadgeCheck,
+    },
+  ],
 };
 
 export function AppSidebar() {
   const location = useLocation();
-  const userRole = getUserRoleFromPath(location.pathname); // Extract the role dynamically
+  const userRole = getUserRoleFromPath(location.pathname, items); // Extract the role dynamically
   const menuItems = items[userRole] || []; // Get the menu for the role
 
   const navIsActive = (url: string) => window.location.pathname === url;
@@ -106,7 +163,7 @@ export function AppSidebar() {
         <AppSidebarHeader />
         <SidebarGroup>
           {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
-          <SidebarGroupContent>
+          <SidebarGroupContent className="w-[221px]">
             <React.Suspense
               fallback={<SidebarSkeleton menuItems={menuItems} />}
             >
@@ -139,7 +196,7 @@ export function AppSidebar() {
                   <p className="text-gray-500">No menu available</p>
                 )}
               </SidebarMenu>
-              <SecurityAlertCard />
+              {userRole.toLocaleLowerCase() !== "admin" && <SecurityAlertCard />}
             </React.Suspense>
           </SidebarGroupContent>
         </SidebarGroup>

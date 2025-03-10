@@ -1,5 +1,6 @@
 const directorPrefix = "/director";
 const registrarPrefix = "/registrar";
+const adminPrefix = "/admin";
 export const ROUTES = {
     HOME: "/",
     AUTH: {
@@ -17,7 +18,6 @@ export const ROUTES = {
     PAYMENT_INVOICE: "/user/payment-invoice",
     UNAUTHORIZED: "/unauthorized",
     DASHBOARD: {
-        SUPERADMIN: "/superadmin/dashboard",
         USER: "/user/dashboard",
         DIRECTOR: {
             HOME: `${directorPrefix}/dashboard`,
@@ -32,6 +32,20 @@ export const ROUTES = {
             USER_LIST: `${registrarPrefix}/user-list`,
             ACTIVITY_LOG: `${registrarPrefix}/activity-log`,
         },
+        SUPERADMIN: {
+            HOME: `${adminPrefix}/dashboard`,
+            IMPORT_APPLICATIONS: `${adminPrefix}/import-applications`,
+            LOCAL_GOVT_LIST: `${adminPrefix}/local-govt-list`,
+            REMITA_TRANSACTIONS: `${adminPrefix}/remita-transactions`,
+            STATE_LIST: `${adminPrefix}/state-list`,
+            MANAGE_PORTS: `${adminPrefix}/manage-ports`,
+            VACCINES: `${adminPrefix}/vaccines`,
+            UPDATE_VACCINE_INVENTORY: `${adminPrefix}/update-vaccine-inventory`,
+            USERS: `${adminPrefix}/users`,
+            YELLOW_CARD_RANGE: `${adminPrefix}/yellow-card-range`,
+            ALL_EVENTS_HISTORY: `${adminPrefix}/all-events-history`,
+            VERIFY_YELLOW_CARDS: `${adminPrefix}/verify-yellow-cards`,
+          },
     },
     PROFILE: "/profile",
     SETTINGS: "/settings",

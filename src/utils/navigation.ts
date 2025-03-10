@@ -1,3 +1,4 @@
+import { UserType } from "@/interface/user";
 import { useNavigate } from "react-router-dom";
 
 export const useNavigation = () => {
@@ -12,4 +13,12 @@ export const useNavigation = () => {
     };
 
     return { goTo, goBack };
+};
+
+// For test: a proper middleware or authorization logic to handle this
+export const getUserRoleFromPath = (pathname: string, navItems: any) => {
+    const roleKeys = Object.keys(navItems); // Get all available roles
+    return (
+        roleKeys.find((role) => pathname.includes(role.toLowerCase())) || "DEFAULT"
+    ); // Fallback role
 };
