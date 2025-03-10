@@ -27,6 +27,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
+import AppTablePagination from "@/components/common/app-table-pagination";
 
 const DirectorRangeList = () => {
   useDashboardTitle("Range List");
@@ -136,29 +137,7 @@ const DirectorRangeList = () => {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-[#9FA2B4] text-sm">
-          Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
-          {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getCoreRowModel().rows.length)} 
-          {" "} entries of {table.getCoreRowModel().rows.length}
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <ChevronLeft />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          <ChevronRight />
-        </Button>
-      </div>
+      <AppTablePagination table={table} />
     </div>
   );
 };

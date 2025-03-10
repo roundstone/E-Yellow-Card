@@ -27,6 +27,7 @@ export const ROUTES = {
         REGISTRAR: {
             HOME: `${registrarPrefix}/dashboard`,
             MANAGE_VACCINES: `${registrarPrefix}/manager-vaccines`,
+            MANAGE_VACCINES_HISTORY: `${registrarPrefix}/manager-vaccines/vaccination-history`,
             ASSIGN_YELLOW_CARD: `${registrarPrefix}/assign-yellow-card`,
             USER_LIST: `${registrarPrefix}/user-list`,
             ACTIVITY_LOG: `${registrarPrefix}/activity-log`,

@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   Calendar,
   ExternalLink,
   FileChartColumnIncreasingIcon,
@@ -7,8 +8,10 @@ import {
   Inbox,
   LayoutGrid,
   LockIcon,
+  Menu,
   Search,
   Settings,
+  Syringe,
 } from "lucide-react";
 
 import {
@@ -64,22 +67,22 @@ const items = {
     {
       title: "Manage Vaccines",
       url: ROUTES.DASHBOARD.REGISTRAR.MANAGE_VACCINES,
-      icon: ExternalLink,
+      icon: Syringe,
     },
     {
       title: "Assign Yellow Card",
       url: ROUTES.DASHBOARD.REGISTRAR.ASSIGN_YELLOW_CARD,
-      icon: FileText,
+      icon: BookOpen,
     },
     {
       title: "User List",
       url: ROUTES.DASHBOARD.REGISTRAR.USER_LIST,
-      icon: Home,
+      icon: FileText,
     },
     {
       title: "Activity Log",
       url: ROUTES.DASHBOARD.REGISTRAR.ACTIVITY_LOG,
-      icon: Inbox,
+      icon: Menu,
     },
   ],
 };

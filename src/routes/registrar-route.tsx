@@ -18,6 +18,11 @@ import DirectorRangeListPage from "@/features/dashboard/director/range/list";
 import DirectorRangeDistributionPage from "@/features/dashboard/director/range/distribution";
 import RegistrarDashboard from "@/features/dashboard/registrar";
 import RegistrarDashboardPage from "@/features/dashboard/registrar";
+import RegistrarActivityLogPage from "@/features/dashboard/registrar/activity-log";
+import RegistrarAssignYellowCardPage from "@/features/dashboard/registrar/assign-yellow-card";
+import RegistrarManageVaccinesPage from "@/features/dashboard/registrar/vaccines";
+import RegistrarVaccinationHistoryPage from "@/features/dashboard/registrar/vaccines-history";
+
 
 export const registrarRoutes: CustomRouteObject[] = [
   {
@@ -42,13 +47,28 @@ export const registrarRoutes: CustomRouteObject[] = [
     layout: DirectorMainLayout,
   },
   {
-    path: ROUTES.DASHBOARD.DIRECTOR.RANGE_LIST,
-    element: <DirectorRangeListPage />,
+    path: ROUTES.DASHBOARD.REGISTRAR.MANAGE_VACCINES,
+    element: <RegistrarManageVaccinesPage />,
     layout: DirectorMainLayout,
   },
   {
-    path: ROUTES.DASHBOARD.DIRECTOR.RANGE_DISTRIBUTION,
-    element: <DirectorRangeDistributionPage />,
+    path: ROUTES.DASHBOARD.REGISTRAR.MANAGE_VACCINES_HISTORY,
+    element: <RegistrarVaccinationHistoryPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.REGISTRAR.ASSIGN_YELLOW_CARD,
+    element: <RegistrarAssignYellowCardPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.REGISTRAR.USER_LIST,
+    element: <RegistrarDashboardPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.REGISTRAR.ACTIVITY_LOG,
+    element: <RegistrarActivityLogPage />,
     layout: DirectorMainLayout,
   },
 ];

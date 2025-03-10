@@ -7,7 +7,7 @@
 /* src/index.css or src/App.css */
 @font-face {
   font-family: 'Satoshi';
-  src: url('./../public/fonts/Satoshi/Satoshi-Black.otf') format('opentype');
+  src: url('/fonts/Satoshi/Satoshi-Black.otf') format('opentype');
   font-weight: 900; /* Black */
   font-style: normal;
   font-display: swap;
@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: 'Satoshi';
-  src: url('./../public/fonts/Satoshi/Satoshi-Bold.otf') format('opentype');
+  src: url('/fonts/Satoshi/Satoshi-Bold.otf') format('opentype');
   font-weight: 700; /* Bold */
   font-style: normal;
   font-display: swap;
@@ -23,7 +23,7 @@
 
 @font-face {
   font-family: 'Satoshi';
-  src: url('./../public/fonts/Satoshi/Satoshi-Medium.otf') format('opentype');
+  src: url('/fonts/Satoshi/Satoshi-Medium.otf') format('opentype');
   font-weight: 500; /* Medium */
   font-style: normal;
   font-display: swap;
@@ -31,7 +31,7 @@
 
 @font-face {
   font-family: 'Satoshi';
-  src: url('./../public/fonts/Satoshi/Satoshi-Regular.otf') format('opentype');
+  src: url('/fonts/Satoshi/Satoshi-Regular.otf') format('opentype');
   font-weight: 400; /* Regular */
   font-style: normal;
   font-display: swap;
@@ -39,7 +39,7 @@
 
 @font-face {
   font-family: 'Satoshi';
-  src: url('./../public/fonts/Satoshi/Satoshi-Light.otf') format('opentype');
+  src: url('/fonts/Satoshi/Satoshi-Light.otf') format('opentype');
   font-weight: 300; /* Light */
   font-style: normal;
   font-display: swap;
@@ -47,7 +47,7 @@
 
 @font-face {
   font-family: "Andale Mono";
-  src: url("./../public/fonts/ANDALEMO.woff") format("woff");
+  src: url("/fonts/ANDALEMO.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;

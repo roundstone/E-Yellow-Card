@@ -58,7 +58,7 @@ const QuickAction: React.FC = () => {
               <button
                 key={index}
                 onClick={action.onClick}
-                className="flex justify-between items-center w-full bg-background p-3 rounded-lg shadow-sm hover:bg-gray-200 transition"
+                className=" text-start flex justify-between items-center w-full bg-background p-3 rounded-lg shadow-sm hover:bg-gray-200 transition"
               >
                 <span className="text-gray-800">{action.label}</span>
                 {action.icon}
@@ -80,7 +80,6 @@ const QuickAction: React.FC = () => {
       <AppModal
         open={isOpenVerifyTransaction}
         setOpen={setOpenVerifyTransaction}
-        // title="QUERY USER"
         className="sm:max-w-[790px] bg-white"
       >
         <VerifyTransaction onClose={() => setOpenVerifyTransaction(false)} />
