@@ -76,6 +76,7 @@ const RegistrarActivityLog = () => {
               table={table}
               className="px"
               noResultsMessage="No yellow cards found."
+              tableCellClassName="px-2"
             />
           </div>
           <AppTablePagination table={table} />

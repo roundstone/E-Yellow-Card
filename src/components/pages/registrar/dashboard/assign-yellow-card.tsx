@@ -4,22 +4,14 @@ import useDashboardTitle from "@/hooks/use-dashboard-title";
 import React, { useState } from "react";
 
 import {
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
 import { yellowCardColumns, yellowCardData } from "../table/yellow-card";
 import AppTablePagination from "@/components/common/app-table-pagination";
 import AppModal from "@/components/common/modal";
 import AssignNewYellowCard from "../modal/assign-new-y-card";
+import AppTable from "@/components/common/app-table";
 
 const RegistrarAssignYellowCard = () => {
   useDashboardTitle("Assign Yellow Card");
@@ -76,59 +68,7 @@ const RegistrarAssignYellowCard = () => {
             />
           </div>
           <div className="overflow-auto border rounded-lg mt-6">
-            <Table className="mt6">
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} className="px-6 py-3">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              
-              </TableHeader>
-              <TableBody>
-                {filteredData?.length ? (
-                  filteredData.map((row, i) => (
-                    <TableRow key={i} className="space-y-3">
-                      <TableCell className="px-6 cursor-pointer text-sm hover:underline">
-                        {row.name}
-                      </TableCell>
-                      <TableCell>
-                        <span className="px-6 text-center font-medium text-gray-500">
-                          {row.email}
-                        </span>
-                      </TableCell>
-                      <TableCell className="px-6 flex items-center justify-start gap-3">
-                        <div className="flex space-x-1">
-                          <span className="font-medium text-sm">
-                            {row.yellowCardNumber}
-                          </span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={yellowCardColumns.length}
-                      className="h-24 text-center"
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+            <AppTable table={table} tableCellClassName="px-2" />
           </div>
           <AppTablePagination table={table} />
         </div>

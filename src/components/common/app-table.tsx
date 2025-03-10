@@ -13,12 +13,16 @@ interface AppTableProps {
   table: any; // Replace `any` with the appropriate type for your table instance
   className?: string;
   noResultsMessage?: string;
+  tableCellClassName?: string;
+  tableHeadClassName?: string;
 }
 
 const AppTable = ({
   table,
   className,
   noResultsMessage = "No results.",
+  tableCellClassName,
+  tableHeadClassName,
 }: AppTableProps) => {
   return (
     <Table className={className}>
@@ -27,7 +31,10 @@ const AppTable = ({
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               return (
-                <TableHead key={header.id} className="px-3 py-1">
+                <TableHead
+                  key={header.id}
+                  className={`text-start px- py-1 ${tableHeadClassName}`}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -48,7 +55,10 @@ const AppTable = ({
               data-state={row.getIsSelected() && "selected"}
             >
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="px-3 py-3">
+                <TableCell
+                  key={cell.id}
+                  className={`px-5 py-3 ${tableCellClassName}`}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
