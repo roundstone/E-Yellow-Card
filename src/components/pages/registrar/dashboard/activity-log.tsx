@@ -26,19 +26,24 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import AppTable from "@/components/common/app-table";
+import AppTablePagination from "@/components/common/app-table-pagination";
+import { FormControl } from "@/components/ui/form";
+
+const requestTypes = ["All Actions", "Login", "Report Download"];
 
 const RegistrarActivityLog = () => {
   useDashboardTitle("Activity Log");
   const [search, setSearch] = useState("");
   const [selectedAction, setSelectedAction] = useState("");
 
-  const filteredLogs = logs.filter(
-    (log) =>
-      log.user.toLowerCase().includes(search.toLowerCase()) ||
-      log.details.toLowerCase().includes(search.toLowerCase())
-  ).filter(log => 
-    selectedAction === "" || log.action === selectedAction
-  );
+  const filteredLogs = logs
+    .filter(
+      (log) =>
+        log.user.toLowerCase().includes(search.toLowerCase()) ||
+        log.details.toLowerCase().includes(search.toLowerCase())
+    )
+    .filter((log) => selectedAction === "" || log.action === selectedAction);
 
   const table = useReactTable({
     data: filteredLogs,
@@ -49,7 +54,7 @@ const RegistrarActivityLog = () => {
   return (
     <Card>
       <CardContent className="p-0">
-        <div className="flex justify-between items-center mb-4 px-6">
+        <div className="flex justify-between items-center mb-4 px-3">
           <div className="flex gap-3 items-center">
             <Input
               placeholder="Search Logs"
@@ -57,59 +62,35 @@ const RegistrarActivityLog = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            {/* <Select onValueChange={setSelectedAction}>
-              <SelectTrigger className="w-[238px]">
-                <SelectValue placeholder="All Actions" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="">All Actions</SelectItem>
-                  <SelectItem value="Login">Login</SelectItem>
-                  <SelectItem value="Report Download">Report Download</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select> */}
+            <div>
+              <Select onValueChange={setSelectedAction} value={selectedAction}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Request Type" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectGroup>
+                    {requestTypes.map((email) => (
+                      <SelectItem key={email} value={email}>
+                        {email}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <Button className="bg-green-600 text-white">Download</Button>
         </div>
-        <Table className="mt-6">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow className="p-0 bg-background" key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead className="px-6" key={header.id}>
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell className="px-6" key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={logColumns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <div className="mt-6">
+          <div className="overflow-auto mt-6">
+            <AppTable
+              table={table}
+              className="px"
+              noResultsMessage="No yellow cards found."
+            />
+          </div>
+          <AppTablePagination table={table} />
+        </div>
       </CardContent>
     </Card>
   );

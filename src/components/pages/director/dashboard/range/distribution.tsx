@@ -28,6 +28,8 @@ import {
   distributionColumns,
   distributionData,
 } from "../table/range-distribution";
+import AppTable from "@/components/common/app-table";
+import AppTablePagination from "@/components/common/app-table-pagination";
 
 const DirectorRangeDistribution = () => {
   useDashboardTitle("Range Description");
@@ -131,54 +133,15 @@ const DirectorRangeDistribution = () => {
 
         {/* Table */}
         <div className="mt-4 overflow-x-auto rounded-lg border">
-          <Table>
-            <TableHeader>
-              {cardTable.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} className="px-0 py-3">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {cardTable.getRowModel().rows?.length ? (
-                cardTable.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="py-5">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={rangeListColumns.length} className="py-5">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <AppTable
+            table={cardTable}
+            className=""
+            noResultsMessage="No yellow cards found."
+          />
         </div>
+        <AppTablePagination table={cardTable} />
 
-        <div className="flex items-center justify-end space-x-2 py-4">
+        {/* <div className="flex items-center justify-end space-x-2 py-4">
           <div className="text-[#9FA2B4] text-sm">
             Showing{" "}
             {cardTable.getState().pagination.pageIndex *
@@ -208,7 +171,7 @@ const DirectorRangeDistribution = () => {
           >
             <ChevronRight />
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Table 2 */}
@@ -242,7 +205,12 @@ const DirectorRangeDistribution = () => {
 
         {/* Table */}
         <div className="mt-4 overflow-x-auto rounded-lg border">
-          <Table>
+          <AppTable
+            table={distributionTable}
+            className=""
+            noResultsMessage="No yellow cards found."
+          />
+          {/* <Table>
             <TableHeader>
               {distributionTable.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -286,40 +254,10 @@ const DirectorRangeDistribution = () => {
                 </TableRow>
               )}
             </TableBody>
-          </Table>
+          </Table> */}
         </div>
+        <AppTablePagination table={cardTable} />
 
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="text-[#9FA2B4] text-sm">
-            Showing{" "}
-            {distributionTable.getState().pagination.pageIndex *
-              distributionTable.getState().pagination.pageSize +
-              1}
-            -
-            {Math.min(
-              (distributionTable.getState().pagination.pageIndex + 1) *
-                distributionTable.getState().pagination.pageSize,
-              distributionTable.getCoreRowModel().rows.length
-            )}{" "}
-            entries of {distributionTable.getCoreRowModel().rows.length}
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => distributionTable.previousPage()}
-            disabled={!distributionTable.getCanPreviousPage()}
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => distributionTable.nextPage()}
-            disabled={!distributionTable.getCanNextPage()}
-          >
-            <ChevronRight />
-          </Button>
-        </div>
       </div>
     </div>
   );

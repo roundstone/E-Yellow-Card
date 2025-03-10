@@ -22,6 +22,7 @@ import RegistrarActivityLogPage from "@/features/dashboard/registrar/activity-lo
 import RegistrarAssignYellowCardPage from "@/features/dashboard/registrar/assign-yellow-card";
 import RegistrarManageVaccinesPage from "@/features/dashboard/registrar/vaccines";
 import RegistrarVaccinationHistoryPage from "@/features/dashboard/registrar/vaccines-history";
+import RegistrarUserListPage from "@/features/dashboard/registrar/user-list";
 
 
 export const registrarRoutes: CustomRouteObject[] = [
@@ -63,7 +64,7 @@ export const registrarRoutes: CustomRouteObject[] = [
   },
   {
     path: ROUTES.DASHBOARD.REGISTRAR.USER_LIST,
-    element: <RegistrarDashboardPage />,
+    element: <RegistrarUserListPage />,
     layout: DirectorMainLayout,
   },
   {
