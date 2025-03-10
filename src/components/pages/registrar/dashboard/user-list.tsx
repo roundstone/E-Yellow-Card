@@ -3,13 +3,9 @@ import { Input } from "@/components/ui/input";
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { SearchIcon } from "lucide-react";
 import React, { useState } from "react";
-import {
-  vaccinationHistoryColumns,
-  vaccinationHistoryData,
-} from "../table/vacination-history";
+import { vaccinationHistoryData } from "../table/vacination-history";
 import {
   ColumnFiltersState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -18,14 +14,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
+
 import AppTablePagination from "@/components/common/app-table-pagination";
 import {
   gUserColumns,
@@ -174,7 +163,11 @@ const GeneralUsers = ({
 
         <div>
           <div className="overflow-auto border rounded-lg mt-6">
-            <AppTable table={table} className="" noResultsMessage="No yellow cards found." />
+            <AppTable
+              table={table}
+              className=""
+              noResultsMessage="No yellow cards found."
+            />
           </div>
           <AppTablePagination table={table} />
         </div>

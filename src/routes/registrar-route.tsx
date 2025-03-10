@@ -12,11 +12,7 @@ interface CustomRouteObject {
 
 import DirectorForgotPasswordPage from "@/features/auth/director/forgot-password";
 import DirectorChangePasswordPage from "@/features/auth/director/change-password";
-import DirectorDashboardPage from "@/features/dashboard/director";
 import DirectorMainLayout from "@/layouts/d-main-layout";
-import DirectorRangeListPage from "@/features/dashboard/director/range/list";
-import DirectorRangeDistributionPage from "@/features/dashboard/director/range/distribution";
-import RegistrarDashboard from "@/features/dashboard/registrar";
 import RegistrarDashboardPage from "@/features/dashboard/registrar";
 import RegistrarActivityLogPage from "@/features/dashboard/registrar/activity-log";
 import RegistrarAssignYellowCardPage from "@/features/dashboard/registrar/assign-yellow-card";

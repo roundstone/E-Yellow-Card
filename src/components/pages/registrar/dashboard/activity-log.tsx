@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import useDashboardTitle from "@/hooks/use-dashboard-title";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import {
   Select,
@@ -13,22 +12,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { logColumns, logs } from "../table/activity-log";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
 import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
-import { FormControl } from "@/components/ui/form";
 
 const requestTypes = ["All Actions", "Login", "Report Download"];
 

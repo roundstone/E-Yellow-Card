@@ -1,21 +1,11 @@
 import useDashboardTitle from "@/hooks/use-dashboard-title";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import React, { useState } from "react";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { RangeItem, rangeListColumns, rangeData } from "../table/range-list";
 import {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -140,38 +130,6 @@ const DirectorRangeDistribution = () => {
           />
         </div>
         <AppTablePagination table={cardTable} />
-
-        {/* <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="text-[#9FA2B4] text-sm">
-            Showing{" "}
-            {cardTable.getState().pagination.pageIndex *
-              cardTable.getState().pagination.pageSize +
-              1}
-            -
-            {Math.min(
-              (cardTable.getState().pagination.pageIndex + 1) *
-                cardTable.getState().pagination.pageSize,
-              cardTable.getCoreRowModel().rows.length
-            )}{" "}
-            entries of {cardTable.getCoreRowModel().rows.length}
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => cardTable.previousPage()}
-            disabled={!cardTable.getCanPreviousPage()}
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => cardTable.nextPage()}
-            disabled={!cardTable.getCanNextPage()}
-          >
-            <ChevronRight />
-          </Button>
-        </div> */}
       </div>
 
       {/* Table 2 */}
@@ -210,54 +168,8 @@ const DirectorRangeDistribution = () => {
             className=""
             noResultsMessage="No yellow cards found."
           />
-          {/* <Table>
-            <TableHeader>
-              {distributionTable.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} className="px-0 py-3">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {distributionTable.getRowModel().rows?.length ? (
-                distributionTable.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="py-5">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={rangeListColumns.length} className="py-5">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table> */}
         </div>
         <AppTablePagination table={cardTable} />
-
       </div>
     </div>
   );
