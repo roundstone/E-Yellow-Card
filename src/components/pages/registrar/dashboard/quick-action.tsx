@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Search } from "lucide-react";
 import React from "react";
 import QueryUser from "../modal/query-user";
+import verifyTransaction from '../modal/verify-transaction';
+import VerifyTransaction from "../modal/verify-transaction";
 
 type ActionItem = {
   label: string;
@@ -13,6 +15,7 @@ type ActionItem = {
 
 const QuickAction: React.FC = () => {
   const [isOpenQueryUser, setOpenQueryUser] = React.useState(false);
+  const [isOpenVerifyTransaction, setOpenVerifyTransaction] = React.useState(false);
 
   const actions: ActionItem[] = [
     { 
@@ -33,7 +36,7 @@ const QuickAction: React.FC = () => {
     {
         label: "Verify a Remita Transaction",
         icon: <ArrowRight className="text-green-600" />,
-        onClick: () => console.log("Verify a Remita Transaction clicked")
+        onClick: () => setOpenVerifyTransaction(true)
     },
   ];
 
@@ -72,6 +75,15 @@ const QuickAction: React.FC = () => {
         className="sm:max-w-[567px] bg-white"
       >
         <QueryUser onClose={() => setOpenQueryUser(false)} />
+      </AppModal>
+
+      <AppModal
+        open={isOpenVerifyTransaction}
+        setOpen={setOpenVerifyTransaction}
+        // title="QUERY USER"
+        className="sm:max-w-[790px] bg-white"
+      >
+        <VerifyTransaction onClose={() => setOpenVerifyTransaction(false)} />
       </AppModal>
     </>
   );

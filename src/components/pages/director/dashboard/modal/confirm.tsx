@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, HelpCircle } from "lucide-react";
+import { CheckCircle, CircleCheckBig, HelpCircle } from "lucide-react";
 import React from "react";
 
 interface ConfirmProps {
@@ -31,7 +31,7 @@ const Confirm: React.FC<ConfirmProps> = ({
     },
     success: {
       bgColor: "bg-[#D1FADF] ring-8 ring-[#ECFDF3]",
-      icon: <CheckCircle className="w-8 h-8 text-primary" strokeWidth={2.5} />,
+      icon: <CircleCheckBig className="w-8 h-8 text-primary" strokeWidth={2.5} />,
     },
   };
 

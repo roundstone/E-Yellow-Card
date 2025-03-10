@@ -14,6 +14,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
 const CommentSchema = z.object({
   commentMessage: z.string().min(6, "Comment message is required"),
@@ -45,18 +46,18 @@ export default function Comment({ onClose }: { onClose: () => void }) {
       <div className="mt-8 sp w-full">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-           
+
             <FormField
               control={form.control}
               name="commentMessage"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter reason"
-                        {...field}
-                      />
+                    <Textarea
+                      placeholder="Tell us a little bit about yourself"
+                      className="resize-none"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -75,7 +76,6 @@ export default function Comment({ onClose }: { onClose: () => void }) {
                 Submit
               </Button>
             </div>
-
           </form>
         </Form>
       </div>
