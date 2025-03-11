@@ -11,6 +11,9 @@ export const ROUTES = {
             LOGIN: "/director/login",
             FORGET_PASSWORD: "/director/forget-password",
             CHANGE_PASSWORD: "/director/change-password",
+        },
+        ADMIN: {
+            SET_PROFILE: "/admin/set-profile"
         }
     },
     PAYMENT: "/user/payment-section",

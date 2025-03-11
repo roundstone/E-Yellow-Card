@@ -25,6 +25,8 @@ import SuperadminUsersPage from "@/features/dashboard/superadmin/users";
 import SuperadminYellowCardRangePage from "@/features/dashboard/superadmin/y-card-range";
 import SuperadminAllEventsHistoryPage from "@/features/dashboard/superadmin/all-event-history";
 import SuperadminVerifyYellowCardsPage from "@/features/dashboard/superadmin/verify-yellow-card";
+import SetProfilePage from "@/features/auth/admin/set-profile";
+import UserAuthLayout from "@/layouts/auth-layout";
 
 export const superadminRoutes: CustomRouteObject[] = [
     {
@@ -41,6 +43,12 @@ export const superadminRoutes: CustomRouteObject[] = [
       path: ROUTES.AUTH.DIRECTOR.CHANGE_PASSWORD,
       element: <DirectorChangePasswordPage />,
       layout: DirectorAuthLayout,
+    },
+    {
+      path: ROUTES.AUTH.ADMIN.SET_PROFILE,
+      element: <SetProfilePage />,
+      layout: UserAuthLayout,
+      layoutProps: { hasHeader: true },
     },
     // Dashboard
     {
