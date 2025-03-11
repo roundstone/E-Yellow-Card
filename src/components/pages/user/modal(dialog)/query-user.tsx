@@ -9,7 +9,7 @@ const UserQuery = () => {
   const [user] = useState<UserDetails | null>(mockUser);
 
   return (
-    <div className="flex justify-center items-center w-full">
+    <div className="flex justify-center items-center w-full -mt-6">
       <div className=" w-full p6 relative">
         <Input value={query} onChange={(e) => setQuery(e.target.value)} />
 
