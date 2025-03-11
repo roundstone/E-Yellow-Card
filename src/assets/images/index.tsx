@@ -1,7 +1,7 @@
 import logo from './coat_of_arms_of_nigeria.png';
 import vaccine from './vaccine.png';
 import yellowCardImage from './yellow-card-image.png';
-import invoiceSample from './RECIEPT_330322557276 1.png';
+import invoiceSample from './reciept.png';
 import jim from './jim.png';
 import jimPassport from './jim-passport.png';
 import nYellowCardIcon from './n-yellow-card-icon.png';
