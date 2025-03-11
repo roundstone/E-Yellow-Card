@@ -17,10 +17,13 @@ import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
 import { columns, data } from "../table/vaccines";
 import VaccineStats from "./vaccine-stats";
+import AppModal from "@/components/common/modal";
+import AddVaccineForm from "../form/add-vaccince";
 
 const AdminVaccines = () => {
   useDashboardTitle("Vaccines");
 
+  const [open, setOpen] = React.useState(false);
   const [search, setSearch] = useState("");
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -51,50 +54,61 @@ const AdminVaccines = () => {
   });
 
   return (
-    <div className="space-y-10">
-      <div className="mt-4 flex justify-between items-center ">
-        <div>
-          <h2 className="text-lg font-semibold">Add Vaccine</h2>
-          <p className="text-gray-600">Add and manage vaccines</p>
-        </div>
-        <div className="mt10">
-          <Button className="text-white">Add Vaccine</Button>
-        </div>
-      </div>
-      <VaccineStats />
-      <div className="mt-4 flex flex-col">
-        <div className="flex justify-between items-center">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(event) => {
-                setSearch(event.target.value);
-                table.setGlobalFilter(event.target.value);
-              }}
-              className="w-[388px] max-w-full border p-2 rounded-md pl-10"
-            />
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="h-5 w-5 text-gray-400" />
-            </span>
+    <>
+      <div className="space-y-10">
+        <div className="mt-4 flex justify-between items-center ">
+          <div>
+            <h2 className="text-lg font-semibold">Add Vaccine</h2>
+            <p className="text-gray-600">Add and manage vaccines</p>
           </div>
+          <div className="mt10">
+            <Button onClick={() => setOpen(true)} className="text-white">
+              Add Vaccine
+            </Button>
+          </div>
+        </div>
+        <VaccineStats />
+        <div className="mt-4 flex flex-col">
+          <div className="flex justify-between items-center">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search"
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  table.setGlobalFilter(event.target.value);
+                }}
+                className="w-[388px] max-w-full border p-2 rounded-md pl-10"
+              />
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <Search className="h-5 w-5 text-gray-400" />
+              </span>
+            </div>
+          </div>
+        </div>
 
+        <div>
+          <div className="mt-4 overflow-x-auto rounded-lg border">
+            <AppTable
+              table={table}
+              className=""
+              noResultsMessage="No yellow cards found."
+              tableCellClassName="px-2"
+            />
+          </div>
+          <AppTablePagination table={table} />
         </div>
       </div>
 
-      <div>
-        <div className="mt-4 overflow-x-auto rounded-lg border">
-          <AppTable
-            table={table}
-            className=""
-            noResultsMessage="No yellow cards found."
-            tableCellClassName="px-2"
-          />
-        </div>
-        <AppTablePagination table={table} />
-      </div>
-    </div>
+      <AppModal
+        open={open}
+        setOpen={setOpen}
+        className="sm:max-w-[790px] bg-white"
+      >
+        <AddVaccineForm />
+      </AppModal>
+    </>
   );
 };
 

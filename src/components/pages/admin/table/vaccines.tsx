@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Trash2, Edit, Edit2 } from "lucide-react";
+import { Trash2, Edit, Edit2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
@@ -38,11 +38,12 @@ export const columns: ColumnDef<IVaccine>[] = [
           variant="outline"
           className={`px-3 py-1 rounded-full ${
             status === "In Stock"
-              ? "bg-green-100 text-green-600"
-              : "bg-red-100 text-red-600"
+              ? "bg-green-100 text-primary border-primary border-[0.5px]"
+              : "bg-red-100 text-danger border-danger border-[0.5px]"
           }`}
         >
-          {status}
+          {status} 
+          <ChevronDown />
         </Badge>
       );
     },

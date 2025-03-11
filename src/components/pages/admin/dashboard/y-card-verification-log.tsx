@@ -10,18 +10,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
 import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
-import { data, columns } from "../table/users";
-import AppModal from "@/components/common/modal";
-import AddUserForm from "../form/add-user";
+import { columns, data } from "../table/y-card-verification-log";
 
-const AdminUsers = () => {
-  useDashboardTitle("Users");
-  const [open, setOpen] = React.useState(false);
-
-  const [search, setSearch] = useState("");
+const AdminYCardVerificationLog = () => {
+  useDashboardTitle("Verify Yellow Card");
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -51,42 +45,30 @@ const AdminUsers = () => {
   });
 
   return (
-    <>
-      <div className="space-y-10">
-        <div className="mt-4 flex justify-between items-center ">
-          <div>
-            <h2 className="text-lg font-semibold">Users</h2>
-            <p className="text-gray-600">Overview of all users.</p>
-          </div>
-          <div className="mt10">
-            <Button onClick={() => setOpen(true)} className="text-white">
-              Add New User
-            </Button>
-          </div>
+    <div className="space-y-10">
+      <div className="mt-4 flex flex-col">
+        <div>
+          <h2 className="text-lg font-semibold">Verify Yellow Card</h2>
         </div>
 
-        <div>
-          <div className="mt-4 overflow-x-auto rounded-lg border">
-            <AppTable
-              table={table}
-              className=""
-              noResultsMessage="No yellow cards found."
-              tableCellClassName="px-2"
-            />
-          </div>
-          <AppTablePagination table={table} />
+        <div className="border-b pt-10 p-5">
+          <h2 className="text-sm font-semibold">Verification Logs</h2>
         </div>
       </div>
 
-      <AppModal
-        open={open}
-        setOpen={setOpen}
-        className="sm:max-w-[790px] bg-white"
-      >
-        <AddUserForm onSubmit={() => {}} />
-      </AppModal>
-    </>
+      <div>
+        <div className="mt-4 overflow-x-auto rounded-lg border">
+          <AppTable
+            table={table}
+            className=""
+            noResultsMessage="No yellow cards found."
+            tableCellClassName="px-2"
+          />
+        </div>
+        <AppTablePagination table={table} />
+      </div>
+    </div>
   );
 };
 
-export default AdminUsers;
+export default AdminYCardVerificationLog;
