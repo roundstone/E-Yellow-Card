@@ -5,32 +5,28 @@ import React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const Payment = () => {
-  const [selectedOption, setSelectedOption] = useState<"offline" | "online">(
-    "online"
+const ProfileType = () => {
+  const [selectedOption, setSelectedOption] = useState<"child" | "adult">(
+    "adult"
   );
   const { goTo } = useNavigation();
 
   const handlePayment = () => {
     let route: string | null = null;
-
-    switch (selectedOption) {
-      case "online":
-        route = ROUTES.PAYMENT_SUCCESS;
-        toast.success("Payment successful!");
-        break;
-      case "offline":
-        route = ROUTES.PAYMENT_INVOICE;
-        toast.success("Offline payment!");
-        break;
-      default:
-        toast.error("Please make a selection!");
-        return;
-    }
-
-    if (route) {
-      goTo(route);
-    }
+    // switch (selectedOption) {
+    //     case "adult":
+    //         route = ROUTES.PAYMENT_SUCCESS;
+    //         toast.success("Payment successful!");
+    //         break;
+    //     case "child":
+    //         route = ROUTES.PAYMENT_INVOICE;
+    //         toast.success("Child payment!");
+    //         break;
+    //     default:
+    //         toast.error("Please make a selection!");
+    //         return;
+    // }
+    goTo(`${ROUTES.AUTH.REGISTER}?type=${selectedOption}`);
   };
 
   return (
@@ -38,20 +34,22 @@ const Payment = () => {
       <div className="bg-white border rounded-xl p-10 w-full max-w-[566px]">
         {/* Header */}
         <div className="max-w-[358px] mx-auto">
-          <h2 className="text-xl font-semibold text-center">
-            How would you like to pay for your Yellow Card?
-          </h2>
-          <p className="text-gray-500 text-center text-sm mt-2">
-            Please choose a payment method that is most convenient for you
-          </p>
+        <h2 className="text-xl font-semibold text-center">
+          Are you a child or an adult?
+        </h2>
+        <p className="text-gray-500 text-center text-sm mt-2">
+          Please indicate if the person you are registering for is above or
+          below 18 years of age
+        </p>
         </div>
+      
 
         {/* Payment Options */}
         <div className="mt-6 space-y-4">
-          {/* Pay Online Option */}
+          {/* Pay Child Option */}
           <label
             className={`flex items-center p-6 border rounded-lg cursor-pointer transition ${
-              selectedOption === "online"
+              selectedOption === "child"
                 ? "border-primary"
                 : "border-gray-300 bg-white"
             }`}
@@ -59,36 +57,36 @@ const Payment = () => {
             <input
               type="radio"
               name="payment"
-              value="online"
-              checked={selectedOption === "online"}
-              onChange={() => setSelectedOption("online")}
+              value="child"
+              checked={selectedOption === "child"}
+              onChange={() => setSelectedOption("child")}
               className="hidden"
             />
             <div className="flex items-center">
               <div
                 className={`w-5 h-5 border-2 rounded-full flex items-center justify-center mr-3 ${
-                  selectedOption === "online"
-                    ? "border-green-500"
+                  selectedOption === "child"
+                    ? "border-primary"
                     : "border-gray-400"
                 }`}
               >
-                {selectedOption === "online" && (
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                {selectedOption === "child" && (
+                  <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>
                 )}
               </div>
               <div>
-                <p className="font-medium">Pay Online</p>
+                <p className="font-medium">A Child</p>
                 <p className="text-sm text-gray-500">
-                  Choose to pay online through Remita
+                  I am below the age of 18 years
                 </p>
               </div>
             </div>
           </label>
 
-          {/* Pay Offline Option */}
+          {/* Pay Adult Option */}
           <label
             className={`flex items-center p-6 border rounded-lg cursor-pointer transition ${
-              selectedOption === "offline"
+              selectedOption === "adult"
                 ? "border-primary"
                 : "border-gray-300 bg-white"
             }`}
@@ -96,27 +94,27 @@ const Payment = () => {
             <input
               type="radio"
               name="payment"
-              value="offline"
-              checked={selectedOption === "offline"}
-              onChange={() => setSelectedOption("offline")}
+              value="adult"
+              checked={selectedOption === "adult"}
+              onChange={() => setSelectedOption("adult")}
               className="hidden"
             />
             <div className="flex items-center">
               <div
                 className={`w-5 h-5 border-2 rounded-full flex items-center justify-center mr-3 ${
-                  selectedOption === "offline"
-                    ? "border-green-500"
+                  selectedOption === "adult"
+                    ? "border-primary"
                     : "border-gray-400"
                 }`}
               >
-                {selectedOption === "offline" && (
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                {selectedOption === "adult" && (
+                  <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>
                 )}
               </div>
               <div>
-                <p className="font-medium">Pay Offline</p>
+                <p className="font-medium">An Adult</p>
                 <p className="text-sm text-gray-500">
-                  Choose to pay offline through a bank branch
+                  I am above the age of 18 years
                 </p>
               </div>
             </div>
@@ -132,4 +130,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default ProfileType;

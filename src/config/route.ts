@@ -4,6 +4,7 @@ const adminPrefix = "/admin";
 export const ROUTES = {
     HOME: "/",
     AUTH: {
+        PROFILE_TYPE: "/user/profile-type",
         REGISTER: "/user/register",
         SET_PROFILE: "/user/set-profile",
         DIRECTOR: {

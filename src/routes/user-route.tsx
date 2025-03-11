@@ -1,5 +1,6 @@
 import PaymentSuccess from "@/components/pages/user/payment-success";
 import { ROUTES } from "@/config/route";
+import ProfileTypePage from "@/features/auth/user/profile-type";
 import Register from "@/features/auth/user/register";
 import SetProfilePage from "@/features/auth/user/set-profile";
 import PaymentPage from "@/features/payment";
@@ -23,6 +24,11 @@ export const userRoutes: CustomRouteObject[] = [
     path: ROUTES.HOME,
     element: <HomePage />,
     layout: MainLayout,
+  },
+  {
+    path: ROUTES.AUTH.PROFILE_TYPE,
+    element: <ProfileTypePage />,
+    layout: UserAuthLayout,
   },
   {
     path: ROUTES.AUTH.REGISTER,

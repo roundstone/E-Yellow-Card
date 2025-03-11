@@ -45,7 +45,7 @@ const MainHeader = () => {
         </nav>
         <Button
           className="text-white"
-          onClick={() => goTo(ROUTES.AUTH.REGISTER)}
+          onClick={() => goTo(ROUTES.AUTH.PROFILE_TYPE)}
         >
           Register
         </Button>

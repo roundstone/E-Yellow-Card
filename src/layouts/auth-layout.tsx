@@ -11,9 +11,9 @@ const UserAuthLayout = ({
   hasHeader = false,
 }: UserAuthLayoutProps) => {
   return (
-    <div className="">
+    <div className="min-h-screen bg-background">
       {hasHeader && <AuthHeader />}
-      <div className="flex flex-col min-hscreen bg-background app-container">
+      <div className="flex flex-col  app-container">
         {children}
       </div>
     </div>
