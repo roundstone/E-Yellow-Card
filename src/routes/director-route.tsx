@@ -19,17 +19,17 @@ import DirectorRangeDistributionPage from "@/features/dashboard/director/range/d
 
 export const directorRoutes: CustomRouteObject[] = [
   {
-    path: ROUTES.AUTH.DIRECTOR.LOGIN,
+    path: ROUTES.AUTH.ADMIN.LOGIN,
     element: <DirectorLoginPage />,
     layout: DirectorAuthLayout,
   },
   {
-    path: ROUTES.AUTH.DIRECTOR.FORGET_PASSWORD,
+    path: ROUTES.AUTH.ADMIN.FORGET_PASSWORD,
     element: <DirectorForgotPasswordPage />,
     layout: DirectorAuthLayout,
   },
   {
-    path: ROUTES.AUTH.DIRECTOR.CHANGE_PASSWORD,
+    path: ROUTES.AUTH.ADMIN.CHANGE_PASSWORD,
     element: <DirectorChangePasswordPage />,
     layout: DirectorAuthLayout,
   },

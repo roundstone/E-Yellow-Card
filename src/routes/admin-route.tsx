@@ -29,86 +29,86 @@ import SetProfilePage from "@/features/auth/admin/set-profile";
 import UserAuthLayout from "@/layouts/auth-layout";
 
 export const superadminRoutes: CustomRouteObject[] = [
-    {
-      path: ROUTES.AUTH.DIRECTOR.LOGIN,
-      element: <DirectorLoginPage />,
-      layout: DirectorAuthLayout,
-    },
-    {
-      path: ROUTES.AUTH.DIRECTOR.FORGET_PASSWORD,
-      element: <DirectorForgotPasswordPage />,
-      layout: DirectorAuthLayout,
-    },
-    {
-      path: ROUTES.AUTH.DIRECTOR.CHANGE_PASSWORD,
-      element: <DirectorChangePasswordPage />,
-      layout: DirectorAuthLayout,
-    },
-    {
-      path: ROUTES.AUTH.ADMIN.SET_PROFILE,
-      element: <SetProfilePage />,
-      layout: UserAuthLayout,
-      layoutProps: { hasHeader: true },
-    },
-    // Dashboard
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.HOME,
-      element: <SuperadminDashboardPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.IMPORT_APPLICATIONS,
-      element: <SuperadminImportApplicationsPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.LOCAL_GOVT_LIST,
-      element: <SuperadminLocalGovtListPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.REMITA_TRANSACTIONS,
-      element: <SuperadminRemitaTransactionsPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.STATE_LIST,
-      element: <SuperadminStateListPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.MANAGE_PORTS,
-      element: <SuperadminManagePortsPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.VACCINES,
-      element: <SuperadminVaccinesPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.UPDATE_VACCINE_INVENTORY,
-      element: <SuperadminUpdateVaccineInventoryPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.USERS,
-      element: <SuperadminUsersPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.YELLOW_CARD_RANGE,
-      element: <SuperadminYellowCardRangePage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.ALL_EVENTS_HISTORY,
-      element: <SuperadminAllEventsHistoryPage />,
-      layout: DirectorMainLayout,
-    },
-    {
-      path: ROUTES.DASHBOARD.SUPERADMIN.VERIFY_YELLOW_CARDS,
-      element: <SuperadminVerifyYellowCardsPage />,
-      layout: DirectorMainLayout,
-    },
-  ];
+  {
+    path: ROUTES.AUTH.ADMIN.LOGIN,
+    element: <DirectorLoginPage />,
+    layout: DirectorAuthLayout,
+  },
+  {
+    path: ROUTES.AUTH.ADMIN.FORGET_PASSWORD,
+    element: <DirectorForgotPasswordPage />,
+    layout: DirectorAuthLayout,
+  },
+  {
+    path: ROUTES.AUTH.ADMIN.CHANGE_PASSWORD,
+    element: <DirectorChangePasswordPage />,
+    layout: DirectorAuthLayout,
+  },
+  {
+    path: ROUTES.AUTH.ADMIN.SET_PROFILE,
+    element: <SetProfilePage />,
+    layout: UserAuthLayout,
+    layoutProps: { hasHeader: true },
+  },
+  // Dashboard
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.HOME,
+    element: <SuperadminDashboardPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.IMPORT_APPLICATIONS,
+    element: <SuperadminImportApplicationsPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.LOCAL_GOVT_LIST,
+    element: <SuperadminLocalGovtListPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.REMITA_TRANSACTIONS,
+    element: <SuperadminRemitaTransactionsPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.STATE_LIST,
+    element: <SuperadminStateListPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.MANAGE_PORTS,
+    element: <SuperadminManagePortsPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.VACCINES,
+    element: <SuperadminVaccinesPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.UPDATE_VACCINE_INVENTORY,
+    element: <SuperadminUpdateVaccineInventoryPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.USERS,
+    element: <SuperadminUsersPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.YELLOW_CARD_RANGE,
+    element: <SuperadminYellowCardRangePage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.ALL_EVENTS_HISTORY,
+    element: <SuperadminAllEventsHistoryPage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.DASHBOARD.SUPERADMIN.VERIFY_YELLOW_CARDS,
+    element: <SuperadminVerifyYellowCardsPage />,
+    layout: DirectorMainLayout,
+  },
+];

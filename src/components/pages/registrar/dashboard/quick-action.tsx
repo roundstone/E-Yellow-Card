@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Search } from "lucide-react";
 import React from "react";
 import QueryUser from "../modal/query-user";
-import verifyTransaction from '../modal/verify-transaction';
+import verifyTransaction from "../modal/verify-transaction";
 import VerifyTransaction from "../modal/verify-transaction";
+import { toast } from "sonner";
 
 type ActionItem = {
   label: string;
@@ -12,31 +13,33 @@ type ActionItem = {
   onClick?: () => void;
 };
 
-
 const QuickAction: React.FC = () => {
   const [isOpenQueryUser, setOpenQueryUser] = React.useState(false);
-  const [isOpenVerifyTransaction, setOpenVerifyTransaction] = React.useState(false);
+  const [isOpenVerifyTransaction, setOpenVerifyTransaction] =
+    React.useState(false);
 
   const actions: ActionItem[] = [
-    { 
-        label: "Query User", 
-        icon: <Search className="text-green-600" />,
-        onClick: () => setOpenQueryUser(true)
+    {
+      label: "Query User",
+      icon: <Search className="text-green-600" />,
+      onClick: () => setOpenQueryUser(true),
     },
     {
-        label: "Issue Yellow Card",
-        icon: <ArrowRight className="text-green-600" />,
-        onClick: () => console.log("Issue Yellow Card clicked")
+      label: "Issue Yellow Card",
+      icon: <ArrowRight className="text-green-600" />,
+      onClick: () => console.log("Issue Yellow Card clicked"),
     },
     {
-        label: "Request Yellow Card",
-        icon: <ArrowRight className="text-green-600" />,
-        onClick: () => console.log("Request Yellow Card clicked")
+      label: "Request Yellow Card",
+      icon: <ArrowRight className="text-green-600" />,
+      onClick: () => {
+        toast.success("Request sent successfully");
+      },
     },
     {
-        label: "Verify a Remita Transaction",
-        icon: <ArrowRight className="text-green-600" />,
-        onClick: () => setOpenVerifyTransaction(true)
+      label: "Verify a Remita Transaction",
+      icon: <ArrowRight className="text-green-600" />,
+      onClick: () => setOpenVerifyTransaction(true),
     },
   ];
 
@@ -84,6 +87,15 @@ const QuickAction: React.FC = () => {
       >
         <VerifyTransaction onClose={() => setOpenVerifyTransaction(false)} />
       </AppModal>
+
+      {/* <AppModal
+        open={isOpeHighVoided}
+        setOpen={setOpeHighVoided}
+        title="QUERY USER"
+        className="sm:max-w-[567px] bg-white"
+      >
+        <AuditCheck onClose={() => setOpeHighVoided(false)} />
+      </AppModal> */}
     </>
   );
 };

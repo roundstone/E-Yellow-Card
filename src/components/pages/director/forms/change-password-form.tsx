@@ -42,7 +42,7 @@ const ChangePasswordForm = () => {
   function onSubmit(data: z.infer<typeof ChangePasswordSchema>) {
     toast.success("Password changed successfully!");
     console.log(data);
-    goTo(ROUTES.AUTH.DIRECTOR.LOGIN);
+    goTo(ROUTES.AUTH.ADMIN.LOGIN);
   }
 
   return (

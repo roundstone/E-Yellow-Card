@@ -48,10 +48,9 @@ const AssignBatchOfYellowCards = ({ onClose }: { onClose: () => void }) => {
   });
 
   function onSubmit(data: z.infer<typeof AssignBatchYCSchema>) {
-  
     console.log(data);
     setConfirm(true);
-    // goTo(ROUTES.AUTH.DIRECTOR.LOGIN);
+    // goTo(ROUTES.AUTH.ADMIN.LOGIN);
   }
 
   return (

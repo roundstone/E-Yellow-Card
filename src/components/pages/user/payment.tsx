@@ -34,7 +34,7 @@ const Payment = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen app-container ">
+    <div className="flex items-center justify-center min-h-[80vh] app-container ">
       <div className="bg-white border rounded-xl p-10 w-full max-w-[566px]">
         {/* Header */}
         <div className="max-w-[358px] mx-auto">

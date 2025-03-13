@@ -34,7 +34,7 @@ const ForgotPasswordForm = () => {
   function onSubmit(data: z.infer<typeof ForgotPasswordSchema>) {
     toast.success("Password reset link sent to your email!");
     console.log(data);
-    goTo(ROUTES.AUTH.DIRECTOR.CHANGE_PASSWORD);
+    goTo(ROUTES.AUTH.ADMIN.CHANGE_PASSWORD);
   }
 
   return (

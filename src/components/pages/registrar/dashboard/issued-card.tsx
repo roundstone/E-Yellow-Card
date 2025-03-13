@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import React from "react";
 import AuditCheck from "../modal/audit-check";
+import { toast } from "sonner";
 
 type IssuedCardsProps = {
   issued: number;
@@ -26,7 +27,7 @@ const reorderColors: Record<string, string> = {
 };
 
 const IssuedCards: React.FC = () => {
-   const [isOpeHighVoided, setOpeHighVoided] = React.useState(false);
+  const [isOpeHighVoided, setOpeHighVoided] = React.useState(false);
   return (
     <>
       <Card className="w-full h-full bg-white p-0">
@@ -73,22 +74,16 @@ const IssuedCards: React.FC = () => {
           </div>
 
           <div className="mt-5 flex justify-end">
-            <Button onClick={() => setOpeHighVoided(true)}  className="flex justify-between items-center bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200 transition">
+            <Button
+              onClick={() => toast.success("Request sent successfully")}
+              className="flex justify-between items-center bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200 transition"
+            >
               <span className="text-gray-800">Request</span>
               <ArrowRight className="text-green-600" />
             </Button>
           </div>
         </CardContent>
       </Card>
-
-      <AppModal
-        open={isOpeHighVoided}
-        setOpen={setOpeHighVoided}
-        title="QUERY USER"
-        className="sm:max-w-[567px] bg-white"
-      >
-        <AuditCheck onClose={() => setOpeHighVoided(false)} />
-      </AppModal>
     </>
   );
 };

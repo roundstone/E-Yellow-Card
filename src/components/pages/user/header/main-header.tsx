@@ -9,7 +9,7 @@ import { useNavigation } from "@/utils/navigation";
 
 const MainHeader = () => {
   const { goTo } = useNavigation();
-  const [open, setOpen] = React.useState(false);
+  // const [open, setOpen] = React.useState(false);
   return (
     <>
       <header className="flex justify-between items-center p-6 bg-transparent">
@@ -29,13 +29,13 @@ const MainHeader = () => {
           >
             Home
           </Link>
-          <Link
+          {/* <Link
             to="#"
             onClick={() => setOpen(true)}
             className="text-text hover:text-opacity-75 transition-colors duration-200"
           >
             Get User Detail
-          </Link>
+          </Link> */}
           <Link
             to="#"
             className="text-text hover:text-opacity-75 transition-colors duration-200"
@@ -50,15 +50,6 @@ const MainHeader = () => {
           Register
         </Button>
       </header>
-      <AppModal
-        open={open}
-        setOpen={setOpen}
-        title="QUERY USER"
-        className="sm:max-w-[567px] bg-white"
-      >
-        <UserQuery />
-      </AppModal>
-      ;
     </>
   );
 };

@@ -20,20 +20,19 @@ import RegistrarManageVaccinesPage from "@/features/dashboard/registrar/vaccines
 import RegistrarVaccinationHistoryPage from "@/features/dashboard/registrar/vaccines-history";
 import RegistrarUserListPage from "@/features/dashboard/registrar/user-list";
 
-
 export const registrarRoutes: CustomRouteObject[] = [
   {
-    path: ROUTES.AUTH.DIRECTOR.LOGIN,
+    path: ROUTES.AUTH.ADMIN.LOGIN,
     element: <DirectorLoginPage />,
     layout: DirectorAuthLayout,
   },
   {
-    path: ROUTES.AUTH.DIRECTOR.FORGET_PASSWORD,
+    path: ROUTES.AUTH.ADMIN.FORGET_PASSWORD,
     element: <DirectorForgotPasswordPage />,
     layout: DirectorAuthLayout,
   },
   {
-    path: ROUTES.AUTH.DIRECTOR.CHANGE_PASSWORD,
+    path: ROUTES.AUTH.ADMIN.CHANGE_PASSWORD,
     element: <DirectorChangePasswordPage />,
     layout: DirectorAuthLayout,
   },

@@ -8,11 +8,11 @@ export const ROUTES = {
         REGISTER: "/user/register",
         SET_PROFILE: "/user/set-profile",
         DIRECTOR: {
-            LOGIN: "/director/login",
-            FORGET_PASSWORD: "/director/forget-password",
-            CHANGE_PASSWORD: "/director/change-password",
         },
         ADMIN: {
+            LOGIN: "/auth/login",
+            FORGET_PASSWORD: "/auth/forget-password",
+            CHANGE_PASSWORD: "/auth/change-password",
             SET_PROFILE: "/admin/set-profile"
         }
     },

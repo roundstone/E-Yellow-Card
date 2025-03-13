@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/config/route";
 import { useNavigation } from "@/utils/navigation";
+import useQueryParam from "@/hooks/use-query-param";
 
 const FormSchema = z.object({
   surname: z.string().min(2, "Surname is required"),
@@ -26,10 +27,14 @@ const FormSchema = z.object({
   state: z.string().optional(),
   address: z.string().optional(),
   passportNumber: z.string().optional(),
+
+  parentFirstName: z.string().optional(),
+  parentSurname: z.string().optional(),
 });
 
 const SetProfileForm = () => {
   const { goTo } = useNavigation();
+  const type = useQueryParam("type");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -41,6 +46,8 @@ const SetProfileForm = () => {
       state: "",
       address: "",
       passportNumber: "",
+      parentFirstName: "",
+      parentSurname: "",
     },
   });
 
@@ -48,6 +55,8 @@ const SetProfileForm = () => {
     toast.success("Form submitted successfully!");
     goTo(ROUTES.PAYMENT);
   }
+
+  const isChild = () => type === "child";
 
   return (
     <Form {...form}>
@@ -59,7 +68,7 @@ const SetProfileForm = () => {
             name="surname"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Surname</FormLabel>
+                <FormLabel>{isChild && "Child's "}Surname</FormLabel>
                 <FormControl>
                   <Input placeholder="Akintade" {...field} />
                 </FormControl>
@@ -72,7 +81,7 @@ const SetProfileForm = () => {
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>{isChild && "Child's "}First Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Temitope" {...field} />
                 </FormControl>
@@ -82,13 +91,51 @@ const SetProfileForm = () => {
           />
         </div>
 
+        {isChild && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="parentSurname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {isChild && "Parent/Guardian "}Surname
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Akintade" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="parentFirstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {isChild && "Parent/Guardian "}First Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Temitope" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </>
+        )}
+
         {/* Date of Birth */}
         <FormField
           control={form.control}
           name="dob"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date of Birth</FormLabel>
+              <FormLabel>{isChild && "Child's "}Date of Birth</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
@@ -103,7 +150,9 @@ const SetProfileForm = () => {
           name="phoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel>
+                {isChild && "Parent/Guardian  "}Phone Number
+              </FormLabel>
               <FormControl>
                 <Input placeholder="+234 (555) 000-0000" {...field} />
               </FormControl>
@@ -118,7 +167,7 @@ const SetProfileForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{isChild && "Parent/Guardian  "}Email</FormLabel>
               <FormControl>
                 <Input placeholder="olivia@untitledui.com" {...field} />
               </FormControl>
@@ -163,7 +212,9 @@ const SetProfileForm = () => {
           name="passportNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Passport Number</FormLabel>
+              <FormLabel>
+                {isChild && "Parent/Guardian  "}Passport Number
+              </FormLabel>
               <FormControl>
                 <Input placeholder="1234567890" {...field} />
               </FormControl>

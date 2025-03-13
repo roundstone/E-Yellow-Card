@@ -4,12 +4,14 @@ import { mockUser, UserDetails } from "@/data/mock-user";
 import IMAGES from "@/assets/images";
 import AppModal from "@/components/common/modal";
 import AssignYellowCard from "./assign-y-card";
+import AssignVaccines from "./assign-vaccines";
 AssignYellowCard;
 export default function QueryUser({ onClose }: { onClose: () => void }) {
   const [query, setQuery] = useState("");
   const [user, setUser] = useState<UserDetails | null>(mockUser);
 
   const [isOpenAssignYCard, setOpenAssignYCard] = React.useState(false);
+  const [isOpenAssignVaccine, setOpenAssignVaccine] = React.useState(false);
 
   // Handle search
   const handleSearch = (query: string) => {
@@ -137,9 +139,12 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
                       <span className="text-primary font-semibold">
                         {"0"}/{user.vaccinations.length}
                       </span>{" "}
-                      <span className="text-primary font-semibold underline">
+                      <button
+                        onClick={() => setOpenAssignVaccine(true)}
+                        className="text-primary font-semibold underline"
+                      >
                         Update
-                      </span>
+                      </button>
                     </p>
                   </div>
 
@@ -187,6 +192,15 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
         className="sm:max-w-[567px] bg-white"
       >
         <AssignYellowCard onClose={() => setOpenAssignYCard(false)} />
+      </AppModal>
+
+      <AppModal
+        open={isOpenAssignVaccine}
+        setOpen={setOpenAssignVaccine}
+        title="Assign Vaccines"
+        className="sm:max-w-[567px] bg-white"
+      >
+        <AssignVaccines onClose={() => setOpenAssignVaccine(false)} />
       </AppModal>
     </>
   );

@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import AppLevelIndicator from "@/components/common/app-level-indicator";
+import AppModal from "@/components/common/modal";
+import AssignBatchOfYellowCards from "./assign-batch-yc";
+import { toast } from "sonner";
 
 interface CardRequest {
   id: number;
@@ -67,21 +70,20 @@ const cardRequests: CardRequest[] = [
 ];
 
 const CardRequests: React.FC = () => {
+  const [isOpenAssignBatch, setOpenAssignBatch] = React.useState(false);
   const handleAssign = (id: number) => {
-    alert(`Assign clicked for ID: ${id}`);
+    setOpenAssignBatch(true);
   };
 
   const handleDecline = (id: number) => {
-    alert(`Decline clicked for ID: ${id}`);
+    toast.success(`Decline clicked for ID: ${id}`);
   };
 
   const newCardContent = (
     <Table className="border-0">
       <TableHeader className="[&_tr]:border-b-0">
         <TableRow className="uppercase text-gray-500 ">
-          <TableHead className="w[100px]">
-            Port Health Service Centre
-          </TableHead>
+          <TableHead className="w[100px]">Port Health Service Centre</TableHead>
           <TableHead>Date / Time Stamp</TableHead>
           <TableHead>Current No of Cards</TableHead>
           <TableHead>Action</TableHead>
@@ -96,7 +98,7 @@ const CardRequests: React.FC = () => {
             <TableCell>{item.timestamp}</TableCell>
             <TableCell className="flex items-center space-x-2">
               <AppLevelIndicator
-              totalIndicators={3}
+                totalIndicators={3}
                 indicator={item.filledPercentage}
                 filledColor={
                   item.reorderLevel === "Critical"
@@ -132,31 +134,42 @@ const CardRequests: React.FC = () => {
   );
 
   return (
-    <div className="">
-      <div>
-        <Tabs defaultValue="phs" className="-mt-5">
-          <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
-            <TabsTrigger
-              value="phs"
-              className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
-            >
-              New Card Request
-            </TabsTrigger>
-            <TabsTrigger
-              value="state"
-              className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
-            >
-              Card info change requests
-            </TabsTrigger>
-          </TabsList>
+    <>
+      <div className="">
+        <div>
+          <Tabs defaultValue="phs" className="-mt-5">
+            <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
+              <TabsTrigger
+                value="phs"
+                className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
+              >
+                New Card Request
+              </TabsTrigger>
+              <TabsTrigger
+                value="state"
+                className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
+              >
+                Card info change requests
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="overflow-x-auto mt-5">
-            <TabsContent value="state">{newCardContent}</TabsContent>
-            <TabsContent value="phs">{newCardContent}</TabsContent>
-          </div>
-        </Tabs>
+            <div className="overflow-x-auto mt-5">
+              <TabsContent value="state">{newCardContent}</TabsContent>
+              <TabsContent value="phs">{newCardContent}</TabsContent>
+            </div>
+          </Tabs>
+        </div>
       </div>
-    </div>
+
+      <AppModal
+        open={isOpenAssignBatch}
+        setOpen={setOpenAssignBatch}
+        title="Assign a Batch of Yellow Cards"
+        className="sm:max-w-[712px] bg-white"
+      >
+        <AssignBatchOfYellowCards onClose={() => setOpenAssignBatch(false)} />
+      </AppModal>
+    </>
   );
 };
 

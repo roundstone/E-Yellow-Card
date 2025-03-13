@@ -96,7 +96,7 @@ const LoginForm = () => {
         {/* */}
         <div className="text-right">
           <Link
-            to={ROUTES.AUTH.DIRECTOR.FORGET_PASSWORD}
+            to={ROUTES.AUTH.ADMIN.FORGET_PASSWORD}
             className="text-sm text-green-600 hover:underline"
           >
             Forgot password?

@@ -39,6 +39,8 @@ const FormSchema = z.object({
 });
 
 const SearchYellowCardForm = () => {
+  const [open, setOpen] = React.useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -48,7 +50,8 @@ const SearchYellowCardForm = () => {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast.success("Form submitted successfully!");
+    toast.success("Result found!");
+    setOpen(true);
   }
 
   return (
@@ -90,6 +93,15 @@ const SearchYellowCardForm = () => {
           </Button>
         </form>
       </Form>
+
+      <AppModal
+        open={open}
+        setOpen={setOpen}
+        title="QUERY USER"
+        className="sm:max-w-[567px] bg-white"
+      >
+        <UserQuery />
+      </AppModal>
     </>
   );
 };

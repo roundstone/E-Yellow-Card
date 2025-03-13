@@ -13,34 +13,41 @@ interface Alert {
   action: string;
   details: string;
   timestamp: string;
+  onClick?: () => void;
 }
-
-const alerts: Alert[] = [
-  {
-    id: 1,
-    type: "critical",
-    action: "Tell us why",
-    details: "2311 YC issued since Dec 2024",
-    timestamp: "27 Feb, 2025 18:09",
-  },
-  {
-    id: 2,
-    type: "critical",
-    action: "Card Request",
-    details: "Submit report",
-    timestamp: "27 Feb, 2025 18:09",
-  },
-  {
-    id: 3,
-    type: "moderate",
-    action: "Card Request",
-    details: "High Voided cards",
-    timestamp: "27 Feb, 2025 18:09",
-  },
-];
 
 const AlertNotifications: React.FC = () => {
   const [isOpenComment, setOpenComment] = React.useState(false);
+  const [isOpenAuditCheck, setOpenAuditCheck] = React.useState(false);
+  const [isOpenHighVoidCard, setOpenHighVoidCard] = React.useState(false);
+
+  const alerts: Alert[] = [
+    {
+      id: 1,
+      type: "critical",
+      action: "Tell us why",
+      details: "2311 YC issued since Dec 2024",
+      timestamp: "27 Feb, 2025 18:09",
+      onClick: () => setOpenComment(true),
+    },
+    {
+      id: 2,
+      type: "critical",
+      action: "Card Request",
+      details: "Submit report",
+      timestamp: "27 Feb, 2025 18:09",
+      onClick: () => setOpenAuditCheck(true),
+    },
+    {
+      id: 3,
+      type: "moderate",
+      action: "Card Request",
+      details: "High Voided cards",
+      timestamp: "27 Feb, 2025 18:09",
+      onClick: () => setOpenHighVoidCard(true),
+    },
+  ];
+
   return (
     <>
       <Card className="col-span-2 w-full h-full bg-white p-0">
@@ -76,7 +83,12 @@ const AlertNotifications: React.FC = () => {
               </div>
               <div className="text-gray-600 self-start">{alert.details}</div>
               <div>
-                <p onClick={() => setOpenComment(true)} className="text-gray-600 underline cursor-pointer">{alert.action}</p>
+                <p
+                  onClick={alert.onClick}
+                  className="text-gray-600 underline cursor-pointer"
+                >
+                  {alert.action}
+                </p>
               </div>
             </div>
           ))}
@@ -86,10 +98,28 @@ const AlertNotifications: React.FC = () => {
       <AppModal
         open={isOpenComment}
         setOpen={setOpenComment}
-        title="Assign a Batch of Yellow Cards"
+        title="COMMENT"
         className="sm:max-w-[567px] bg-white"
       >
-        <QueryUser onClose={() => setOpenComment(false)} />
+        <Comment type="lowIssuanceRate" onClose={() => setOpenComment(false)} />
+      </AppModal>
+
+      <AppModal
+        open={isOpenAuditCheck}
+        setOpen={setOpenAuditCheck}
+        title="COMMENT"
+        className="sm:max-w-[567px] bg-white"
+      >
+        <AuditCheck onClose={() => setOpenAuditCheck(false)} />
+      </AppModal>
+
+      <AppModal
+        open={isOpenHighVoidCard}
+        setOpen={setOpenHighVoidCard}
+        title="COMMENT"
+        className="sm:max-w-[567px] bg-white"
+      >
+        <Comment type="highVoidedCards" onClose={() => setOpenHighVoidCard(false)} />
       </AppModal>
     </>
   );

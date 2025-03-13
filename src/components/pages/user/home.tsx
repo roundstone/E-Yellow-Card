@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, UserIcon } from "lucide-react";
+import { ArrowRight, Database, UserIcon, UserRound } from "lucide-react";
 import SearchYellowCardForm from "./forms/search-yellow-card";
 import MainHeader from "./header/main-header";
 import IMAGES from "@/assets/images";
@@ -25,7 +25,7 @@ const YellowCardHomePage = () => {
             <SearchYellowCardForm />
           </div>
 
-          <div className="pt-20 w-full md:w-[260px]">
+          <div className="pt-20 w-full md:w-[260px] hidden">
             <div className="border-t space-y-3">
               <p className="uppercase tracking-widest pt-5">
                 Have you made payments?
@@ -56,7 +56,7 @@ const YellowCardHomePage = () => {
           </div>
           <div className="bg-[#D3E5DB] border border-primary/50 rounded-2xl p-6 shadow-md space-y-10">
             <div className="flex justify-center items-center p-1 bg-primary w-fit rounded-lg">
-              <UserIcon size={32} />
+              <UserRound className="stroke-1" size={32} />
             </div>
             <h4 className="font-bold">Create an Account</h4>
             <p className="text-text">
@@ -67,7 +67,7 @@ const YellowCardHomePage = () => {
           </div>
           <div className="bg-[#E4E9D2] border border-[#E0CC7C]/50 rounded-2xl p-6 shadow-md space-y-10">
             <div className="flex justify-center items-center p-1 bg-[#E0CC7C] w-fit rounded-lg">
-              <UserIcon size={32} />
+              <Database className="stroke-1" size={32} />
             </div>
             <h4 className="font-bold">
               Make Payment & Download the e-yellow card app

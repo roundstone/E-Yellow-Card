@@ -17,7 +17,7 @@ const PaymentSuccess = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen  p-4">
+    <div className="flex flex-col items-center justify-center min-h-[80vh]">
       <div className=" w-full max-w-[1029px] text-center">
         {/* Success Icon */}
         <div className="flex justify-center">
