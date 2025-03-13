@@ -26,7 +26,7 @@ const leaderboard: LeaderboardData = {
 
 const Leaderboard: React.FC = () => {
   return (
-    <Card className=" bg-white w-full p-0">
+    <Card className=" bg-white w-full p-0 pb-8">
       {/* Header */}
       <CardHeader className="flex-row justify-between items-center border-b py-3">
         <CardTitle className="text-sm font-semibold">Leaderboard</CardTitle>
