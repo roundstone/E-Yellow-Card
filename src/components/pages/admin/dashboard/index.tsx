@@ -25,8 +25,6 @@ type Props = {};
 
 const AdminDashboard = (props: Props) => {
   useDashboardTitle("Dashboard");
-  const [isOpenAssignBatch, setOpenAssignBatch] = useState(false);
-  const [isOpenRequestAudit, setOpenRequestAudit] = useState(false);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
