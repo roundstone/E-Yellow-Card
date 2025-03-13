@@ -1,9 +1,10 @@
+import AdminDashboard from "@/components/pages/admin/dashboard";
 import React from "react";
 
 type Props = {};
 
 const SuperadminDashboardPage = (props: Props) => {
-  return <div>Dashboard</div>;
+  return <AdminDashboard />;
 };
 
 export default SuperadminDashboardPage;
