@@ -28,7 +28,7 @@ const StatCard = ({
           <MoreVertical className="text-gray-400 w-5 h-5 cursor-pointer" />
         </div>
 
-        <div className="text-3xl font-semibold text-black mt-5">
+        <div className="text-xl sm:text-2xl md:text-3xl font-semibold text-black mt-5">
           {value.toLocaleString()}
         </div>
 

@@ -1,9 +1,10 @@
+import RemitaTransaction from "@/components/pages/admin/dashboard/remita-transaction";
 import React from "react";
 
 type Props = {};
 
 const SuperadminRemitaTransactionsPage = (props: Props) => {
-  return <div>Remita Transactions</div>;
+  return <RemitaTransaction />;
 };
 
 export default SuperadminRemitaTransactionsPage;

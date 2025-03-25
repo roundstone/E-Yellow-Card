@@ -98,11 +98,11 @@ const items = {
       url: ROUTES.DASHBOARD.SUPERADMIN.IMPORT_APPLICATIONS,
       icon: ExternalLink,
     },
-    {
-      title: "Local Govt List",
-      url: ROUTES.DASHBOARD.SUPERADMIN.LOCAL_GOVT_LIST,
-      icon: ClipboardList,
-    },
+    // {
+    //   title: "Local Govt List",
+    //   url: ROUTES.DASHBOARD.SUPERADMIN.LOCAL_GOVT_LIST,
+    //   icon: ClipboardList,
+    // },
     {
       title: "Remita Transactions",
       url: ROUTES.DASHBOARD.SUPERADMIN.REMITA_TRANSACTIONS,
@@ -114,7 +114,7 @@ const items = {
       icon: FileText,
     },
     {
-      title: "Manage Ports",
+      title: "PHS Centres",
       url: ROUTES.DASHBOARD.SUPERADMIN.MANAGE_PORTS,
       icon: FileChartColumn,
     },
@@ -123,11 +123,11 @@ const items = {
       url: ROUTES.DASHBOARD.SUPERADMIN.VACCINES,
       icon: Syringe,
     },
-    {
-      title: "Update Vaccine Inventory",
-      url: ROUTES.DASHBOARD.SUPERADMIN.UPDATE_VACCINE_INVENTORY,
-      icon: RefreshCcw,
-    },
+    // {
+    //   title: "Update Vaccine Inventory",
+    //   url: ROUTES.DASHBOARD.SUPERADMIN.UPDATE_VACCINE_INVENTORY,
+    //   icon: RefreshCcw,
+    // },
     {
       title: "Users",
       url: ROUTES.DASHBOARD.SUPERADMIN.USERS,

@@ -1,9 +1,10 @@
+import PHSCentres from "@/components/pages/admin/dashboard/phs-centres";
 import React from "react";
 
 type Props = {};
 
 const SuperadminManagePortsPage = (props: Props) => {
-  return <div>Manage Ports</div>;
+  return <PHSCentres />;
 };
 
 export default SuperadminManagePortsPage;

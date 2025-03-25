@@ -26,27 +26,32 @@ import React from "react";
 import IMAGES from "@/assets/images";
 import { useAtom } from "jotai";
 import { appAtom } from "@/stores/app";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { ROUTES } from "@/config/route";
 
 const data = [
   [
     {
       label: "Profile",
       icon: UserCircle,
+      route: ROUTES.PROFILE,
     },
     {
       label: "Password Manager",
       icon: Lock,
+      route: "#",
     },
   ],
   [
     {
       label: "Import",
       icon: ArrowUp,
+      route: "#",
     },
     {
       label: "Export",
       icon: ArrowDown,
+      route: "#",
     },
   ],
 ];
@@ -98,7 +103,8 @@ export function AppDashboardNav() {
                         {group.map((item, index) => (
                           <SidebarMenuItem key={index}>
                             <SidebarMenuButton>
-                              <item.icon /> <span>{item.label}</span>
+                              <item.icon />{" "}
+                              <Link to={item.route}>{item.label}</Link>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         ))}

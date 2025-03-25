@@ -1,18 +1,12 @@
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Building,
   CircleAlert,
   CircleUserRound,
-  UserRoundPlusIcon,
 } from "lucide-react";
 import React from "react";
 import {
-  ArrowUpRight,
   BookOpen,
-  MoreVertical,
-  ExternalLink,
 } from "lucide-react";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
 import StatCard from "@/components/common/app-stats-card";
 
 const trendUp = [
@@ -33,7 +27,7 @@ const trendDown = [
 
 const DashboardStats = () => {
   return (
-    <div className="grid md:grid-cols-4 gap-4 mt-6">
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
       <StatCard
         title="Registered Users"
         value={5000010}

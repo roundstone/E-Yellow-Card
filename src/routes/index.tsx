@@ -13,6 +13,7 @@ import RouteWrapper from "@/components/route/wrapper";
 import { directorRoutes } from "./director-route";
 import { registrarRoutes } from "./registrar-route";
 import { superadminRoutes } from "./admin-route";
+import { sharedRoutes } from "./shared-route";
 
 const AppRoutes = () => {
   const userType = UserType.SUPERADMIN;
@@ -66,6 +67,21 @@ const AppRoutes = () => {
 
         {/* registrarRoutes */}
         {superadminRoutes.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            element={
+              <RouteWrapper
+                element={route.element}
+                layout={route.layout}
+                layoutProps={route.layoutProps}
+              />
+            }
+          />
+        ))}
+
+         {/* sharedRoutes */}
+         {sharedRoutes.map((route, index) => (
           <Route
             key={index}
             path={route.path}

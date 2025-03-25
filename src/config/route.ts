@@ -51,7 +51,7 @@ export const ROUTES = {
             VERIFY_YELLOW_CARDS: `${adminPrefix}/verify-yellow-cards`,
           },
     },
-    PROFILE: "/profile",
+    PROFILE: `${directorPrefix}/profile`,
     SETTINGS: "/settings",
 };
 
