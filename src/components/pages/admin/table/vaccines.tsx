@@ -3,6 +3,9 @@ import { Trash2, Edit, Edit2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import Swal from "sweetalert2";
+import { apiFetch } from "@/utils/api";
+import { toast } from "sonner";
 
 interface IVaccine {
   id: number;
@@ -75,9 +78,34 @@ export const columns: ColumnDef<IVaccine>[] = [
 
 const handleDelete = (vaccine: IVaccine) => {
   console.log("Delete", vaccine);
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#219f59",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete!"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      toast.success("Deleting...");
+      const response = await apiFetch("admin/vaccine/delete/"+vaccine.id, {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+      if (response.statusCode == 200) {
+        document.getElementById('deleteVaccineBtn').click()
+        toast.success("Vaccine deleted!");
+      } else {
+        toast.success("Something went wrong!");
+      }
+    }
+  });
 };
 
 const handleEdit = (vaccine: IVaccine) => {
+  localStorage.setItem("currentEditVaccineId", vaccine.id.toString());
+  document.getElementById('editVaccineBtn').click();
   console.log("Edit", vaccine);
 };
 

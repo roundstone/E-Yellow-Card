@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import useDashboardTitle from "@/hooks/use-dashboard-title";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -18,6 +18,9 @@ import {
 import { logColumns, logs } from "../table/activity-log";
 import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
+import Loading from "@/components/loading";
+import { apiFetch } from "@/utils/api";
+import Spinner from "@/components/spinner";
 
 const requestTypes = ["All Actions", "Login", "Report Download"];
 
@@ -26,7 +29,13 @@ const RegistrarActivityLog = () => {
   const [search, setSearch] = useState("");
   const [selectedAction, setSelectedAction] = useState("");
 
-  const filteredLogs = logs
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [activityLog, setActivityLog] = useState([]);
+  const [error, setError] = useState(null);
+
+  const filteredLogs = activityLog
     .filter(
       (log) =>
         log.user.toLowerCase().includes(search.toLowerCase()) ||
@@ -40,9 +49,50 @@ const RegistrarActivityLog = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const formatActivityLog = (data) => {
+      return data.map((minidata, index) => {
+        return {
+          id: index+1,
+          timestamp: minidata.timestamp,
+          user: minidata.user.firstName+" "+minidata.user.surName,
+          userAvatar: "/passport.png",
+          action: minidata.action,
+          details: minidata.details,
+          ipAddress: minidata.action ?? "192.1******",
+        };
+      });
+    };
+  
+  const fetchLogData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("registrar/activity/log", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setActivityLog(formatActivityLog(response.data));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+    
+  useEffect(() => {
+      fetchLogData();
+    }, []);
+  
+  if (loading) return <Spinner text="Loading Activity Log..." />;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <Card>
       <CardContent className="p-0">
+        { isLoading ? <Loading /> : '' }
         <div className="flex justify-between items-center mb-4 px-3">
           <div className="flex gap-3 items-center">
             <Input
@@ -51,7 +101,7 @@ const RegistrarActivityLog = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <div>
+            {/* <div>
               <Select onValueChange={setSelectedAction} value={selectedAction}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Request Type" />
@@ -66,7 +116,7 @@ const RegistrarActivityLog = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </div>
           <Button className="bg-green-600 text-white">Download</Button>
         </div>
@@ -75,7 +125,7 @@ const RegistrarActivityLog = () => {
             <AppTable
               table={table}
               className="px"
-              noResultsMessage="No yellow cards found."
+              noResultsMessage="No activity found."
               tableCellClassName="px-2"
             />
           </div>

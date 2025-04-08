@@ -6,9 +6,16 @@ import { useNavigation } from "@/utils/navigation";
 import { ROUTES } from "@/config/route";
 
 const PaymentSuccess = () => {
-  const referenceNumber = "MOH/A/123456789001";
   const [copied, setCopied] = useState(false);
   const { goTo } = useNavigation();
+
+  const userData = sessionStorage.getItem("userData");
+  const user = JSON.parse(userData);
+
+  const txnData = sessionStorage.getItem("txnData");
+  const txn = JSON.parse(txnData);
+
+  const referenceNumber = txn.rrr;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referenceNumber);
@@ -34,7 +41,7 @@ const PaymentSuccess = () => {
         {/* Reference Number */}
         <div className="max-w-[537px] mx-auto">
           <p className="font-semibold">
-            TEMITOPE, This is your Reference Number
+            {user.firstName}, This is your Reference Number
           </p>
           <p className="text-gray-500 text-sm font-light mt-4">
             Below is your reference number, you can take it to the port officers
@@ -62,7 +69,10 @@ const PaymentSuccess = () => {
           {/* Go Back Home Button */}
           <Button
             className="text-white px-20 mt-10"
-            onClick={() => goTo(ROUTES.HOME)}
+            onClick={() => {
+              sessionStorage.clear();
+              goTo(ROUTES.HOME);
+            }}
           >
             Go back Home
           </Button>

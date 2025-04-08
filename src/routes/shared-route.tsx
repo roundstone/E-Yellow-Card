@@ -17,4 +17,14 @@ export const sharedRoutes: CustomRouteObject[] = [
     element: <SharedProfilePage />,
     layout: DirectorMainLayout,
   },
+  {
+    path: ROUTES.PROFILE2,
+    element: <SharedProfilePage />,
+    layout: DirectorMainLayout,
+  },
+  {
+    path: ROUTES.PROFILE3,
+    element: <SharedProfilePage />,
+    layout: DirectorMainLayout,
+  },
 ];

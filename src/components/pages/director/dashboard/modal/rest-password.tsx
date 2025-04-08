@@ -1,5 +1,5 @@
 import React from "react";
-import ChangePasswordForm from "../../forms/change-password-form";
+import ChangePasswordForm from "../../forms/change-expired-password-form";
 
 export default function ResetPassword({ onClose }: { onClose: () => void }) {
   return (

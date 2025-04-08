@@ -1,6 +1,6 @@
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   ColumnFiltersState,
@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
 import { columns, data } from "../table/phs-centres";
+import { apiFetch } from "@/utils/api";
+import Spinner from "@/components/spinner";
 
 const PHSCentres = () => {
   useDashboardTitle("PHS Centres");
@@ -32,8 +34,12 @@ const PHSCentres = () => {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const [phscData, setPhscData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const table = useReactTable({
-    data,
+    data: phscData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -54,6 +60,44 @@ const PHSCentres = () => {
   // Unique values for filters
   const uniqueZones = Array.from(new Set(data.map((item) => item.zone)));
   const uniqueStates = Array.from(new Set(data.map((item) => item.state)));
+
+  const formatPhsc = (phsc) => {
+    return phsc.map((data) => {
+      return {
+        id: data.id,
+        zone: data.zone,
+        location: data.location,
+        state: data.state,
+        cardsIssued: data.cardsIssued || "N/A",
+        status: data.active ? "Active" : "Inactive"
+      };
+    });
+  };
+
+  useEffect(() => {
+    const fetchPhsc = async () => {
+      try {
+        const response = await apiFetch("admin/phsc/list", {
+          method: "GET",
+        }, true); // Ensure JWT token is included
+
+        if (response.statusCode !== 200) {
+          throw new Error(response.message || "Something went wrong");
+        }
+
+        setPhscData(formatPhsc(response.data));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPhsc();
+  }, []);
+
+  if (loading) return <Spinner text="Loading PHS Centers..." />;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="space-y-10">

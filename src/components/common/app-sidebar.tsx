@@ -27,7 +27,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ROUTES } from "@/config/route";
 import IMAGES from "@/assets/images";
@@ -35,6 +35,8 @@ import AppModal from "./modal";
 import ResetPassword from "../pages/director/dashboard/modal/rest-password";
 import { cn } from "@/lib/utils";
 import { getUserRoleFromPath } from "@/utils/navigation";
+import { userAtom } from "@/stores/user";
+import { useAtomValue } from "jotai";
 
 // Menu items.
 const items = {
@@ -234,15 +236,43 @@ const SidebarSkeleton: React.FC<{ menuItems: any[] }> = ({ menuItems }) => {
 
 const SecurityAlertCard = () => {
   const [open, setOpen] = React.useState(false);
+  const userData = useAtomValue(userAtom);
+  // console.log(userData.user);
+
+  const passwordExpiresAt = new Date(userData.user.passwordExpiresAt);
+  const now = new Date();
+
+  const isExpired = now > passwordExpiresAt;
+
+  const location = useLocation();
+
+  useEffect(() => {
+    setOpen(isExpired);
+  }, [isExpired]);
+
+  useEffect(() => {
+    if (isExpired) {
+      setOpen(true);
+    }
+  }, [location]);
+
+  const getDaysUntilExpiry = (expiryDate: Date): number => {
+    const msInDay = 1000 * 60 * 60 * 24;
+    const diffInMs = expiryDate.getTime() - now.getTime();
+  
+    return Math.floor(diffInMs / msInDay); // Can be negative if already expired
+  };
+  
   return (
     <>
       <div className="border rounded-lg py-6 px-4 shadow-sm bg-white max-w-[221px] space-y-6 mt-20 relative">
         <h2 className="font-bold text-base">Security Alert</h2>
         <p className="text-gray-700 text-sm">
-          Your password expires in <span className="font-bold">10 days.</span>{" "}
+          Your password expires in <span className="font-bold">{getDaysUntilExpiry(passwordExpiresAt)} day(s).</span>{" "}
           Reset now to maintain access
         </p>
         <button
+          id="passwordResetBtn"
           onClick={() => setOpen(true)}
           className="flex items-center justify-between w-full border border-[#EEF5F0] bg-[#F6F9F7] text-sm py-2 px-4 rounded-lg hover:bg-green-50 transition"
         >

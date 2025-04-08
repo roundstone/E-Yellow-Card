@@ -1,6 +1,6 @@
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   ColumnFiltersState,
@@ -22,6 +22,10 @@ import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
 import AppModal from "@/components/common/modal";
 import AssignBatchOfYellowCards from "../modal/assign-batch-yc";
+import { apiFetch } from "@/utils/api";
+import Spinner from "@/components/spinner";
+import { toast } from "sonner";
+import Loading from "@/components/loading";
 
 const DirectorRangeDistribution = () => {
   useDashboardTitle("Range Description");
@@ -37,8 +41,15 @@ const DirectorRangeDistribution = () => {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const [distData, setDistData] = useState([]);
+  const [availData, setAvailData] = useState([]);
+  const [rawData, setRawData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const cardTable = useReactTable({
-    data: cardData,
+    data: availData,
     columns: cardColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -57,7 +68,7 @@ const DirectorRangeDistribution = () => {
   });
 
   const distributionTable = useReactTable({
-    data: distributionData,
+    data: distData,
     columns: distributionColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -75,10 +86,109 @@ const DirectorRangeDistribution = () => {
     },
   });
 
+  const formatDistData = (data) => {
+    return data.map((minidata) => {
+      return {
+        code: minidata.code,
+        quantity: minidata.quantity,
+        range: minidata.start+" "+minidata.end,
+        phsCentre: minidata.phsc,
+        date: formatDate(minidata.createdAt)
+      };
+    });
+  };
+
+  const formatAvailableData = (data) => {
+    return data.map((minidata) => {
+      return {
+        id: minidata.id,
+        phsCentre: minidata.phsc,
+        code: minidata.code,
+        startCardNumber: minidata.start,
+        endCardNumber: minidata.end,
+        remainingCards: minidata.availableQuantity
+      };
+    });
+  };
+
+  const formatDate = (isoDate: string) => {
+    const date = new Date(isoDate);
+  
+    if (isNaN(date.getTime())) return "Invalid Date";
+  
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  const handleAssignBatch = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("director/yellowcard/assign", {
+        method: "POST",
+        body: JSON.stringify({
+          code: data.cardCode,
+          quantity: data.quantity,
+          type: data.type,
+          state: data.state,
+          zone: data.zone,
+          phsc: data.port
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode == 200) {
+        setOpenAssignBatch(false);
+        toast.success("The card range has been assigned to "+data.port);
+        fetchRangeDistribution();
+      }
+
+      return response;
+    } catch (error) {
+      toast.error(error.message || "Failed to assign batch.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const fetchRangeDistribution = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("director/yellowcard/assign/history", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setDistData(formatDistData(response.data));
+      setAvailData(formatAvailableData(response.data));
+      setRawData(response.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRangeDistribution();
+  }, []);
+
+  if (loading) return <Spinner text="Loading Range Distribution..." />;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <>
       <div className="space-y-10">
         <div className="bg-background border p-6 rounded-lg flex justify-between items-center">
+          { isLoading ? <Loading /> : '' }
+
           <div className="flex items-center">
             <div className="relative max-md:hidden">
               <div className="bg-[#D5D51D] w-12 h-16 mr-3 -rotate-12"></div>
@@ -187,7 +297,7 @@ const DirectorRangeDistribution = () => {
         title="Assign a Batch of Yellow Cards"
         className="sm:max-w-[712px] bg-white"
       >
-        <AssignBatchOfYellowCards onClose={() => setOpenAssignBatch(false)} />
+        <AssignBatchOfYellowCards onClose={() => setOpenAssignBatch(false)} onSubmit={handleAssignBatch} />
       </AppModal>
     </>
   );

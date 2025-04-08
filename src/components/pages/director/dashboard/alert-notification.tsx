@@ -13,27 +13,61 @@ interface Alert {
   requester?: string;
 }
 
-const alerts: Alert[] = [
-  {
-    id: 1,
-    type: "critical",
-    action: "Exceedingly low issuance rate",
-    details: "2311 YC issued since Dec 2024",
-    location: "Murtala Muhammed International Airport, Lagos",
-    timestamp: "27 Feb, 2025 18:09",
-  },
-  {
-    id: 2,
-    type: "critical",
-    action: "Card Request",
-    details: "New card request",
-    location: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
-    timestamp: "27 Feb, 2025 18:09",
-    requester: "Ahmed Idaholo",
-  },
-];
+// const alerts: Alert[] = [
+//   {
+//     id: 1,
+//     type: "critical",
+//     action: "Exceedingly low issuance rate",
+//     details: "2311 YC issued since Dec 2024",
+//     location: "Murtala Muhammed International Airport, Lagos",
+//     timestamp: "27 Feb, 2025 18:09",
+//   },
+//   {
+//     id: 2,
+//     type: "critical",
+//     action: "Card Request",
+//     details: "New card request",
+//     location: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
+//     timestamp: "27 Feb, 2025 18:09",
+//     requester: "Ahmed Idaholo",
+//   },
+// ];
 
-const AlertNotifications: React.FC = () => {
+interface Alert {
+  id: number;
+  type: AlertType;
+  action: string;
+  details: string;
+  phsc: string;
+  createdAt: string;
+  requester?: string;
+}
+
+interface AlertNotificationsProps {
+  alerts: Alert[];
+}
+
+const AlertNotifications:  React.FC<AlertNotificationsProps> = ({ alerts }) => {
+  // Sort and slice the alerts based on the createdAt field, keeping only the top 6 most recent ones
+  const processedAlerts = [...alerts]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 6)
+    .map((item) => ({
+      id: item.id,
+      type: item.type,
+      action: item.action,
+      details: item.details,
+      location: item.phsc,
+      timestamp: new Date(item.createdAt).toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      requester: item.requester,
+    }));
+
   return (
     <Card className="col-span-3 w-full h-full bg-white p-0">
       <CardHeader className="bg-background- border-b py-3">
@@ -67,7 +101,7 @@ const AlertNotifications: React.FC = () => {
             </div>
             <div className="text-gray-600 self-start">{alert.action}</div>
             <div>
-              <p className="font-semibold underline">{alert.location}</p>
+              <p className="font-semibold underline">{alert.phsc}</p>
               <p className="text-gray-500">{alert.details}</p>
               {alert.requester && (
                 <p className="text-gray-500 text-xs">by {alert.requester}</p>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,11 +24,13 @@ import {
 import { SearchIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/utils/api";
+import Loading from "@/components/loading";
 
 const RequestAuditSchema = z.object({
   requestType: z.string().nonempty("Request type is required"),
   selectedCenters: z
-    .array(z.string())
+    .array(z.number())
     .refine((value) => value.length > 0, {
       message: "At least one service center must be selected.",
     }),
@@ -53,15 +55,62 @@ export default function AuditRequest({ onClose }: { onClose: () => void }) {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredCenters = serviceCenters.filter((value) =>
-    value.label.toLowerCase().includes(searchTerm.toLowerCase())
+  const [phsLocations, setPhsLocations] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const filteredCenters = phsLocations.filter((value) =>
+    value.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Fetch PHS locations on component mount
+  useEffect(() => {
+    async function fetchPhsLocations() {
+      try {
+        const data = await apiFetch("admin/phsc/list", { method: "GET" });
+        if (data.statusCode === 200) {
+          setPhsLocations(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching PHS locations:", error);
+      }
+    }
+    fetchPhsLocations();
+  }, []);
+
   const selectedCenters = form.watch("selectedCenters") || [];
-  const allSelected = selectedCenters.length === serviceCenters.length;
+  const allSelected = selectedCenters.length === filteredCenters.length;
+
+  const handleAuditRequest = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("director/audit/request", {
+        method: "POST",
+        body: JSON.stringify({
+          centers: data.selectedCenters,
+          reason: data.requestType,
+          isAllCenters: selectedCenters.length === filteredCenters.length
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode == 200) {
+        toast.success("Request sent successfully!");
+      } else {
+        throw new Error("Something went wrong");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to send request.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="p-6">
+      { isLoading ? <Loading /> : '' }
       <h2 className="text-lg font-semibold text-center">
         Specify your Audit Request
       </h2>
@@ -72,8 +121,8 @@ export default function AuditRequest({ onClose }: { onClose: () => void }) {
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit((data) => {
-            toast.success("Request sent successfully!");
+          onSubmit={form.handleSubmit(async (data) => {
+            await handleAuditRequest(data);
             console.log(data);
             onClose();
           })}
@@ -85,11 +134,11 @@ export default function AuditRequest({ onClose }: { onClose: () => void }) {
               name="requestType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Port</FormLabel>
+                  <FormLabel>Port Audit Request Type</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Request Type" />
+                        <SelectValue placeholder="--Request Type--" />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
                         {requestTypes.map((type) => (
@@ -122,7 +171,7 @@ export default function AuditRequest({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <div className="border rounded-lg">
+          <div className="border rounded-lg max-h-[200px] overflow-y-auto">
             <FormItem className="grid grid-cols-2 gap-0 p-4">
               {/* "All" Checkbox */}
               <div className="col-span-2 flex items-center space-x-3 border-b p-5">
@@ -133,7 +182,7 @@ export default function AuditRequest({ onClose }: { onClose: () => void }) {
                       if (checked) {
                         form.setValue(
                           "selectedCenters",
-                          serviceCenters.map((item) => item.id)
+                          filteredCenters.map((item) => item.id)
                         );
                       } else {
                         form.setValue("selectedCenters", []);
@@ -172,7 +221,7 @@ export default function AuditRequest({ onClose }: { onClose: () => void }) {
                           />
                         </FormControl>
                         <FormLabel className="text-sm font-normal">
-                          {item.label}
+                          {item.location}
                         </FormLabel>
                       </FormItem>
                     </div>

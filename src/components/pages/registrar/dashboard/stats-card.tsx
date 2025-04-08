@@ -26,14 +26,36 @@ const trendDown = [
   { value: 40 },
 ];
 
-const DashboardStats = () => {
+interface StatProps {
+  statData?: {
+    vaccinatedUsers?: {
+      count?: number;
+      change?: number;
+    };
+    issuedCards?: {
+      count?: number;
+      change?: number;
+    };
+    voidedCards?: {
+      count?: number;
+      change?: number;
+    };
+    mostIssuedVaccine?: {
+      name?: string;
+      change?: number;
+    };
+  };
+}
+
+const DashboardStats = ({ statData }: StatProps) => {
+  
   return (
     <div className="grid md:grid-cols-4 gap-4">
       <StatCard
         title="Yellow Cards Issued"
-        value={122190}
-        change={10}
-        isPositive={false}
+        value={statData?.issuedCards?.count ?? 0}
+        change={statData?.issuedCards?.change ?? 0}
+        isPositive={statData?.issuedCards?.change > 0}
         icon={<BookOpen className="text-black w-5 h-5" />}
         trendUp={trendUp}
         trendDown={trendDown}
@@ -41,25 +63,25 @@ const DashboardStats = () => {
 
       <StatCard
         title="Vaccinated Users"
-        value={775400}
-        change={40}
-        isPositive={true}
+        value={statData?.vaccinatedUsers?.count ?? 0}
+        change={statData?.vaccinatedUsers?.change ?? 0}
+        isPositive={statData?.vaccinatedUsers?.change > 0}
         icon={<CircleUserRound className="text-black w-5 h-5" />}
       />
       <StatCard
         title="Voided Yellow Cards"
-        value={75}
-        change={20}
-        isPositive={true}
+        value={statData?.voidedCards?.count ?? 0}
+        change={statData?.voidedCards?.change ?? 0}
+        isPositive={statData?.voidedCards?.change > 0}
         icon={<CircleAlert className="text-black w-5 h-5" />}
         trendUp={trendUp}
         trendDown={trendDown}
       />
       <StatCard
         title="Most Issued Vaccine"
-        value={"Yellow Fever"}
-        change={20}
-        isPositive={true}
+        value={statData?.mostIssuedVaccine?.name}
+        change={statData?.mostIssuedVaccine?.change ?? 0}
+        isPositive={statData?.mostIssuedVaccine?.change > 0}
         icon={<RefreshCcw className="text-black w-5 h-5" />}
         trendUp={trendUp}
         trendDown={trendDown}

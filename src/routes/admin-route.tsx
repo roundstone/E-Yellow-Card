@@ -58,7 +58,7 @@ export const superadminRoutes: CustomRouteObject[] = [
   },
   {
     path: ROUTES.DASHBOARD.SUPERADMIN.IMPORT_APPLICATIONS,
-    element: <SuperadminImportApplicationsPage />,
+    element: <SuperadminStateListPage />,
     layout: DirectorMainLayout,
   },
   {
@@ -73,7 +73,7 @@ export const superadminRoutes: CustomRouteObject[] = [
   },
   {
     path: ROUTES.DASHBOARD.SUPERADMIN.STATE_LIST,
-    element: <SuperadminStateListPage />,
+    element: <SuperadminImportApplicationsPage />,
     layout: DirectorMainLayout,
   },
   {

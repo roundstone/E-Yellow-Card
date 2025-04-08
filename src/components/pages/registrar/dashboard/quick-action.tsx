@@ -6,6 +6,10 @@ import QueryUser from "../modal/query-user";
 import verifyTransaction from "../modal/verify-transaction";
 import VerifyTransaction from "../modal/verify-transaction";
 import { toast } from "sonner";
+import { useNavigation } from "@/utils/navigation";
+import { ROUTES } from "@/config/route";
+import Swal from "sweetalert2";
+import { apiFetch } from "@/utils/api";
 
 type ActionItem = {
   label: string;
@@ -18,6 +22,8 @@ const QuickAction: React.FC = () => {
   const [isOpenVerifyTransaction, setOpenVerifyTransaction] =
     React.useState(false);
 
+  const { goTo } = useNavigation();
+
   const actions: ActionItem[] = [
     {
       label: "Query User",
@@ -27,13 +33,55 @@ const QuickAction: React.FC = () => {
     {
       label: "Issue Yellow Card",
       icon: <ArrowRight className="text-green-600" />,
-      onClick: () => console.log("Issue Yellow Card clicked"),
+      onClick: () => goTo(ROUTES.DASHBOARD.REGISTRAR.ASSIGN_YELLOW_CARD),
     },
     {
       label: "Request Yellow Card",
       icon: <ArrowRight className="text-green-600" />,
       onClick: () => {
-        toast.success("Request sent successfully");
+        Swal.fire({
+          title: "Enter Request Amount!",
+          input: "text",
+          inputAttributes: {
+            autocapitalize: "off"
+          },
+          showCancelButton: true,
+          confirmButtonColor: "#219f59",
+          cancelButtonColor: "#ef4444",
+          confirmButtonText: "Submit",
+          showLoaderOnConfirm: true,
+          preConfirm: async (arg) => {
+            try {
+              const response = await apiFetch("registrar/card/request", {
+                method: "POST",
+                body: JSON.stringify({
+                  requestedAmount: arg,
+                }),
+              });
+        
+              console.log(response);
+        
+              if (response.statusCode !== 200) {
+                return Swal.showValidationMessage(`
+                    ${JSON.stringify(response)}
+                  `);
+              }
+        
+              return response;
+            } catch (error) {
+              toast.error(error.message || "Request failed");
+              Swal.showValidationMessage(`
+                  Request failed: ${error}
+                `);
+              console.error(error.message);
+            }
+          },
+          allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+          if (result.isConfirmed) {
+            toast.success("Request sent successfully");
+          }
+        });
       },
     },
     {

@@ -36,12 +36,12 @@ const VaccineSchema = z.object({
   ),
 });
 
-const AddVaccineForm = () => {
+const AddVaccineForm = ({ initialData = null, onSubmit }) => {
   const [isSuccess, setSuccess] = React.useState(false);
 
   const form = useForm({
     resolver: zodResolver(VaccineSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       vaccines: [
         {
           vaccineName: "",
@@ -67,7 +67,12 @@ const AddVaccineForm = () => {
     });
   };
 
-  function onSubmit(data) {
+  function onSubmitHandle(data) {
+    const response = onSubmit(data.vaccines[0]);
+
+    if (!response || response.statusCode !== 200) {
+      return;
+    }
     toast.success("Vaccine details submitted successfully!");
     console.log(data);
     setSuccess(true);
@@ -77,14 +82,14 @@ const AddVaccineForm = () => {
     <>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmitHandle)}
           className="space-y-10 max-h-[626px] overflow-auto"
         >
           {fields.map((field, index) => (
             <>
               <div key={field.id} className={cn("space-y-4")}>
                 <h3 className="text-sm font-semibold">
-                  Enter New Vaccine Details
+                  Enter Vaccine Details
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -131,6 +136,7 @@ const AddVaccineForm = () => {
                           <RadioGroup
                             onValueChange={field.onChange}
                             className="flex space-x-5"
+                            required
                           >
                             <FormItem className="flex items-center space-x-3 space-y-0">
                               <FormControl>
@@ -170,7 +176,7 @@ const AddVaccineForm = () => {
                               <SelectValue placeholder="--Select vaccine validity--" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent className="bg-white">
                             <SelectItem value="6_months">6 Months</SelectItem>
                             <SelectItem value="1_year">1 Year</SelectItem>
                             <SelectItem value="2_years">2 Years</SelectItem>
@@ -189,14 +195,14 @@ const AddVaccineForm = () => {
           ))}
 
           <div className="flex justify-between items-center">
-            <Button
+            {/* <Button
               type="button"
               variant="ghost"
               onClick={addVaccine}
               className="text-gray-500 flex items-center gap-2"
             >
               + Add another vaccine
-            </Button>
+            </Button> */}
 
             <Button type="submit" className="px-10 text-white">
               Confirm

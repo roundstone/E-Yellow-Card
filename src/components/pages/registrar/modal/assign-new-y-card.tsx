@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,22 +16,38 @@ import { toast } from "sonner";
 import { z } from "zod";
 import AppModal from "@/components/common/modal";
 import Confirm from "../../director/dashboard/modal/confirm";
+import Loading from "@/components/loading";
+import { apiFetch } from "@/utils/api";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/stores/user";
 
 const AssignYellowCardSchema = z.object({
   passportNumber: z.string().min(6, "Passport number is required"),
   referenceNumber: z.string().min(6, "Reference number is required"),
   fullName: z.string().min(3, "Full name is required"),
-  vaccinationsReceived: z.string().min(3, "Enter vaccinations received"),
+  // vaccinationsReceived: z.string().min(3, "Enter vaccinations received"),
   yellowCardNumber: z.string().min(6, "Yellow card number is required"),
 });
 
 export default function AssignNewYellowCard({
   onClose,
+  onSubmit
 }: {
   onClose: () => void;
+  onSubmit: any;
 }) {
   const [isOpenStatusInfo, setOpenStatusInfo] = React.useState(false);
   const [isSuccess, setSuccess] = React.useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [formData, setFormData] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [availableNumbers, setAvailableNumbers] = useState([]);
+
+  const lastSearchedPassport = React.useRef<string>("");
+
+  const user = useAtomValue(userAtom);
 
   const form = useForm<z.infer<typeof AssignYellowCardSchema>>({
     resolver: zodResolver(AssignYellowCardSchema),
@@ -39,26 +55,104 @@ export default function AssignNewYellowCard({
       passportNumber: "",
       referenceNumber: "",
       fullName: "",
-      vaccinationsReceived: "",
+      // vaccinationsReceived: "",
       yellowCardNumber: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof AssignYellowCardSchema>) {
+  function onSubmitHandler(data: z.infer<typeof AssignYellowCardSchema>) {
+    setFormData(data);
     console.log(data);
     setOpenStatusInfo(true);
   }
+
+  const handlePNChange = async (value) => {
+    
+    const passportNumber = value;
+    
+    if (passportNumber.length >= 6) { // Only query when enough characters are entered
+      setIsLoading(true);
+      try {
+        const response = await apiFetch("registrar/user/search", {
+          method: "POST",
+          body: JSON.stringify({
+            searchParam: passportNumber
+          }),
+        });
+  
+        console.log(response);
+  
+        if (response.statusCode !== 200) {
+          throw new Error("Something went wrong!");
+        }
+
+        if(!response.data.latestTransaction || !response.data.latestTransaction.rrr) {
+          toast.error("User found, but hasn't completed payment!");
+        } else {
+          toast.success("User found!");
+        }
+
+        setUserData(response.data);
+        form.setValue('fullName', response.data.firstName+" "+response.data.surName);
+        form.setValue('referenceNumber', response.data.latestTransaction.rrr);
+      } catch (error) {
+        toast.error("User not found!");
+        console.error(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
+
+  const fetchAvailableCards = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/yellow-card/list", {
+        method: "POST",
+        body: JSON.stringify({
+          phsc: user.user.phsLocation
+        }),
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setAvailableNumbers(response.data);
+    } catch (err) {
+      toast.error(err.message || "Error getting available yellow cards!");
+      console.log(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+    
+  useEffect(() => {
+    fetchAvailableCards();
+  }, []);
+  
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-6">
+          { isLoading ? <Loading /> : '' }
+
           {/* Passport Number */}
           <FormField
             control={form.control}
             name="passportNumber"
             render={({ field }) => (
               <FormItem>
-                <FormControl>
+                <FormControl
+                  onBlur={(e) => {
+                    const currentValue = field.value;
+
+                    if (currentValue && currentValue !== lastSearchedPassport.current) {
+                      lastSearchedPassport.current = currentValue;
+                      handlePNChange(currentValue); // call API only if it's a new value
+                    }
+                  }}
+                >
                   <Input placeholder="Enter Passport Number" {...field} />
                 </FormControl>
                 <FormMessage />
@@ -73,7 +167,7 @@ export default function AssignNewYellowCard({
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Enter Reference Number" {...field} />
+                  <Input placeholder="Reference Number" readOnly={true} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -87,7 +181,7 @@ export default function AssignNewYellowCard({
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="FULL NAME HERE" {...field} />
+                  <Input placeholder="Full Name " readOnly={true} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,18 +189,18 @@ export default function AssignNewYellowCard({
           />
 
           {/* Vaccinations Received */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="vaccinationsReceived"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Vaccinations Received" {...field} />
+                  <Input placeholder="Vaccinations Received" readOnly {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* Yellow Card Number */}
           <div>
@@ -117,6 +211,25 @@ export default function AssignNewYellowCard({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Your yellow card number</FormLabel>
+                  <div className="flex gap-2 my-2 max-h-20 overflow-auto">
+                    {availableNumbers.map((number) => (
+                      <button
+                        key={number}
+                        type="button" // Prevent form submission
+                        onClick={() => {
+                          form.setValue("yellowCardNumber", number); // Set the form value
+                          form.clearErrors("yellowCardNumber"); // Clear any errors
+                        }}
+                        className={`px-3 py-1 rounded-xl border ${
+                          form.watch("yellowCardNumber") === number
+                            ? "bg-green-600 text-white"
+                            : "bg-background text-gray-700"
+                        }`}
+                      >
+                        {number}
+                      </button>
+                    ))}
+                  </div>
                   <FormControl>
                     <Input placeholder="Enter Yellow Card Number" {...field} />
                   </FormControl>
@@ -143,16 +256,22 @@ export default function AssignNewYellowCard({
       >
         <Confirm
           buttonOne={() => setOpenStatusInfo(false)}
-          buttonTwo={() => {
+          buttonTwo={async () => {
+            const response = await onSubmit(formData);
+
+            if(!response || response?.statusCode !== 200) {
+              return;
+            }
+
+            toast.success("Yellow Card Assigned Successfully!");
             setOpenStatusInfo(false);
             setSuccess(true);
-            toast.success("Yellow Card Assigned Successfully!");
           }}
           title={"Confirm Assign Yellow Card"}
           message={
-            "Are you sure you want to assign the yellow card with the number YC/2343430 to Ismail Muhammad?"
+            `Are you sure you want to assign the yellow card with the number ${formData?.yellowCardNumber} to ${userData?.firstName} ${userData?.surName}?`
           }
-          type="success"
+          type="confirm"
         />
       </AppModal>
 
@@ -162,21 +281,24 @@ export default function AssignNewYellowCard({
         className="sm:max-w-[400px] bg-white"
       >
         <Confirm
-          buttonOne={() => setSuccess(false)}
-          buttonTwo={() => {
+          buttonOne={() => { 
             onClose();
+            setSuccess(false); 
+          }}
+          buttonTwo={() => {
+            form.reset();
             setSuccess(false);
           }}
           buttonOneLabel="View history"
           buttonTwoLabel="Done"
-          title={"Card Range Assigned!"}
+          title={"Card Assigned!"}
           type="success"
           message={
             <p className="text-gray-600 mt-2">
-              The card range{" "}
-              <span className="font-semibold">A133900 - A134900</span> has been
+              The card {" "}
+              <span className="font-semibold">{formData?.yellowCardNumber}</span> has been
               assigned to{" "}
-              <span className="font-semibold">Tin Can Island Port</span>?
+              <span className="font-semibold">{`${userData?.firstName} ${userData?.surName}`}</span>
             </p>
           }
         />

@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +28,8 @@ import { Label } from "@/components/ui/label";
 import { Copy } from "lucide-react";
 import UserQuery from "../modal(dialog)/query-user";
 import AppModal from "@/components/common/modal";
+import Loading from "@/components/loading";
+import { apiFetch } from "@/utils/api";
 
 const FormSchema = z.object({
   cardNumber: z.string().min(2, {
@@ -40,6 +42,8 @@ const FormSchema = z.object({
 
 const SearchYellowCardForm = () => {
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -49,9 +53,28 @@ const SearchYellowCardForm = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast.success("Result found!");
-    setOpen(true);
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setLoading(true);
+    try {
+      const resp = await apiFetch("user/query-user", {
+        method: "POST",
+        body: JSON.stringify({
+          yellowCardNumber: data.cardNumber,
+          passportNumber: data.cardNumber
+        }),
+      });
+      if (resp.statusCode == 200) {
+        toast.success("Result found!");
+        setUser(resp.data);
+        setOpen(true);
+      } else {
+        toast.success("User not found!");
+      }
+    } catch (error) {
+      toast.error("Failed to send OTP.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -61,6 +84,7 @@ const SearchYellowCardForm = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full  space-y-6"
         >
+          { loading ? <Loading /> : '' }
           <FormField
             control={form.control}
             name="cardNumber"
@@ -100,7 +124,7 @@ const SearchYellowCardForm = () => {
         title="QUERY USER"
         className="sm:max-w-[567px] bg-white"
       >
-        <UserQuery />
+        <UserQuery userData={user} />
       </AppModal>
     </>
   );

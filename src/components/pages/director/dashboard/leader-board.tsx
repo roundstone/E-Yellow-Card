@@ -4,29 +4,52 @@ import { Trophy } from "lucide-react";
 import React from "react";
 
 // Define TypeScript interface for leaderboard data
-interface LeaderboardData {
-  location: string;
-  totalIssued: number;
-  officer: {
-    name: string;
-    issued: number;
-    location: string;
-  };
+// interface LeaderboardData {
+//   location: string;
+//   totalIssued: number;
+//   officer: {
+//     name: string;
+//     issued: number;
+//     location: string;
+//   };
+// }
+
+// const leaderboard: LeaderboardData = {
+//   location: "Lekki Deep Sea Port, Lagos",
+//   totalIssued: 13421,
+//   officer: {
+//     name: "Ahmad Umar",
+//     issued: 1233,
+//     location: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
+//   },
+// };
+
+interface LeaderboardCenter {
+  center: string;
+  count: number | string;
 }
 
-const leaderboard: LeaderboardData = {
-  location: "Lekki Deep Sea Port, Lagos",
-  totalIssued: 13421,
-  officer: {
-    name: "Ahmad Umar",
-    issued: 1233,
-    location: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
-  },
-};
+interface LeaderboardOfficer {
+  officerName: string;
+  center: string;
+  count: number | string;
+}
 
-const Leaderboard: React.FC = () => {
+interface LeaderboardData {
+  topCenters?: LeaderboardCenter[];
+  topOfficers?: LeaderboardOfficer[];
+}
+
+interface LeaderboardProps {
+  leaderboard: LeaderboardData;
+}
+
+const Leaderboard: React.FC<LeaderboardProps>  = ({ leaderboard }) => {
+  const topCenter = leaderboard.topCenters[0];
+  const topOfficer = leaderboard.topOfficers[0];
+
   return (
-    <Card className=" bg-white w-full p-0 pb-8">
+    <Card className="bg-white w-full p-0 pb-8">
       {/* Header */}
       <CardHeader className="flex-row justify-between items-center border-b py-3">
         <CardTitle className="text-sm font-semibold">Leaderboard</CardTitle>
@@ -37,9 +60,9 @@ const Leaderboard: React.FC = () => {
         {/* Top Location */}
         <div>
           <p className="text-gray500 text-sm font-semibold">#1</p>
-          <h3 className="text-md font-light">{leaderboard.location}</h3>
+          <h3 className="text-md font-light">{topCenter?.center}</h3>
           <p className="text-green-600 text-3xl font-bold">
-            {leaderboard.totalIssued.toLocaleString()}
+            {Number(topCenter?.count).toLocaleString()}
           </p>
           <p className="text-gray-600 text-lg">Yellow cards Issued</p>
         </div>
@@ -49,14 +72,14 @@ const Leaderboard: React.FC = () => {
 
         {/* Top Officer */}
         <div>
-          <p className="text- text-sm font-semibold">#1 Officer</p>
+          <p className="text-sm font-semibold">#1 Officer</p>
           <p className="font-light">
-            {leaderboard.officer.name}{" "}
+            {topOfficer?.officerName}{" "}
             <em className="text-green-600 underline">
-              {leaderboard.officer.issued} issued
+              {topOfficer?.count} issued
             </em>{" "}
             <span className="text-gray-500">
-              ({leaderboard.officer.location})
+              ({topOfficer?.center})
             </span>
           </p>
         </div>

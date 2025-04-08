@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { mockUser, UserDetails } from "@/data/mock-user";
 import { Button } from "@/components/ui/button";
@@ -18,22 +18,32 @@ import { toast } from "sonner";
 import { z } from "zod";
 import AppModal from "@/components/common/modal";
 import AssignVaccines from "./assign-vaccines";
+import Loading from "@/components/loading";
+import { apiFetch } from "@/utils/api";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/stores/user";
 
 const AssignYellowCardSchema = z.object({
   yellowCardNumber: z.string().min(1, "Yellow Card Number is required"),
 });
 
-const availableNumbers = [
-  "B234568",
-  "B234569",
-  "B234570",
-  "B234571",
-  "B234572",
-];
+// const availableNumbers = [
+//   "B234568",
+//   "B234569",
+//   "B234570",
+//   "B234571",
+//   "B234572",
+// ];
 
-export default function AssignYellowCard({ onClose }: { onClose: () => void }) {
+export default function AssignYellowCard({ onClose, userData }: { onClose: () => void, userData: any }) {
   const [isOpenAssignVaccine, setOpenAssignVaccine] = React.useState(false);
-  const [user] = useState<UserDetails | null>(mockUser);
+  const [user] = useState<UserDetails | null>(userData);
+
+  const [availableNumbers, setAvailableNumbers] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const registrar = useAtomValue(userAtom);
 
   // Initialize the form
   const form = useForm<z.infer<typeof AssignYellowCardSchema>>({
@@ -44,17 +54,68 @@ export default function AssignYellowCard({ onClose }: { onClose: () => void }) {
   });
 
   // Handle form submission
-  const onSubmit = (data: z.infer<typeof AssignYellowCardSchema>) => {
-    toast.success(`Assigned Yellow Card: ${data.yellowCardNumber}`);
-    console.log(data);
-    onClose(); // Close the modal or perform other actions
+  const onSubmit = async (data: z.infer<typeof AssignYellowCardSchema>) => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/yellow-card/assign", {
+        method: "POST",
+        body: JSON.stringify({
+          passportNumber: user.passportNumber,
+          yellowCardNumber: data.yellowCardNumber,
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode == 200) {
+        toast.success(`Assigned Yellow Card: ${data.yellowCardNumber}`);
+        console.log(data);
+        onClose(); // Close the modal or perform other actions
+      } else {
+        throw new Error(response.message || "Something went wrong");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to assign yellow card.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const fetchAvailableCards = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/yellow-card/list", {
+        method: "POST",
+        body: JSON.stringify({
+          phsc: registrar.user.phsLocation
+        }),
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setAvailableNumbers(response.data);
+    } catch (err) {
+      toast.error(err.message || "Error getting available yellow cards!");
+      console.log(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+    
+  useEffect(() => {
+    fetchAvailableCards();
+  }, []);
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="-mt-6">
           <div className="flex justify-center items-center w-full">
+            { isLoading ? <Loading /> : '' }
+
             <div className="w-full p6 relative">
               {/* User Details */}
               <div className="flex flex-col gap-2 rounded-lg bg-background p-4 text-sm">

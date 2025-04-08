@@ -28,12 +28,18 @@ const AuthHeader = () => {
           >
             Home
           </Link>
-          <Link
+          {/* <Link
             to="#"
             onClick={() => setOpen(true)}
             className="text-text hover:text-opacity-75 transition-colors duration-200 "
           >
             Get User Detail
+          </Link> */}
+          <Link
+            to="#"
+            className="text-text hover:text-opacity-75 transition-colors duration-200"
+          >
+            Port Health Locations
           </Link>
           <div className="border-l inline-block px-10"> &nbsp;</div>
         </nav>
@@ -44,9 +50,8 @@ const AuthHeader = () => {
         title="QUERY USER"
         className="sm:max-w-[567px] bg-white"
       >
-        <UserQuery />
+        <UserQuery userData={null} />
       </AppModal>
-      ;
     </>
   );
 };

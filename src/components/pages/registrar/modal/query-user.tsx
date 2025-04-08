@@ -1,36 +1,100 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { mockUser, UserDetails } from "@/data/mock-user";
 import IMAGES from "@/assets/images";
 import AppModal from "@/components/common/modal";
 import AssignYellowCard from "./assign-y-card";
 import AssignVaccines from "./assign-vaccines";
+import { apiFetch } from "@/utils/api";
+import { toast } from "sonner";
+import { formatUserData } from "@/utils/user-format";
+import Spinner from "@/components/spinner";
+import MiniSpinner from "@/components/mini-spinner";
 AssignYellowCard;
 export default function QueryUser({ onClose }: { onClose: () => void }) {
+  const [searchTerm, setSearchTerm] = useState("");
   const [query, setQuery] = useState("");
   const [user, setUser] = useState<UserDetails | null>(mockUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isOpenAssignYCard, setOpenAssignYCard] = React.useState(false);
   const [isOpenAssignVaccine, setOpenAssignVaccine] = React.useState(false);
 
   // Handle search
-  const handleSearch = (query: string) => {
+  // const handleSearch = (query: string) => {
+  //   if (!query.trim()) {
+  //     setUser(null);
+  //     return;
+  //   }
+  //   setQuery(query);
+  //   const foundUser =
+  //     mockUser.passportNumber.toLowerCase() == query.toLowerCase()
+  //       ? mockUser
+  //       : null;
+
+  //   if (foundUser) {
+  //     setUser(foundUser);
+  //   } else {
+  //     setUser(null);
+  //   }
+  // };
+
+   // Handle search with debounce
+   const handleSearch = (searchValue: string) => {
+    setSearchTerm(searchValue);
+  };
+
+  // Actual search function that will be debounced
+  const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setUser(null);
       return;
     }
-    setQuery(query);
-    const foundUser =
-      mockUser.passportNumber.toLowerCase() == query.toLowerCase()
-        ? mockUser
-        : null;
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/user/search", {
+        method: "POST",
+        body: JSON.stringify({
+          searchParam: query
+        }),
+      });
 
-    if (foundUser) {
-      setUser(foundUser);
-    } else {
+      console.log(response.data);
+
+      if (response.statusCode == 200) {
+        setUser(formatUserData(response.data, '/passport.png'));
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
       setUser(null);
+      toast.error(error.message || "User not found!");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
-  };
+    
+    // const foundUser =
+    //   mockUser.passportNumber.toLowerCase() === query.toLowerCase()
+    //     ? mockUser
+    //     : null;
+
+    // if (foundUser) {
+    //   setUser(foundUser);
+    // } else {
+    //   setUser(null);
+    // }
+  }, []);
+
+  // Debounce effect - waits 500ms after typing stops before searching
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      setQuery(searchTerm);
+      performSearch(searchTerm);
+    }, 1000); // 1000ms delay
+
+    return () => clearTimeout(delaySearch);
+  }, [searchTerm, performSearch]);
 
   return (
     <>
@@ -44,6 +108,8 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
           // onChange={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
         />
+
+        { isLoading ? <MiniSpinner text="Searching for user..." /> : '' }
 
         {/* Display UI based on search results */}
         {!query.trim() ? (
@@ -119,7 +185,23 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
                   {/* Yellow Card Number */}
                   <div className="flex justify-between pt-6">
                     <p className="text-sm">Yellow Card Number</p>
-                    <p
+                    {user.yellowCardNumber ? (
+                        <p className="text-gray-600 text-sm">{user.yellowCardNumber}</p>
+                      ) : (
+                        <p
+                          className="text-gray-600 text-sm cursor-pointer"
+                          onClick={() => {
+                            setOpenAssignYCard(true);
+                            // onClose();
+                          }}
+                        >
+                          Not Assigned{" "}
+                          <span className="text-primary font-semibold underline">
+                            Assign Now
+                          </span>
+                        </p>
+                      )}
+                    {/* <p
                       className="text-gray-600 text-sm cursor-pointer"
                       onClick={() => {
                         setOpenAssignYCard(true);
@@ -130,7 +212,7 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
                       <span className="text-primary font-semibold underline">
                         Assign Now
                       </span>
-                    </p>
+                    </p> */}
                   </div>
 
                   <div className="flex justify-between">
@@ -191,7 +273,7 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
         title="ASSIGN YELLOW CARD NUMBER"
         className="sm:max-w-[567px] bg-white"
       >
-        <AssignYellowCard onClose={() => setOpenAssignYCard(false)} />
+        <AssignYellowCard userData={user} onClose={() => setOpenAssignYCard(false)} />
       </AppModal>
 
       <AppModal

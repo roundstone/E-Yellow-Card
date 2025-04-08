@@ -19,10 +19,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { nigerianStates } from "@/data/states";
+import { apiFetch } from "@/utils/api";
 
 const UserSchema = z.object({
-  surname: z.string().min(1, "Surname is required"),
+  surName: z.string().min(1, "Surname is required"),
   firstName: z.string().min(1, "First Name is required"),
   email: z.string().email("Invalid email address"),
   city: z.string().min(1, "City is required"),
@@ -31,10 +33,13 @@ const UserSchema = z.object({
 });
 
 const AddUserForm = ({ initialData = null, onSubmit }) => {
+  const [phsLocations, setPhsLocations] = useState([]);
+  const [filteredLocations, setFilteredLocations] = useState([]);
+
   const form = useForm({
     resolver: zodResolver(UserSchema),
     defaultValues: initialData || {
-      surname: "",
+      surName: "",
       firstName: "",
       email: "",
       city: "",
@@ -43,8 +48,36 @@ const AddUserForm = ({ initialData = null, onSubmit }) => {
     },
   });
 
+  // Fetch PHS locations on component mount
+  useEffect(() => {
+    async function fetchPhsLocations() {
+      try {
+        const data = await apiFetch("admin/phsc/list", { method: "GET" });
+        if (data.statusCode === 200) {
+          setPhsLocations(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching PHS locations:", error);
+      }
+    }
+    fetchPhsLocations();
+  }, []);
+
+  // Handle state selection change
+  function handleStateChange(state) {
+    form.setValue("city", state); // Update state field
+    form.setValue("phsLocation", ""); // Reset PHS location field
+    const locations = phsLocations.filter((loc) => loc.state === state);
+    setFilteredLocations(locations);
+  }
+
   function handleSubmit(data) {
-    onSubmit(data);
+    const response = onSubmit(data);
+
+    if (!response || response.statusCode !== 200) {
+      return;
+    }
+
     toast.success(
       initialData ? "User updated successfully!" : "User added successfully!"
     );
@@ -56,7 +89,7 @@ const AddUserForm = ({ initialData = null, onSubmit }) => {
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="surname"
+            name="surName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Surname</FormLabel>
@@ -107,9 +140,9 @@ const AddUserForm = ({ initialData = null, onSubmit }) => {
                     <SelectValue placeholder="--Select Role--" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value=" Registrar">Registrar</SelectItem>
-                  <SelectItem value=" Manager">Manager</SelectItem>
+                <SelectContent className="bg-white">
+                  <SelectItem value="Director">Director</SelectItem>
+                  <SelectItem value="Registrar">Registrar</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -123,9 +156,10 @@ const AddUserForm = ({ initialData = null, onSubmit }) => {
             name="city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Vaccine Validity</FormLabel>
+                <FormLabel>PHS State</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
+                  // onValueChange={field.onChange}
+                  onValueChange={handleStateChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
@@ -133,9 +167,12 @@ const AddUserForm = ({ initialData = null, onSubmit }) => {
                       <SelectValue placeholder="--Select city--" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Abuja">Abuja</SelectItem>
-                    <SelectItem value="Lagos">Lagos</SelectItem>
+                  <SelectContent className="bg-white">
+                    {[...new Set(phsLocations.map((loc) => loc.state))].map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -151,19 +188,25 @@ const AddUserForm = ({ initialData = null, onSubmit }) => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={!filteredLocations.length}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="--Select PHS Location--" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value=" Nnamdi Azikwe International Airport">
-                      Nnamdi Azikwe International Airport
-                    </SelectItem>
-                    <SelectItem value=" Murtala Muhammed Airport">
-                      Murtala Muhammed Airport
-                    </SelectItem>
+                  <SelectContent className="bg-white">
+                    {filteredLocations.length > 0 ? (
+                      filteredLocations.map((location) => (
+                        <SelectItem key={location.id} value={location.location}>
+                          {location.location}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem disabled value="Location">
+                        No locations available
+                      </SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />

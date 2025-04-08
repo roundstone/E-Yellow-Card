@@ -1,6 +1,6 @@
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   ColumnFiltersState,
@@ -15,6 +15,8 @@ import {
 import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
 import { columns, data } from "../table/remita-transaction";
+import { apiFetch } from "@/utils/api";
+import Spinner from "@/components/spinner";
 
 const RemitaTransaction = () => {
   useDashboardTitle("Remita Transaction");
@@ -29,8 +31,12 @@ const RemitaTransaction = () => {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const table = useReactTable({
-    data,
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const table = useReactTable<any>({
+    data: transactions,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -47,6 +53,44 @@ const RemitaTransaction = () => {
       rowSelection,
     },
   });
+
+  const formatTransactions = (transactions) => {
+    return transactions.map((data) => {
+      return {
+        id: data.id,
+        referenceNumber: data.rrr || "N/A",
+        name: `${data.user.firstName || "Unknown"} ${data.user.surName || "User"}`,
+        amount: parseFloat(data.amount) || 0,
+        paymentMethod: data.channel || "Unknown",
+        status: data.status || "Pending",
+      };
+    });
+  };
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await apiFetch("admin/remita-transactions/list", {
+          method: "GET",
+        }, true); // Ensure JWT token is included
+
+        if (response.statusCode !== 200) {
+          throw new Error(response.message || "Something went wrong");
+        }
+
+        setTransactions(formatTransactions(response.data));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  if (loading) return <Spinner text="Loading transactions..." />;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="space-y-10">

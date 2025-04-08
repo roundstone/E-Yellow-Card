@@ -16,37 +16,28 @@ interface Alert {
   onClick?: () => void;
 }
 
-const AlertNotifications: React.FC = () => {
+interface AlertNotificationsProps {
+  alertData: Alert[];
+}
+
+const AlertNotifications: React.FC<AlertNotificationsProps> = ({ alertData }) => {
   const [isOpenComment, setOpenComment] = React.useState(false);
   const [isOpenAuditCheck, setOpenAuditCheck] = React.useState(false);
   const [isOpenHighVoidCard, setOpenHighVoidCard] = React.useState(false);
 
-  const alerts: Alert[] = [
-    {
-      id: 1,
-      type: "critical",
-      action: "Tell us why",
-      details: "2311 YC issued since Dec 2024",
-      timestamp: "27 Feb, 2025 18:09",
-      onClick: () => setOpenComment(true),
-    },
-    {
-      id: 2,
-      type: "critical",
-      action: "Card Request",
-      details: "Submit report",
-      timestamp: "27 Feb, 2025 18:09",
-      onClick: () => setOpenAuditCheck(true),
-    },
-    {
-      id: 3,
-      type: "moderate",
-      action: "Card Request",
-      details: "High Voided cards",
-      timestamp: "27 Feb, 2025 18:09",
-      onClick: () => setOpenHighVoidCard(true),
-    },
-  ];
+  const alerts: Alert[] = alertData.map((alert) => {
+    if (alert.details.includes("since") || alert.details.includes("issuance")) {
+      return { ...alert, onClick: () => setOpenComment(true) };
+    }
+    if (alert.details.toLowerCase().includes("report")) {
+      return { ...alert, onClick: () => setOpenAuditCheck(true) };
+    }
+    if (alert.details.toLowerCase().includes("voided")) {
+      return { ...alert, onClick: () => setOpenHighVoidCard(true) };
+    }
+    return alert;
+  });
+
 
   return (
     <>

@@ -1,11 +1,12 @@
 import IMAGES from "@/assets/images";
 import { Input } from "@/components/ui/input";
 import { mockUser, UserDetails } from "@/data/mock-user";
+import { calculateAge } from "@/utils/common";
 import React from "react";
 import { useState } from "react";
 
-const UserQuery = () => {
-  const [query, setQuery] = useState(mockUser.passportNumber);
+const UserQuery = ({ userData }: { userData: any }) => {
+  const [query, setQuery] = useState(userData.passportNumber);
   const [user] = useState<UserDetails | null>(mockUser);
 
   return (
@@ -29,7 +30,7 @@ const UserQuery = () => {
                     <span>MN</span>{" "}
                   </div>
                   <div className="font-medium  text-right text-sm">
-                    {user.firstName} {user.lastName} {user.middleName}
+                    {userData?.firstName} {userData?.surName}
                   </div>
                 </div>
 
@@ -37,7 +38,7 @@ const UserQuery = () => {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className=" text-sm font-medium">Age</div>
                   <div className="text-gray-500 text-right text-sm">
-                    {user.age}
+                    {calculateAge(userData?.dob)}
                   </div>
                 </div>
 
@@ -45,7 +46,7 @@ const UserQuery = () => {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className=" text-sm font-medium">State of Origin</div>
                   <div className="text-gray-500 text-right text-sm">
-                    {user.stateOfOrigin}
+                    {userData?.state}
                   </div>
                 </div>
 
@@ -53,14 +54,15 @@ const UserQuery = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className=" text-sm font-medium">Passport Number</div>
                   <div className="text-gray-500 text-right text-sm">
-                    {user.passportNumber}
+                    {userData?.passportNumber}
                   </div>
                 </div>
               </div>
                 <div className="w-full col-span-1 flex justify-end">
                 <div className="bg-black w-32 h-32 rounded-lg overflow-hidden">
                   <img
-                  src={user.imageUrl}
+                  // src={user.imageUrl}
+                  src="/passport.png"
                   alt="User"
                   className="w-full h-full object-cover"
                   />
@@ -72,7 +74,7 @@ const UserQuery = () => {
               {/* Yellow Card Number */}
               <div className="flex justify-between pt-6">
                 <p className=" text-sm">Yellow Card Number</p>
-                <p className="text-gray-600 text-sm">{user.yellowCardNumber}</p>
+                <p className="text-gray-600 text-sm">{userData?.yellowCardNumber}</p>
               </div>
 
               <div className="flex justify-between">

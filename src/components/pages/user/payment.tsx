@@ -1,23 +1,168 @@
+import Loading from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/config/route";
+import { apiFetch } from "@/utils/api";
 import { useNavigation } from "@/utils/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
+import RemitaPaymentUtil from "@/utils/remita";
 
 const Payment = () => {
   const [selectedOption, setSelectedOption] = useState<"offline" | "online">(
     "online"
   );
+  const [loading, setLoading] = useState(true);
+
   const { goTo } = useNavigation();
 
-  const handlePayment = () => {
+  setTimeout(()=> {
+    setLoading(false);
+  }, 3000)
+
+  const userData = sessionStorage.getItem("userData");
+  const user = JSON.parse(userData);
+
+  const param = {
+    payerEmail: user.email,
+    payerName: user.firstName,
+    userId: user.userId,
+  };
+
+  const initiateTxn = async () => {
+    // const storedPayment = sessionStorage.getItem("txnData");
+    // if (storedPayment) {
+    //   toast.error("Payment already initiated.");
+    //   return {
+    //     code: -1,
+    //     data: JSON.parse(storedPayment)
+    //   };
+    // }
+ 
+    const endpoint =
+      selectedOption === "online" ? "user/remita/initiate" : "user/remita/payment/offline";
+
+    const payload =
+      selectedOption === "online"
+        ? param
+        : { ...param, payerPhone: user.phone };
+
+    try {
+      const response = await apiFetch(endpoint, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      if(response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong")
+      }
+
+      sessionStorage.setItem("txnData", JSON.stringify(response.data));
+
+      toast.success(
+        selectedOption === "online"
+          ? "Online payment initiated!"
+          : "Offline payment request sent!"
+      );
+      return {
+        code: 1,
+        data: response.data
+      };
+    } catch (error) {
+      toast.error(error.message || "An error occurred while processing payment.");
+      return {
+        code: 0,
+        data: {}
+      };
+    }
+  };
+
+  const payOnline = async (tnx) => {
+    setLoading(true);
+    await RemitaPaymentUtil.loadScript(tnx.data.live); // Pass `true` for live environment
+    setLoading(false);
+
+    let paymentData = {
+      key: tnx.data.key, // enter your key here
+      transactionId: tnx.data.tnxid,
+      customerId: user.userId,
+      firstName: user.firstName,
+      lastName: user.surName,
+      email: user.email,
+      amount: tnx.data.amount,
+      narration: "E-Yellowcard Payment",
+    };
+
+    let remitaData = {
+      ...paymentData,
+      onSuccess: async function (response) {
+        console.log(response);
+
+        const responseData = response;
+
+        // function callback when payment is successful
+        setLoading(true);
+        
+        try {
+          const response = await apiFetch(`user/remita/verify/${responseData.transactionId}`, {
+            method: "GET",
+          });
+
+          console.log(response);
+    
+          if (response.statusCode !== 200) {
+            throw new Error(response.message || "Something went wrong");
+          }
+  
+          toast.success("Payment verified successfully!");
+
+          setLoading(false);
+
+          console.log("callback Successful Response", response);
+
+          sessionStorage.setItem("txnData", JSON.stringify(response.data));
+
+          // Handle navigation or further logic after successful verification
+          goTo(ROUTES.PAYMENT_SUCCESS); // Assuming there's a route for successful verification
+        } catch (error) {
+          toast.error(error.message || "Verification failed.");
+          console.log("Error!", error);
+          setLoading(false);
+        }
+      },
+      onError: function (response) {
+        // function callback when payment fails
+        console.log("callback Error Response", response);
+        toast.error("Transaction failed! Try again");
+        goTo(ROUTES.PAYMENT_FAILED);
+      },
+      onClose: function () {
+        // function callback when payment modal is closed
+        sessionStorage.removeItem("txnData");
+        console.log("closed");
+        // toast.success("Payment Abandoned!");
+      },
+    }
+
+    await RemitaPaymentUtil.startPayment(remitaData);
+  }
+
+  const handlePayment = async () => {
+    setLoading(true);
+    const tnx = await initiateTxn();
+
+    if (tnx.code === 0) {
+      setLoading(false);
+      return;
+    }
+
+    console.log(tnx.data);
+
     let route: string | null = null;
 
     switch (selectedOption) {
       case "online":
-        route = ROUTES.PAYMENT_SUCCESS;
-        toast.success("Payment successful!");
+        await payOnline(tnx);
         break;
       case "offline":
         route = ROUTES.PAYMENT_INVOICE;
@@ -27,6 +172,8 @@ const Payment = () => {
         toast.error("Please make a selection!");
         return;
     }
+    
+    setLoading(false);
 
     if (route) {
       goTo(route);
@@ -36,6 +183,8 @@ const Payment = () => {
   return (
     <div className="flex items-center justify-center min-h-[80vh] app-container ">
       <div className="bg-white border rounded-xl p-10 w-full max-w-[566px]">
+        { loading ? <Loading /> : '' }
+
         {/* Header */}
         <div className="max-w-[358px] mx-auto">
           <h2 className="text-xl font-semibold text-center">

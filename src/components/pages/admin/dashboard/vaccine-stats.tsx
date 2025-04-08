@@ -36,14 +36,14 @@ const trendDown = [
   { value: 40 },
 ];
 
-const VaccineStats = () => {
+const VaccineStats = ({ regUserCount = 0, vaccUserCount = 0, chartdata = [] }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
       {/* Registered Users Card */}
      
       <StatCard
         title="Registered Users"
-        value={775400}
+        value={regUserCount}
         change="20"
         isPositive={true}
         trendUp={trendDown}
@@ -53,7 +53,7 @@ const VaccineStats = () => {
       {/* Vaccinated Users Card */}
       <StatCard
         title="Vaccinated Users"
-        value={1672443}
+        value={vaccUserCount}
         change="20"
         isPositive={true}
         trendUp={trendUp}
@@ -63,7 +63,7 @@ const VaccineStats = () => {
       {/* Bar Chart */}
       <div className="p-4 col-span-1 md:col-span-2">
         <ResponsiveContainer width="100%" height={150}>
-          <BarChart layout="vertical" data={data}>
+          <BarChart layout="vertical" data={chartdata}>
             <XAxis type="number" hide />
             <YAxis dataKey="name" type="category" width={100} />
             <Tooltip />

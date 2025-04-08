@@ -2,7 +2,7 @@ import IMAGES from "@/assets/images";
 import { Input } from "@/components/ui/input";
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { SearchIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { vaccinationHistoryData } from "../table/vacination-history";
 import {
   ColumnFiltersState,
@@ -25,6 +25,9 @@ import {
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AppTable from "@/components/common/app-table";
+import Loading from "@/components/loading";
+import Spinner from "@/components/spinner";
+import { apiFetch } from "@/utils/api";
 
 const RegistrarUserList = () => {
   useDashboardTitle("User List");
@@ -48,8 +51,15 @@ const RegistrarUserList = () => {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [generalUsers, setGeneralUsers] = useState([]);
+  const [voidUsers, setVoidUsers] = useState([]);
+  const [error, setError] = useState(null);
+
   const gTable = useReactTable({
-    data: gUserData,
+    data: generalUsers,
     columns: gUserColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -68,7 +78,7 @@ const RegistrarUserList = () => {
   });
 
   const vTable = useReactTable({
-    data: vUserData,
+    data: voidUsers,
     columns: vUserColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -86,21 +96,73 @@ const RegistrarUserList = () => {
     },
   });
 
+  const formatGeneralUsers = (data) => {
+    return data.map((minidata, index) => {
+      return {
+        id: index+1,
+        yellowCardNumber: minidata.yellowCardNumber ?? '--',
+        name: minidata.firstName+" "+minidata.surName,
+        email: minidata.email,
+        vaccinations: (minidata.vaccines.length > 0) ? minidata.vaccines.map(vaccine => vaccine.vaccineName) : "--",
+      };
+    });
+  };
+
+  const formatVoidUsers = (data) => {
+    return data.map((minidata, index) => {
+      return {
+        id: index+1,
+        generalUserId: minidata.userId,
+        yellowCardNumber: minidata.yellowCardNumber,
+        registrarId: "--",
+        reason: "The physical card was damaged at the point of issuance.",
+      };
+    });
+  };
+
+  const fetchUserData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("registrar/users/list", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setGeneralUsers(formatGeneralUsers(response.data.users));
+      setVoidUsers(formatVoidUsers(response.data.voidUsers));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+    
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  if (loading) return <Spinner text="Loading Users..." />;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <>
       <Tabs defaultValue="gUserTab" className="">
+        { isLoading ? <Loading /> : '' }
         <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
           <TabsTrigger
             value="gUserTab"
             className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
           >
-            New Card Request
+            General Users List
           </TabsTrigger>
           <TabsTrigger
             value="vUserTab"
             className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
           >
-            Card info change requests
+            Void Users List
           </TabsTrigger>
         </TabsList>
 
@@ -153,7 +215,7 @@ const GeneralUsers = ({
             <SearchIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="checkbox"
+              placeholder="Search"
               className="w-full p-2 pl-10 border rounded-md"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -166,7 +228,7 @@ const GeneralUsers = ({
             <AppTable
               table={table}
               className=""
-              noResultsMessage="No yellow cards found."
+              noResultsMessage="No user found."
             />
           </div>
           <AppTablePagination table={table} />

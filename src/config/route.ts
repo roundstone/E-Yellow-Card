@@ -52,6 +52,8 @@ export const ROUTES = {
           },
     },
     PROFILE: `${directorPrefix}/profile`,
+    PROFILE2: `${adminPrefix}/profile`,
+    PROFILE3: `${registrarPrefix}/profile`,
     SETTINGS: "/settings",
 };
 

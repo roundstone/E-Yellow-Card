@@ -19,21 +19,23 @@ import {
 } from "@/components/ui/select";
 import { nigerianStates } from "@/data/states";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import Confirm from "./confirm";
+import { apiFetch } from "@/utils/api";
 
 const AssignBatchYCSchema = z.object({
   cardCode: z.string().nonempty("Card code is required"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   type: z.enum(["state", "zone"]),
   state: z.string().optional(),
+  zone: z.string().optional(),
   port: z.string().optional(),
 });
 
-const AssignBatchOfYellowCards = ({ onClose }: { onClose: () => void }) => {
+const AssignBatchOfYellowCards = ({ onClose, onSubmit }) => {
   const [isConfirm, setConfirm] = React.useState(false);
   const [isSuccess, setSuccess] = React.useState(false);
   const form = useForm<z.infer<typeof AssignBatchYCSchema>>({
@@ -42,21 +44,57 @@ const AssignBatchOfYellowCards = ({ onClose }: { onClose: () => void }) => {
       cardCode: "",
       quantity: null,
       type: "state",
+      zone: "",
       state: "",
       port: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof AssignBatchYCSchema>) {
-    console.log(data);
-    setConfirm(true);
-    // goTo(ROUTES.AUTH.ADMIN.LOGIN);
+  const [phsLocations, setPhsLocations] = useState([]);
+  const [filteredLocations, setFilteredLocations] = useState([]);
+
+  // Fetch PHS locations on component mount
+  useEffect(() => {
+    async function fetchPhsLocations() {
+      try {
+        const data = await apiFetch("admin/phsc/list", { method: "GET" });
+        if (data.statusCode === 200) {
+          setPhsLocations(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching PHS locations:", error);
+      }
+    }
+    fetchPhsLocations();
+  }, []);
+
+  const watchType = form.watch("type");
+
+  useEffect(() => {
+    if (watchType === "zone") {
+      form.setValue("state", "");
+      form.setValue("port", "");
+      setFilteredLocations([]);
+    }
+  }, [watchType]);
+
+  // Handle state selection change
+  function handleStateChange(state) {
+    form.setValue("state", state); // Update state field
+    form.setValue("port", ""); // Reset PHS location field
+    const locations = phsLocations.filter((loc) => loc.state === state);
+    form.setValue("zone", locations[0].zone || "");
+    setFilteredLocations(locations);
+  }
+
+  function onSubmitHandler(data: z.infer<typeof AssignBatchYCSchema>) {
+    const response = onSubmit(data);
   }
 
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-5">
           <div className="grid grid-cols-2 gap-3">
             <FormField
               control={form.control}
@@ -70,9 +108,9 @@ const AssignBatchOfYellowCards = ({ onClose }: { onClose: () => void }) => {
                         <SelectValue placeholder="Select card code" />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
-                        {["Code 1", "Code 2", "Code 3"].map((email) => (
-                          <SelectItem key={email} value={email}>
-                            {email}
+                        {["A", "B", "C", "D"].map((code) => (
+                          <SelectItem key={code} value={code}>
+                            {code}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -133,34 +171,106 @@ const AssignBatchOfYellowCards = ({ onClose }: { onClose: () => void }) => {
             )}
           />
 
-          <StateSelect control={form.control} name="state" label="State" />
+          {/* <StateSelect control={form.control} name="state" label="State" /> */}
 
-          <div className="grid grid-cols-2">
+          {watchType === "zone" && (
             <FormField
               control={form.control}
-              name="port"
+              name="zone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Port</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                  <FormLabel>Zones</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl> 
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select destination port" />
+                        <SelectValue placeholder="--Select zone--" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {["Port 1", "Port 2", "Port 3"].map((email) => (
-                          <SelectItem key={email} value={email}>
-                            {email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    <SelectContent className="bg-white">
+                      {["NorthCentral", "NorthEast", "NorthWest", "SouthEast", "SouthSouth", "SouthWest"].map((zone) => (
+                        <SelectItem key={zone} value={zone}>
+                          {zone}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
+          )}
+
+          {watchType === "state" && (
+            <FormField
+              control={form.control}
+              name="state"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>State</FormLabel>
+                  <Select
+                    onValueChange={handleStateChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="--Select city--" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-white">
+                      {[...new Set(phsLocations.map((loc) => loc.state))].map((state) => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {watchType === "state" && (
+            <div className="grid grid-cols-2">
+              <FormField
+                control={form.control}
+                name="port"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PHS Location</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={!filteredLocations.length}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="--Select PHS Location--" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-white">
+                        {filteredLocations.length > 0 ? (
+                          filteredLocations.map((location) => (
+                            <SelectItem key={location.id} value={location.location}>
+                              {location.location}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem disabled value="Location">
+                            No locations available
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
 
           <Button type="submit" className=" text-white py-2">
             Distribute Card Range

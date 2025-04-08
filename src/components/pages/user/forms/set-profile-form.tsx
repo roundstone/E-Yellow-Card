@@ -8,7 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/config/route";
 import { useNavigation } from "@/utils/navigation";
 import useQueryParam from "@/hooks/use-query-param";
+import { apiFetch } from "@/utils/api";
+import Loading from "@/components/loading";
 
 const FormSchema = z.object({
   surname: z.string().min(2, "Surname is required"),
@@ -24,9 +27,10 @@ const FormSchema = z.object({
   dob: z.string().min(1, "Date of birth is required"),
   phoneNumber: z.string().min(10, "Enter a valid phone number"),
   email: z.string().email("Enter a valid email"),
-  state: z.string().optional(),
-  address: z.string().optional(),
-  passportNumber: z.string().optional(),
+  state: z.string(),
+  address: z.string(),
+  gender: z.string(),
+  passportNumber: z.string(),
 
   parentFirstName: z.string().optional(),
   parentSurname: z.string().optional(),
@@ -35,6 +39,11 @@ const FormSchema = z.object({
 const SetProfileForm = () => {
   const { goTo } = useNavigation();
   const type = useQueryParam("type");
+  const isChild = (type == "child") ? true : false;
+
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState("");
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -45,22 +54,79 @@ const SetProfileForm = () => {
       email: "",
       state: "",
       address: "",
+      gender: "",
       passportNumber: "",
       parentFirstName: "",
       parentSurname: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast.success("Form submitted successfully!");
-    goTo(ROUTES.PAYMENT);
-  }
+  useEffect(() => {
+    // Retrieve data from sessionStorage
+    const ninValidationData = sessionStorage.getItem("ninValidationData");
+    const userData = sessionStorage.getItem("userData");
 
-  const isChild = () => type === "child";
+    if (ninValidationData && userData) {
+      try {
+        const ninData = JSON.parse(ninValidationData);
+        const user = JSON.parse(userData);
+
+        setUserId(user.userId);
+
+        const fullName = ninData.name.split(" ");
+
+        // Populate the form with stored data
+        form.reset({
+          surname: fullName[fullName.length - 1] || "",
+          firstName: fullName[0] || "",
+          dob: ninData.dob.replace(/-/g, "/") || "",
+          phoneNumber: user.phone || ""
+        });
+      } catch (error) {
+        console.error("Error parsing sessionStorage data:", error);
+      }
+    }
+  }, [form]);
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setLoading(true);
+    try {
+      const response = await apiFetch(`user/auth/profile/${userId}`, {
+        method: "POST",
+        body: JSON.stringify({
+          firstName: data.firstName,
+          surName: data.surname,
+          guardianFirstName: data.parentFirstName,
+          guardianSurName: data.parentSurname,
+          email: data.email,
+          dob: data.dob,
+          state: data.state,
+          address: data.address,
+          gender: data.gender,
+          passportNumber: data.passportNumber
+        }),
+      });
+
+      if (response.statusCode == 200) {
+        toast.success("Profile completed successfully!");
+        sessionStorage.setItem("userData", JSON.stringify(response.data));
+        goTo(ROUTES.PAYMENT);
+      } else {
+        toast.error("An error occurred while updating profile!");
+      }
+    } catch (error) {
+      toast.error("An error occurred!");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+        { loading ? <Loading /> : '' }
+
         {/* Surname & First Name */}
         <div className="grid grid-cols-2 gap-4">
           <FormField
@@ -70,7 +136,7 @@ const SetProfileForm = () => {
               <FormItem>
                 <FormLabel>{isChild && "Child's "}Surname</FormLabel>
                 <FormControl>
-                  <Input placeholder="Akintade" {...field} />
+                  <Input placeholder="Akintade" {...field} readOnly />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,7 +149,7 @@ const SetProfileForm = () => {
               <FormItem>
                 <FormLabel>{isChild && "Child's "}First Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Temitope" {...field} />
+                  <Input placeholder="Temitope" {...field} readOnly />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -154,7 +220,7 @@ const SetProfileForm = () => {
                 {isChild && "Parent/Guardian  "}Phone Number
               </FormLabel>
               <FormControl>
-                <Input placeholder="+234 (555) 000-0000" {...field} />
+                <Input placeholder="+234 (555) 000-0000" {...field} readOnly />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -184,7 +250,59 @@ const SetProfileForm = () => {
             <FormItem>
               <FormLabel>State of Residence</FormLabel>
               <FormControl>
-                <Input placeholder="Abuja, FCT" {...field} />
+                {/* <Input placeholder="Abuja, FCT" {...field} /> */}
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full bg-white">
+                    <SelectValue placeholder="Select a state" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectGroup>
+                      {[
+                        "Abia",
+                        "Adamawa",
+                        "Akwa Ibom",
+                        "Anambra",
+                        "Bauchi",
+                        "Bayelsa",
+                        "Benue",
+                        "Borno",
+                        "Cross River",
+                        "Delta",
+                        "Ebonyi",
+                        "Edo",
+                        "Ekiti",
+                        "Enugu",
+                        "FCT",
+                        "Gombe",
+                        "Imo",
+                        "Jigawa",
+                        "Kaduna",
+                        "Kano",
+                        "Katsina",
+                        "Kebbi",
+                        "Kogi",
+                        "Kwara",
+                        "Lagos",
+                        "Nasarawa",
+                        "Niger",
+                        "Ogun",
+                        "Ondo",
+                        "Osun",
+                        "Oyo",
+                        "Plateau",
+                        "Rivers",
+                        "Sokoto",
+                        "Taraba",
+                        "Yobe",
+                        "Zamfara"
+                      ].map((state) => (
+                        <SelectItem key={state} value={state} className="cursor-pointer">
+                          {state}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -200,6 +318,31 @@ const SetProfileForm = () => {
               <FormLabel>Address</FormLabel>
               <FormControl>
                 <Input placeholder="Enter your address" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Gender */}
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gender</FormLabel>
+              <FormControl>
+                <Select value={field.value} onValueChange={field.onChange} >
+                  <SelectTrigger className="w-full bg-white">
+                    <SelectValue placeholder="Select an gender" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectGroup>
+                      <SelectItem value="Male" className="cursor-pointer">Male</SelectItem>
+                      <SelectItem value="Female" className="cursor-pointer">Female</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

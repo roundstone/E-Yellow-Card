@@ -21,51 +21,101 @@ const data: StateData[] = [
   { name: "Katsina", count: 9304 },
 ];
 
-const RegisteredUsers = () => {
+interface UserStatItem {
+  name: string;
+  count: string | number;
+}
+
+interface RegisteredUsersProps {
+  byState: UserStatItem[];
+  byPhs: UserStatItem[];
+}
+
+const RegisteredUsers = ({ byState, byPhs }) => {
   const [sortDescending, setSortDescending] = useState(true);
-  const [activeTab, setActiveTab] = useState("states");
+  const [activeTab, setActiveTab] = useState<"state" | "phs">("state");
 
-  const sortedData = [...data].sort((a, b) =>
-    sortDescending ? b.count - a.count : a.count - b.count
-  );
+  const normalizeData = (data) => {
+    return data.map((item) => ({
+      name: item.state || item.phsc || "Unknown",
+      count: item.count,
+    }));
+  };
 
-  const tableStateContent = (
-    <div className="mt-3">
-      {sortedData.map((item, index) => (
-        <div key={index} className="grid grid-cols-3 items-center py-2">
-          <div
-            className={cn(
-              "text-text cursor-pointer",
-              index == 0 && "underline"
-            )}
-          >
-            {item.name}
+  const sortData = (data: UserStatItem[]) => {
+    return [...data].sort((a, b) => {
+      const countA = Number(a.count);
+      const countB = Number(b.count);
+      return sortDescending ? countB - countA : countA - countB;
+    });
+  };
+
+  // const tableStateContent = (
+  //   <div className="mt-3">
+  //     {sortedData.map((item, index) => (
+  //       <div key={index} className="grid grid-cols-3 items-center py-2">
+  //         <div
+  //           className={cn(
+  //             "text-text cursor-pointer",
+  //             index == 0 && "underline"
+  //           )}
+  //         >
+  //           {item.state}
+  //         </div>
+  //         <div className="flex1 mx-3 bg-[#F8F8F8] p-1">
+  //           <div
+  //             className="bg-green-600 h-2 transition-all duration-500"
+  //             style={{
+  //               width: `${Math.min(
+  //                 (item.count / sortedData[0].count) * 100,
+  //                 100
+  //               )}%`,
+  //             }}
+  //           />
+  //         </div>
+  //         <div className="font-medium text-end">
+  //           {item.count.toLocaleString()}
+  //         </div>
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
+
+  const renderTable = (data: UserStatItem[]) => {
+    const normalized = normalizeData(data);
+    const sortedData = sortData(normalized);
+
+    return (
+      <div className="mt-3">
+        {sortedData.map((item, index) => (
+          <div key={index} className="grid grid-cols-3 items-center py-2">
+            <div className={cn("text-text cursor-pointer", index === 0 && "underline")}>
+              {item.name}
+            </div>
+            <div className="flex-1 mx-3 bg-[#F8F8F8] p-1">
+              <div
+                className="bg-green-600 h-2 transition-all duration-500"
+                style={{
+                  width: `${Math.min(
+                    (Number(item.count) / Number(sortedData[0].count)) * 100,
+                    100
+                  )}%`,
+                }}
+              />
+            </div>
+            <div className="font-medium text-end">
+              {Number(item.count).toLocaleString()}
+            </div>
           </div>
-          <div className="flex1 mx-3 bg-[#F8F8F8] p-1">
-            <div
-              className="bg-green-600 h-2 transition-all duration-500"
-              style={{
-                width: `${Math.min(
-                  (item.count / sortedData[0].count) * 100,
-                  100
-                )}%`,
-              }}
-            />
-          </div>
-          <div className="font-medium text-end">
-            {item.count.toLocaleString()}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <Card className=" bg-white h-full p-0">
-      <CardHeader className="flex-row justify-between items-center border-b px- py-3">
-        <CardTitle className="text-sm font-semibold">
-          Registered Users
-        </CardTitle>
+    <Card className="bg-white h-full p-0">
+      <CardHeader className="flex-row justify-between items-center border-b py-3">
+        <CardTitle className="text-sm font-semibold">Registered Users</CardTitle>
         <div className="flex gap-2">
           {["Today", "7d ago", "2w", "1m", "6m", "1y"].map((filter) => (
             <Button
@@ -78,10 +128,10 @@ const RegisteredUsers = () => {
         </div>
       </CardHeader>
 
-      <CardContent className="">
-        <Tabs defaultValue="state" className="">
+      <CardContent>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "state" | "phs")}>
           <div className="flex justify-between items-center">
-            <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
+            <TabsList className="grid grid-cols-2 bg-[#F6F6F6] w-fit rounded-lg p-0">
               <TabsTrigger
                 value="state"
                 className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
@@ -95,8 +145,9 @@ const RegisteredUsers = () => {
                 By PHS Centres
               </TabsTrigger>
             </TabsList>
+
             <div
-              className="flex justify-end text-gray-500 text-sm cursor-pointer mt2"
+              className="flex justify-end text-gray-500 text-sm cursor-pointer mt-2"
               onClick={() => setSortDescending(!sortDescending)}
             >
               {sortDescending ? (
@@ -104,11 +155,16 @@ const RegisteredUsers = () => {
               ) : (
                 <ChevronDown className="w-4 h-4" />
               )}
-              <span>Highest to Lowest</span>
+              <span className="ml-1">Highest to Lowest</span>
             </div>
           </div>
-          <TabsContent value="state">{tableStateContent}</TabsContent>
-          <TabsContent value="phs">{tableStateContent}</TabsContent>
+
+          <TabsContent value="state">
+            {activeTab === "state" && renderTable(byState)}
+          </TabsContent>
+          <TabsContent value="phs">
+            {activeTab === "phs" && renderTable(byPhs)}
+          </TabsContent>
         </Tabs>
       </CardContent>
     </Card>

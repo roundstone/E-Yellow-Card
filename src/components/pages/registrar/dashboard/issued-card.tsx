@@ -17,7 +17,7 @@ type IssuedCardsProps = {
     time: string;
     range: string;
   };
-  reorderLevel: "Low" | "Medium" | "Critical";
+  reorderLevel: string;
 };
 
 const reorderColors: Record<string, string> = {
@@ -26,7 +26,22 @@ const reorderColors: Record<string, string> = {
   Critical: "bg-red-500",
 };
 
-const IssuedCards: React.FC = () => {
+const formatDate = (isoDate: string) => {
+  const date = new Date(isoDate);
+
+  if (isNaN(date.getTime())) return "Invalid Date";
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+const IssuedCards: React.FC<IssuedCardsProps> = ({ issued, total, lastBatch, reorderLevel }) => {
   const [isOpeHighVoided, setOpeHighVoided] = React.useState(false);
   return (
     <>
@@ -44,18 +59,20 @@ const IssuedCards: React.FC = () => {
               className="w-11 h-11"
             />
             <p className="text-[28px] font-bold">
-              124<span className="text-[23px] ">/{"2424"}</span>
+              {issued}<span className="text-[23px] ">/{total}</span>
             </p>
           </div>
 
-          <p className="text-sm text-gray-600 my-4 border-t border-b border-dotted py-6">
-            The last batch of cards assigned to your PHS Centre was{" "}
-            <span className="font-semibold">{3000}</span> on{" "}
-            <span className="font-semibold">
-              {"24 Jan, 2025"}, {"18:24"}
-            </span>{" "}
-            (<span className="font-semibold">{"A23000-A5300"}</span>)
-          </p>
+          {lastBatch && (
+            <p className="text-sm text-gray-600 my-4 border-t border-b border-dotted py-6">
+              The last batch of cards assigned to your PHS Centre was{" "}
+              <span className="font-semibold">{lastBatch.count}</span> on{" "}
+              <span className="font-semibold">
+                {formatDate(lastBatch.date)}
+              </span>{" "}
+              (<span className="font-semibold">{lastBatch.range}</span>)
+            </p>
+          )}
 
           <div>
             <h4 className="text-gray-500 text-sm font-semibold">
@@ -69,7 +86,7 @@ const IssuedCards: React.FC = () => {
                   emptyColor={"bg-red-300"}
                 />
               </div>
-              <span className="ml-2 text-gray-800 font-medium">Critical</span>
+              <span className="ml-2 text-gray-800 font-medium">{reorderLevel}</span>
             </div>
           </div>
 

@@ -70,13 +70,44 @@ const cardIssuanceData: CardIssuanceData[] = [
   },
 ];
 
-const CardIssuance = () => {
+interface CardAvailability {
+  phsCenter: string;
+  available: string;
+  total: string;
+}
+
+interface CardIssuanceProps {
+  cardAvailability: CardAvailability[];
+}
+
+const CardIssuance = ({ cardAvailability }: CardIssuanceProps) => {
   const [sortDescending, setSortDescending] = useState(true);
   const [open, setOpen] = useState(false);
 
   //   const sortedData = [...cardIssuanceData].sort((a, b) =>
   //     sortDescending ? a.issued - b.issued : b.issued - a.issued
   //   );
+
+  const top6 = [...cardAvailability]
+  .sort((a, b) => parseInt(b.total) - parseInt(a.total))
+  .slice(0, 6);
+
+  const normalizedData = top6.map((item) => {
+    const issued = parseInt(item.available, 10);
+    const total = parseInt(item.total, 10);
+    const issuePercent = total > 0 ? Math.floor((issued / total) * 100) : 0;
+    return {
+      centre: item.phsCenter,
+      issued,
+      total,
+      issueCount: issuePercent,
+      reorderLevel: issuePercent < 50 ? "Critical" : "Great",
+    };
+  });
+
+  const sortedData = [...normalizedData].sort((a, b) =>
+    sortDescending ? a.issueCount! - b.issueCount! : b.issueCount! - a.issueCount!
+  );
 
   const tableStateContent = (
     <Table>
@@ -88,7 +119,7 @@ const CardIssuance = () => {
         </TableRow>
       </TableHeader>
       <TableBody className="">
-        {cardIssuanceData.map((item, i) => (
+        {sortedData.map((item, i) => (
           <TableRow key={item.centre} className="space-y-3">
             <TableCell className={cn("cursor-pointer text-sm hover:underline")}>
               {item.centre}

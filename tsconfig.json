@@ -1,7 +1,11 @@
 {
     "compilerOptions": {
-    "esModuleInterop": true,
+      "esModuleInterop": true,
       "jsx": "react",
+      "module": "esnext",
+      "target": "esnext",
+      "moduleResolution": "node",
+      "types": ["vite/client"],
       "baseUrl": "./",
       "paths": {
         "@/*": ["src/*"]

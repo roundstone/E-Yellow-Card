@@ -19,10 +19,12 @@ import { ROUTES } from "@/config/route";
 import { useLocation } from "react-router-dom";
 import { apiFetch } from "@/utils/api";
 import Loading from "@/components/loading";
+import { defaultUser, userAtom } from "@/stores/user";
+import { useSetAtom } from "jotai";
 
 const ChangePasswordSchema = z
   .object({
-    // currentPassword: z.string().min(6, "Current password is required"),
+    currentPassword: z.string().min(6, "Current password is required"),
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Confirm your new password"),
   })
@@ -36,40 +38,30 @@ const ChangePasswordForm = () => {
   const form = useForm<z.infer<typeof ChangePasswordSchema>>({
     resolver: zodResolver(ChangePasswordSchema),
     defaultValues: {
-      // currentPassword: "",
+      currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
   });
 
-  const useQueryParams = () => {
-    const { search } = useLocation();
-    return new URLSearchParams(search);
-  };
-
   const [loading, setLoading] = useState(false);
-
-  const query = useQueryParams();
-  const token = query.get("token");
-  const email = query.get("email");
 
   const passwordReset = async (credentials) => {
     try {
-      const response = await apiFetch("auth/password/reset/alt", {
+      const response = await apiFetch("admin/password/change", {
         method: "POST",
         body: JSON.stringify({
+          oldPassword: credentials.currentPassword,
           newPassword: credentials.newPassword,
           repeatPassword: credentials.confirmPassword,
-          email,
-          token
         }),
-      }, false); // No auth token needed for login
+      }, true);
 
       if (response.statusCode !== 200) {
         throw new Error(response.message || "Something went wrong");
       }
 
-      toast.success("Password changed successfully!");
+    //   toast.success("Password changed successfully!");
 
       return true;
     } catch (error) {
@@ -88,6 +80,10 @@ const ChangePasswordForm = () => {
       return;
     }
 
+    localStorage.removeItem("token"); // Remove JWT token
+
+    toast.success("Password changed successfully!! Please login again.");
+
     goTo(ROUTES.AUTH.ADMIN.LOGIN);
   }
 
@@ -97,7 +93,7 @@ const ChangePasswordForm = () => {
         { loading ? <Loading /> : '' }
 
         {/* Current Password */}
-        {/* <FormField
+        <FormField
           control={form.control}
           name="currentPassword"
           render={({ field }) => (
@@ -120,7 +116,7 @@ const ChangePasswordForm = () => {
               <FormMessage />
             </FormItem>
           )}
-        /> */}
+        />
 
         {/* New Password */}
         <FormField

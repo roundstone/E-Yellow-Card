@@ -4,7 +4,7 @@ import {
   ChevronRight,
   Search,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -28,6 +28,9 @@ import {
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import AppTablePagination from "@/components/common/app-table-pagination";
+import { apiFetch } from "@/utils/api";
+import Spinner from "@/components/spinner";
+import Loading from "@/components/loading";
 
 const DirectorRangeList = () => {
   useDashboardTitle("Range List");
@@ -41,6 +44,12 @@ const DirectorRangeList = () => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const [rangeData, setRangeData] = useState([]);
+  const [rawData, setRawData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const table = useReactTable({
     data: rangeData,
@@ -61,8 +70,48 @@ const DirectorRangeList = () => {
     },
   });
 
+  const formatRangeData = (data) => {
+    return data.map((minidata) => {
+      return {
+        id: minidata.code,
+        code: minidata.code,
+        startCardNumber: minidata.start,
+        endCardNumber: minidata.end,
+        zone: minidata.zone
+      };
+    });
+  };
+
+  const fetchRangeList = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("director/yellowcard/assign/history", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setRangeData(formatRangeData(response.data));
+      setRawData(response.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRangeList();
+  }, []);
+
+  if (loading) return <Spinner text="Loading Range List..." />;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <div className="p6">
+      { isLoading ? <Loading /> : '' }
       {/* Search Input */}
       <div className="mt-4 flex justify-between items-center">
         <div>

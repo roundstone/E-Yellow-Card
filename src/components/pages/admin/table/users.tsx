@@ -3,6 +3,9 @@ import { Trash2, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IUser } from "@/interface/user";
 import React from "react";
+import { toast } from "sonner";
+import Swal from "sweetalert2";
+import { apiFetch } from "@/utils/api";
 
 export const columns: ColumnDef<IUser>[] = [
   {
@@ -35,6 +38,7 @@ export const columns: ColumnDef<IUser>[] = [
           variant="ghost"
           size="icon"
           onClick={() => handleDelete(row.original)}
+          disabled={row.original.role == "Admin"}
         >
           <Trash2 className="w-4 h-4 text-gray-500" />
         </Button>
@@ -42,6 +46,7 @@ export const columns: ColumnDef<IUser>[] = [
           variant="ghost"
           size="icon"
           onClick={() => handleEdit(row.original)}
+          disabled={row.original.role == "Admin"}
         >
           <Edit2 className="w-4 h-4 text-gray-500" />
         </Button>
@@ -51,10 +56,39 @@ export const columns: ColumnDef<IUser>[] = [
 ];
 
 const handleDelete = (user: IUser) => {
-  console.log("Delete", user);
+  // console.log("Delete", user);
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#219f59",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete user!"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      if (user.role !== 'Admin') {
+        toast.success("Deleting user...");
+        const response = await apiFetch("admin/user/delete/"+user.id, {
+          method: "POST",
+          body: JSON.stringify({}),
+        });
+        if (response.statusCode == 200) {
+          document.getElementById('deleteUserBtn').click()
+          toast.success("User account deleted!");
+        } else {
+          toast.success("Something went wrong!");
+        }
+      } else {
+        toast.error("You can't delete an admin Account!");
+      }
+    }
+  });
 };
 
 const handleEdit = (user: IUser) => {
+  localStorage.setItem("currentEditUserId", user.id.toString());
+  document.getElementById('editUserBtn').click();
   console.log("Edit", user);
 };
 
