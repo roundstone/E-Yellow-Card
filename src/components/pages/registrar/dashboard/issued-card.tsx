@@ -7,6 +7,8 @@ import { ArrowRight } from "lucide-react";
 import React from "react";
 import AuditCheck from "../modal/audit-check";
 import { toast } from "sonner";
+import Swal from "sweetalert2";
+import { apiFetch } from "@/utils/api";
 
 type IssuedCardsProps = {
   issued: number;
@@ -38,6 +40,52 @@ const formatDate = (isoDate: string) => {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
+  });
+}
+
+const requestCard = () => {
+  Swal.fire({
+    title: "Enter Request Amount!",
+    input: "text",
+    inputAttributes: {
+      autocapitalize: "off"
+    },
+    showCancelButton: true,
+    confirmButtonColor: "#219f59",
+    cancelButtonColor: "#ef4444",
+    confirmButtonText: "Submit",
+    showLoaderOnConfirm: true,
+    preConfirm: async (arg) => {
+      try {
+        const response = await apiFetch("registrar/card/request", {
+          method: "POST",
+          body: JSON.stringify({
+            requestedAmount: arg,
+          }),
+        });
+  
+        console.log(response);
+  
+        if (response.statusCode !== 200) {
+          return Swal.showValidationMessage(`
+              ${JSON.stringify(response)}
+            `);
+        }
+  
+        return response;
+      } catch (error) {
+        toast.error(error.message || "Request failed");
+        Swal.showValidationMessage(`
+            Request failed: ${error}
+          `);
+        console.error(error.message);
+      }
+    },
+    allowOutsideClick: () => !Swal.isLoading()
+  }).then((result) => {
+    if (result.isConfirmed) {
+      toast.success("Request sent successfully");
+    }
   });
 }
 
@@ -92,7 +140,7 @@ const IssuedCards: React.FC<IssuedCardsProps> = ({ issued, total, lastBatch, reo
 
           <div className="mt-5 flex justify-end">
             <Button
-              onClick={() => toast.success("Request sent successfully")}
+              onClick={requestCard}
               className="flex justify-between items-center bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200 transition"
             >
               <span className="text-gray-800">Request</span>

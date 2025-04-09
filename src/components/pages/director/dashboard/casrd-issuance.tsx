@@ -126,7 +126,7 @@ const CardIssuance = ({ cardAvailability }: CardIssuanceProps) => {
             </TableCell>
             <TableCell>
               <span className="w/4 text-center font-medium text-gray-500">
-                {item.issued.toLocaleString()}/
+                {(item.total - item.issued).toLocaleString()}/
                 <span className="text-gray-700 font-semibold">
                   {item.total.toLocaleString()}
                 </span>

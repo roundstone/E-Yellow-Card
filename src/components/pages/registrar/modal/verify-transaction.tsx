@@ -20,6 +20,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { CreditCard } from "lucide-react";
 import StatusInfo from "./status-info";
+import Loading from "@/components/loading";
+import { apiFetch } from "@/utils/api";
 
 const vTransactionSchema = z.object({
   passportNumber: z.string().nonempty("Passport number is required"),
@@ -32,7 +34,7 @@ export default function VerifyTransaction({
   onClose: () => void;
 }) {
 
-    const [isOpenStatusInfo, setOpenStatusInfo] = React.useState(false);
+  const [isOpenStatusInfo, setOpenStatusInfo] = React.useState(false);
 
   const form = useForm<z.infer<typeof vTransactionSchema>>({
     resolver: zodResolver(vTransactionSchema),
@@ -42,16 +44,55 @@ export default function VerifyTransaction({
     },
   });
 
-  function onSubmit(data: z.infer<typeof vTransactionSchema>) {
-    // toast.success("Password reset link sent to your email!");
-    console.log(data);
-    // onClose();
-    setOpenStatusInfo(true)
+  const [isLoading, setIsLoading] = useState(false);
+  const [verified, setVerified] = useState(0);
+
+  async function onSubmit(data: z.infer<typeof vTransactionSchema>) {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/remita/verify", {
+        method: "POST",
+        body: JSON.stringify({
+          passportNumber: data.passportNumber,
+          referenceNumber: data.referenceNumber
+        }),
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      console.log(response.data.status);
+      console.log(response.data);
+
+      if(response.data.transaction.status == 'Success') {
+        toast.success(response.message);
+        setVerified(1);
+      } else if (response.data.transaction.status == 'Pending') {
+        toast.info(response.message);
+        setVerified(2);
+      } else {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      console.log(response.data);
+      // onClose();
+      setOpenStatusInfo(true)
+    } catch (err) {
+      setVerified(0);
+      setOpenStatusInfo(true)
+      toast.error(err.message || "Error verifying transaction!");
+      console.log(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <>
       <div className="py-6">
+        { isLoading ? <Loading /> : '' }
+
         <CreditCard className="w-16 h-16 mx-auto stroke-1 text-[#82868E]" />
         <h2 className="text-lg font-semibold text-center">
           Verify Remita Transaction Status
@@ -119,7 +160,7 @@ export default function VerifyTransaction({
         setOpen={setOpenStatusInfo}
         className="sm:max-w-[790px] bg-white"
       >
-        <StatusInfo onClose={() => setOpenStatusInfo(false)} statusType={"failed"} />
+        <StatusInfo onClose={() => setOpenStatusInfo(false)} statusType={(verified == 1) ? 'success' : (verified == 2) ? 'pending' : 'failed'} />
       </AppModal>
     </>
   );

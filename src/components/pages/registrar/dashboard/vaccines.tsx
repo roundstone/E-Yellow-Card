@@ -4,13 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import VaccinationForm from "../form/vaccination-form";
 import AppModal from "@/components/common/modal";
 import Confirm from "../../director/dashboard/modal/confirm";
 import { toast } from "sonner";
 import { useNavigation } from "@/utils/navigation";
 import { ROUTES } from "@/config/route";
+import Spinner from "@/components/spinner";
+import { apiFetch } from "@/utils/api";
+import Loading from "@/components/loading";
 
 const users = [
   { id: 1, name: "Kelechi Christopher", yellowCardNumber: null },
@@ -28,22 +31,99 @@ const RegistrarVaccines = () => {
   const [isSuccess, setSuccess] = React.useState(false);
   const { goTo } = useNavigation();
 
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [usersList, setUsersList] = useState([]);
+  const [vaccineFormData, setVaccineFormData] = useState(null);
+  
+  const [error, setError] = useState(null);
+
   const [search, setSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState<{
-    id: number;
-    name: string;
-    yellowCardNumber: string;
-  } | null>(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [isOpenAssignVForm, setIsOpenAssignVForm] = useState(false);
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // const filteredUsers = usersList.filter((user) =>
+  //   user.name.toLowerCase().includes(search.toLowerCase())
+  // );
+
+  const filteredUsers = usersList.filter((user) => {
+    const searchTerm = search.toLowerCase();
+    
+    return (
+      (user.firstName && user.firstName.toLowerCase().includes(searchTerm)) ||
+      (user.surName && user.surName.toLowerCase().includes(searchTerm)) ||
+      (user.passportNumber && user.passportNumber.toLowerCase().includes(searchTerm)) ||
+      (user.nin && user.nin.toLowerCase().includes(searchTerm))
+    );
+  });
+
+  const preHandleVaccinceAssign = (data) => {
+    setOpenStatusInfo(true);
+    setVaccineFormData(data);
+  }
+
+  const handleVaccineAssign = async () => {
+    if (!vaccineFormData) {
+      toast.error("Form Data not found!");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/vaccine/assign", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: selectedUser.userId,
+          vaccineIds: vaccineFormData.vaccines
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode !== 200) {
+        throw new Error("Something went wrong");
+      }
+
+      setSuccess(true);
+    } catch (error) {
+      toast.error(error.message || "Request failed");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const fetchUserData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("registrar/users/list", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setUsersList(response.data.users);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+    
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  if (loading) return <Spinner text="Loading data..." />;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <>
       <div className="flex ">
         {/* Left Side - User List */}
+        { isLoading ? <Loading /> : '' }
         <div className="w-1/3">
           <h2 className="text-lg font-semibold">Manage Vaccines</h2>
           <p className="text-gray-500 mb-4">
@@ -67,17 +147,17 @@ const RegistrarVaccines = () => {
 
           {/* User List */}
           <div className="border  divide-y-2">
-            {filteredUsers.map((user) => (
+            {filteredUsers.slice(0, 7).map((user) => (
               <div
                 key={user.id}
                 className={`p-4 cursor-pointer ${
-                  selectedUser?.id === user.id
+                  selectedUser?.userId === user.userId
                     ? "bg-green-100 font-medium"
                     : "hover:bg-gray-50"
                 }`}
-                onClick={() => setSelectedUser(user)}
+                onClick={() => { setSelectedUser(user); setIsOpenAssignVForm(false); }}
               >
-                {user.name}
+                {user.firstName +" "+ user.surName}
               </div>
             ))}
           </div>
@@ -101,7 +181,7 @@ const RegistrarVaccines = () => {
                 Vaccination Details
               </h2>
               <h3 className="text-lg font-medium">
-                {selectedUser.name}{" "}
+                {selectedUser.firstName+" "+selectedUser.surName}{" "}
                 <span className=" pl-5">
                   Yellow Card Number: {selectedUser.yellowCardNumber || "Nil"}
                 </span>
@@ -113,25 +193,49 @@ const RegistrarVaccines = () => {
                 </CardHeader>
                 <CardContent>
                   {!isOpenAssignVForm ? (
-                    <div className="fle items-center justify-center text-center text-gray-500">
-                      <img
-                        src={IMAGES.pendingBlock}
-                        alt="No User Selected"
-                        className="h-16 mx-auto mb-4"
-                      />
-                      <h2 className="text-lg font-medium">No record found</h2>
-                      <p>This user currently has no assigned vaccine.</p>
-
-                      <Button
-                        onClick={() => setIsOpenAssignVForm(true)}
-                        className="mt-4 text-white"
-                      >
-                        Assign vaccine(s)
-                      </Button>
-                    </div>
+                    selectedUser && selectedUser.vaccines && selectedUser.vaccines.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-medium">Assigned Vaccines</h3>
+                          <Button 
+                            onClick={() => setIsOpenAssignVForm(true)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            Edit Vaccines
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {selectedUser.vaccines.map((vaccine) => (
+                            <div key={vaccine.id} className="bg-gray-50 p-3 rounded-md flex items-center">
+                              <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
+                              <span>{vaccine.vaccineName}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="fle items-center justify-center text-center text-gray-500">
+                        <img
+                          src={IMAGES.pendingBlock}
+                          alt="No User Selected"
+                          className="h-16 mx-auto mb-4"
+                        />
+                        <h2 className="text-lg font-medium">No record found</h2>
+                        <p>This user currently has no assigned vaccine.</p>
+                        <Button
+                          onClick={() => setIsOpenAssignVForm(true)}
+                          className="mt-4 text-white"
+                        >
+                          Assign vaccine(s)
+                        </Button>
+                      </div>
+                    )
                   ) : (
                     <VaccinationForm
-                      onSuccess={() => setOpenStatusInfo(true)}
+                      onSuccess={preHandleVaccinceAssign}
+                      vToggleVForm={() => setIsOpenAssignVForm(false)}
+                      userVaccines={selectedUser.vaccines}
                     />
                   )}
                 </CardContent>
@@ -165,14 +269,13 @@ const RegistrarVaccines = () => {
           buttonOne={() => setOpenStatusInfo(false)}
           buttonTwo={() => {
             setOpenStatusInfo(false);
-            setSuccess(true);
-            toast.success("Yellow Card Assigned Successfully!");
+            handleVaccineAssign();
+            // setSuccess(true);
           }}
-          title={"CConfirm Assign Vaccine"}
+          title={"Confirm Assign Vaccine"}
           message={
-            "Are you sure you want to assign the Yellow Fever Vaccine this user?"
+            "Are you sure you want to assign Vaccines this user?"
           }
-          //   type="success"
         />
       </AppModal>
 
@@ -184,8 +287,9 @@ const RegistrarVaccines = () => {
         <Confirm
           buttonOne={() => setSuccess(false)}
           buttonTwo={() => {
-            // onClose();
             setSuccess(false);
+            fetchUserData();
+            setSelectedUser(null);
           }}
           buttonOneLabel="View Vaccines"
           buttonTwoLabel="Done"

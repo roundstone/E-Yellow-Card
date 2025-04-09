@@ -2,7 +2,7 @@ import IMAGES from "@/assets/images";
 import { Input } from "@/components/ui/input";
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { SearchIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   vaccinationHistoryColumns,
   vaccinationHistoryData,
@@ -21,20 +21,93 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import AppTablePagination from "@/components/common/app-table-pagination";
+import { apiFetch } from "@/utils/api";
+import Spinner from "@/components/spinner";
 
 const RegistrarVaccinationHistory = () => {
   useDashboardTitle("Manage Vaccines");
   const [search, setSearch] = useState("");
 
-  const filteredData = vaccinationHistoryData.filter((record) =>
-    record.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const [loading, setLoading] = useState(true);
+
+  const [vaccineHistory, setVaccineHistory] = useState([]);
+
+  const [error, setError] = useState(null);
+
+  // const filteredData = vaccinationHistoryData.filter((record) =>
+  //   record.name.toLowerCase().includes(search.toLowerCase())
+  // );
+
+  const filteredData = vaccineHistory.filter((record) => {
+    const searchLower = search.toLowerCase();
+    const name = record.name.toLowerCase();
+    
+    // Check if the full name contains the search term
+    return name.includes(searchLower);
+  });
+
+  function formatVaccinationData(records) {
+    // Handle single record case
+    if (!Array.isArray(records)) {
+      records = [records];
+    }
+    
+    // Group by userId
+    const userMap = {};
+  
+    records.forEach(record => {
+      const userId = record.user.userId;
+      const vaccineName = record.vaccine?.vaccineName;
+      
+      if (!userMap[userId]) {
+        userMap[userId] = {
+          name: `${record.user.firstName} ${record.user.surName}`,
+          vaccineAssigned: [],
+          date: new Date(record.administeredAt).toLocaleDateString("en-GB")
+        };
+      }
+      
+      // Add vaccine if it exists and isn't already in the list
+      if (vaccineName && !userMap[userId].vaccineAssigned.includes(vaccineName)) {
+        userMap[userId].vaccineAssigned.push(vaccineName);
+      }
+    });
+  
+    // Convert map to array
+    return Object.values(userMap);
+  }
 
   const table = useReactTable({
-    data: vaccinationHistoryData,
+    data: vaccineHistory,
     columns: vaccinationHistoryColumns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const fetchHistoryData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("registrar/vaccination/list", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setVaccineHistory(formatVaccinationData(response.data));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+    
+  useEffect(() => {
+    fetchHistoryData();
+  }, []);
+
+  if (loading) return <Spinner text="Loading data..." />;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <>
@@ -52,7 +125,7 @@ const RegistrarVaccinationHistory = () => {
             <SearchIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="checkbox"
+              placeholder="Search"
               className="w-full p-2 pl-10 border rounded-md"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
