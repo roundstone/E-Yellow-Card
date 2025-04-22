@@ -31,7 +31,7 @@ const DirectorDashboard = (props: Props) => {
 
   const userData = useAtomValue(userAtom);
 
-  const [dashboardData, setDashboardData] = useState({});
+  const [dashboardData, setDashboardData] = useState(null);
   const [regUserStateData, setRegUserStateData] = useState({});
   const [regUserPhsData, setRegUserPhsData] = useState({});
   const [cardAvailData, setCardAvailData] = useState([]);
@@ -145,7 +145,7 @@ const DirectorDashboard = (props: Props) => {
             </Card>
             <RegisteredUsers byState={regUserStateData} byPhs={regUserPhsData} />
           </div>
-          <CardIssuance cardAvailability={cardAvailData} />
+          <CardIssuance cardAvailability={cardAvailData} cardRequest={dashboardData.cardRequests} />
         </div>
 
         <div className="grid md:grid-cols-4 gap-4 ">

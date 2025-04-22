@@ -69,18 +69,19 @@ export function AppDashboardNav() {
         },
       },
     ],
-    [
-      {
-        label: "Import",
-        icon: ArrowUp,
-        route: "#",
-      },
-      {
-        label: "Export",
-        icon: ArrowDown,
-        route: "#",
-      },
-    ],
+    // [
+    //   {
+    //     label: "Import",
+    //     icon: ArrowUp,
+    //     adminOnly: true,
+    //     route: ROUTES.DASHBOARD.SUPERADMIN.IMPORT_APPLICATIONS,
+    //   },
+    //   {
+    //     label: "Export",
+    //     icon: ArrowDown,
+    //     route: ROUTES.DASHBOARD.SUPERADMIN.IMPORT_APPLICATIONS,
+    //   },
+    // ],
     [
       {
         label: "Logout",

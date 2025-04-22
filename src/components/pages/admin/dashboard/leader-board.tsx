@@ -5,40 +5,61 @@ import { CheckCircleIcon, Trophy, XCircleIcon } from "lucide-react";
 import { useState } from "react";
 import React from "react";
 
-const leaderboardData = [
-  {
-    name: "Lekki Deep Sea Port, Lagos",
-    image: IMAGES.yellowCardImage,
-    score: 220302,
-    progress: 40,
-  },
-  {
-    name: "Maiduguri International Airport, Borno",
-    image: IMAGES.yellowCardImage,
-    score: 220302,
-    progress: 50,
-  },
-  {
-    name: "Mallam Aminu Kano International Airport, Kano",
-    image: IMAGES.yellowCardImage,
-    score: 220302,
-    progress: 30,
-  },
-  {
-    name: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
-    image: IMAGES.yellowCardImage,
-    score: 220302,
-    progress: 60,
-  },
-  {
-    name: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
-    image: IMAGES.vaccine,
-    score: 220302,
-    progress: 25,
-  },
-];
+// const leaderboardData = [
+//   {
+//     name: "Lekki Deep Sea Port, Lagos",
+//     image: IMAGES.yellowCardImage,
+//     score: 220302,
+//     progress: 40,
+//   },
+//   {
+//     name: "Maiduguri International Airport, Borno",
+//     image: IMAGES.yellowCardImage,
+//     score: 220302,
+//     progress: 50,
+//   },
+//   {
+//     name: "Mallam Aminu Kano International Airport, Kano",
+//     image: IMAGES.yellowCardImage,
+//     score: 220302,
+//     progress: 30,
+//   },
+//   {
+//     name: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
+//     image: IMAGES.yellowCardImage,
+//     score: 220302,
+//     progress: 60,
+//   },
+//   {
+//     name: "Illela Border, Sokoto State (Nigeria-Niger Republic)",
+//     image: IMAGES.vaccine,
+//     score: 220302,
+//     progress: 25,
+//   },
+// ];
 
-export default function Leaderboard() {
+const formatCenterData = (data) => {
+  // Filter out any null center items
+  const filteredData = data.filter(item => item.center !== null);
+  
+  // Calculate total count for percentage calculation
+  const totalCount = data.reduce((sum, item) => sum + parseInt(item.count || 0), 0);
+  
+  return filteredData.map(item => {
+    // Calculate progress percentage (0-100)
+    const count = parseInt(item.count);
+    const progress = Math.round((count / totalCount) * 100);
+    
+    return {
+      name: item.center,
+      image: IMAGES.yellowCardImage, // Use placeholder image reference
+      score: count, // Generate a score value by multiplying count
+      progress: progress, // Cap progress at 70 or use actual value
+    };
+  });
+}
+
+export default function Leaderboard({leaderboardData}) {
   const [selectedFilter, setSelectedFilter] = useState("All");
 
   return (
@@ -75,7 +96,7 @@ export default function Leaderboard() {
           </div>
         </div>
         <div className="w-full">
-          {leaderboardData.map((item, index) => (
+          {formatCenterData(leaderboardData).map((item, index) => (
             <div
               key={index}
               className="flex items-center justify-between py-3 border-b"

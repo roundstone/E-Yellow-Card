@@ -45,7 +45,7 @@ const AdminDashboard = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
 
-  const [dashboardData, setDashboardData] = useState({});
+  const [dashboardData, setDashboardData] = useState(null);
   const [vaccinneData, setVaccineData] = useState({});
   const [rawUserList, setRawUserList] = useState([]);
   const [userList, setUserList] = useState([]);
@@ -178,8 +178,8 @@ const AdminDashboard = (props: Props) => {
         <DashboardStats statData={dashboardData} />
 
         <div className="grid md:grid-cols-2 gap-4 ">
-          <VaccineIssuanceChart />
-          <CardIssuance cardAvailability={cardAvailData} />
+          <VaccineIssuanceChart vaccineHistoryData={dashboardData.vaccineIssuance} />
+          <CardIssuance cardAvailability={cardAvailData} cardRequest={dashboardData.cardRequests} />
         </div>
 
         <div>
@@ -206,8 +206,8 @@ const AdminDashboard = (props: Props) => {
           <AppTablePagination table={table} />
         </div>
         <div className="grid md:grid-cols-2 gap-4 ">
-          <Leaderboard />
-          <VerificationLog />
+          <Leaderboard leaderboardData={dashboardData.leaderBoard} />
+          <VerificationLog VerificationLogData={dashboardData.verificationLog} />
         </div>
       </div>
 

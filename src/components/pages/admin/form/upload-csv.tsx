@@ -19,10 +19,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectContent,
+  SelectValue,
 } from "@/components/ui/select";
 import React from "react";
 import AppModal from "@/components/common/modal";
 import SystemCheck from "../modal/system-check";
+import Loading from "@/components/loading";
 
 const UploadSchema = z.object({
   images: z.array(z.instanceof(File)).nonempty("At least one file is required"),
@@ -41,6 +43,8 @@ const UploadCSVForm = () => {
 
   const [files, setFiles] = useState([]);
   const [progress, setProgress] = useState({});
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -76,6 +80,7 @@ const UploadCSVForm = () => {
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          { isLoading ? <Loading /> : '' }
           <FormField
             control={form.control}
             name="images"
@@ -148,13 +153,23 @@ const UploadCSVForm = () => {
                 <FormLabel>Zone</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-full">
+                    {/* <SelectTrigger className="w-full">
                       --Select Zone--
-                    </SelectTrigger>
+                    </SelectTrigger> */}
+                    <FormControl> 
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="--Select zone--" />
+                      </SelectTrigger>
+                    </FormControl>
                     <SelectContent className="bg-white">
-                      <SelectItem value="zone1">Zone 1</SelectItem>
+                      {/* <SelectItem value="zone1">Zone 1</SelectItem>
                       <SelectItem value="zone2">Zone 2</SelectItem>
-                      <SelectItem value="zone3">Zone 3</SelectItem>
+                      <SelectItem value="zone3">Zone 3</SelectItem> */}
+                      {["NorthCentral", "NorthEast", "NorthWest", "SouthEast", "SouthSouth", "SouthWest"].map((zone) => (
+                        <SelectItem key={zone} value={zone}>
+                          {zone}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormControl>

@@ -2,6 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React from "react";
+import { toast } from "sonner";
 
 interface IStateList {
   number: number;
@@ -55,8 +56,32 @@ export const columns: ColumnDef<IStateList>[] = [
   },
 ];
 
-const handleDownload = (file: IStateList) => {
-  console.log("Download", file);
+const handleDownload = async (file: IStateList) => {
+  // console.log("Download", file);
+  const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const response = await fetch(`${API_URL}/admin/export/${file.fileName}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer `+localStorage.getItem('token'),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Download failed');
+  }
+
+  toast.success("Exporting...");
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = file.fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
 };
 
 export const data: IStateList[] = [

@@ -14,6 +14,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AppLevelIndicator from "@/components/common/app-level-indicator";
 import AppModal from "@/components/common/modal";
 import CardRequests from "./modal/card-request";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/stores/user";
 
 interface CardIssuanceData {
   centre: string;
@@ -78,15 +80,18 @@ interface CardAvailability {
 
 interface CardIssuanceProps {
   cardAvailability: CardAvailability[];
+  cardRequest: any
 }
 
-const CardIssuance = ({ cardAvailability }: CardIssuanceProps) => {
+const CardIssuance = ({ cardAvailability, cardRequest=[] }: CardIssuanceProps) => {
   const [sortDescending, setSortDescending] = useState(true);
   const [open, setOpen] = useState(false);
 
   //   const sortedData = [...cardIssuanceData].sort((a, b) =>
   //     sortDescending ? a.issued - b.issued : b.issued - a.issued
   //   );
+
+  const user = useAtomValue(userAtom);
 
   const top6 = [...cardAvailability]
   .sort((a, b) => parseInt(b.total) - parseInt(a.total))
@@ -164,14 +169,16 @@ const CardIssuance = ({ cardAvailability }: CardIssuanceProps) => {
         {/* Header */}
         <CardHeader className="flex-row items-center justify-between py-3">
           <CardTitle className="text-sm font-semibold">Card Issuance</CardTitle>
-          <div>
-            <button onClick={() => setOpen(true)} className="flex items-center space-x-1 text-sm font-medium text-black">
-              <span>Requests</span>
-              <span className="bg-black text-white px-2 py-1 text-xs rounded-full">
-                24
-              </span>
-            </button>
-          </div>
+          { user.role !== 'Admin' && (
+            <div>
+              <button onClick={() => setOpen(true)} className="flex items-center space-x-1 text-sm font-medium text-black">
+                <span>Requests</span>
+                <span className="bg-black text-white px-2 py-1 text-xs rounded-full">
+                  {cardRequest.length}
+                </span>
+              </button>
+            </div>
+          )}
         </CardHeader>
 
         <CardContent>
@@ -219,19 +226,19 @@ const CardIssuance = ({ cardAvailability }: CardIssuanceProps) => {
 
           <Tabs defaultValue="phs" className="">
             <div className="flex justify-between items-center py-5">
-              <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
+              <TabsList className="grid grid-cols-1 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
                 <TabsTrigger
                   value="phs"
                   className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
                 >
                   By PHS Centres
                 </TabsTrigger>
-                <TabsTrigger
+                {/* <TabsTrigger
                   value="state"
                   className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
                 >
                   By States
-                </TabsTrigger>
+                </TabsTrigger> */}
               </TabsList>
               <div
                 className="flex justify-end text-gray-500 text-sm cursor-pointer mt2"
@@ -245,14 +252,14 @@ const CardIssuance = ({ cardAvailability }: CardIssuanceProps) => {
                 <span>Critical to Great</span>
               </div>
             </div>
-            <TabsContent value="state">{tableStateContent}</TabsContent>
+            {/* <TabsContent value="state">{tableStateContent}</TabsContent> */}
             <TabsContent value="phs">{tableStateContent}</TabsContent>
           </Tabs>
         </CardContent>
       </Card>
 
       <AppModal open={open} setOpen={setOpen} title="Manage Card Requests" className="sm:max-w-[1153px] bg-white">
-        <CardRequests />
+        <CardRequests requests={cardRequest} />
       </AppModal>
     </>
   );

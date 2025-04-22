@@ -1,6 +1,6 @@
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   ColumnFiltersState,
@@ -16,11 +16,19 @@ import { Button } from "@/components/ui/button";
 import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
 import { columns, data } from "../table/state-list";
+import Spinner from "@/components/spinner";
+import { apiFetch } from "@/utils/api";
+import Loading from "@/components/loading";
 
 const AdminStateList = () => {
   useDashboardTitle("Yellow Card Range");
 
   const [search, setSearch] = useState("");
+
+  const [batchData, setBatchData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -31,7 +39,7 @@ const AdminStateList = () => {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: batchData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -49,9 +57,36 @@ const AdminStateList = () => {
     },
   });
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("admin/batch/list", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setBatchData(response.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  if (loading) return <Spinner text="Loading..." />;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <div className="space-y-10">
       <div className="mt-4 flex flex-col">
+        { isLoading ? <Loading /> : '' }
         <div>
           <h2 className="text-lg font-semibold">All Batch List</h2>
         </div>
@@ -96,7 +131,7 @@ const AdminStateList = () => {
           <AppTable
             table={table}
             className=""
-            noResultsMessage="No yellow cards found."
+            noResultsMessage="No data found."
             tableCellClassName="px-2"
           />
         </div>

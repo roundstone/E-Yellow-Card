@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { data, columns } from "../table/users";
-import UploadCSVForm from "../form/upload-csv";
+import UploadCSVForm from "../form/upload-csv2";
 
 const AdminStateListUpload = () => {
   useDashboardTitle("State List");

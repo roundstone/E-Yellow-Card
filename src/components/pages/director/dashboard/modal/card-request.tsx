@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -16,6 +16,8 @@ import AppLevelIndicator from "@/components/common/app-level-indicator";
 import AppModal from "@/components/common/modal";
 import AssignBatchOfYellowCards from "./assign-batch-yc";
 import { toast } from "sonner";
+import { apiFetch } from "@/utils/api";
+import Loading from "@/components/loading";
 
 interface CardRequest {
   id: number;
@@ -26,57 +28,140 @@ interface CardRequest {
   filledPercentage: number; // Comes from API
 }
 
-const cardRequests: CardRequest[] = [
-  {
-    id: 1,
-    location: "Murtala Muhammed International Airport, Lagos",
-    timestamp: "Wed 22 Dec 16:08",
-    currentCount: "230/3422",
-    reorderLevel: "Critical",
-    filledPercentage: 50,
-  },
-  {
-    id: 2,
-    location: "Maiduguri International Airport, Borno",
-    timestamp: "Wed 22 Dec 16:08",
-    currentCount: "230/3422",
-    reorderLevel: "Critical",
-    filledPercentage: 50,
-  },
-  {
-    id: 3,
-    location: "Murtala Muhammed International Airport, Lagos",
-    timestamp: "Wed 22 Dec 16:08",
-    currentCount: "230/3422",
-    reorderLevel: "Critical",
-    filledPercentage: 50,
-  },
-  {
-    id: 4,
-    location: "Murtala Muhammed International Airport, Lagos",
-    timestamp: "Wed 22 Dec 16:08",
-    currentCount: "230/3422",
-    reorderLevel: "Moderate",
-    filledPercentage: 30,
-  },
-  {
-    id: 5,
-    location: "Lekki Deep Sea Port, Lagos",
-    timestamp: "Wed 22 Dec 16:08",
-    currentCount: "230/3422",
-    reorderLevel: "Critical",
-    filledPercentage: 50,
-  },
-];
+// const cardRequests: CardRequest[] = [
+//   {
+//     id: 1,
+//     location: "Murtala Muhammed International Airport, Lagos",
+//     timestamp: "Wed 22 Dec 16:08",
+//     currentCount: "230/3422",
+//     reorderLevel: "Critical",
+//     filledPercentage: 50,
+//   },
+//   {
+//     id: 2,
+//     location: "Maiduguri International Airport, Borno",
+//     timestamp: "Wed 22 Dec 16:08",
+//     currentCount: "230/3422",
+//     reorderLevel: "Critical",
+//     filledPercentage: 50,
+//   },
+//   {
+//     id: 3,
+//     location: "Murtala Muhammed International Airport, Lagos",
+//     timestamp: "Wed 22 Dec 16:08",
+//     currentCount: "230/3422",
+//     reorderLevel: "Critical",
+//     filledPercentage: 50,
+//   },
+//   {
+//     id: 4,
+//     location: "Murtala Muhammed International Airport, Lagos",
+//     timestamp: "Wed 22 Dec 16:08",
+//     currentCount: "230/3422",
+//     reorderLevel: "Moderate",
+//     filledPercentage: 30,
+//   },
+//   {
+//     id: 5,
+//     location: "Lekki Deep Sea Port, Lagos",
+//     timestamp: "Wed 22 Dec 16:08",
+//     currentCount: "230/3422",
+//     reorderLevel: "Critical",
+//     filledPercentage: 50,
+//   },
+// ];
 
-const CardRequests: React.FC = () => {
+function transformCardRequests(originalData) {
+  return originalData.map(item => {
+    // Calculate filled percentage
+    const filledPercentage = Math.round((item.currentCardCount / item.totalCardCapacity) * 100);
+    
+    // Determine reorder level based on card count
+    // Assuming below 20% is Critical, otherwise Moderate
+    const reorderLevel = filledPercentage < 20 ? "Critical" : "Moderate";
+    
+    // Format the timestamp to the required format
+    const date = new Date(item.timestamp);
+    const formattedDate = date.toDateString().split(' ').slice(0, 3).join(' ') + " " + 
+                         String(date.getHours()).padStart(2, '0') + ":" + 
+                         String(date.getMinutes()).padStart(2, '0');
+    
+    return {
+      id: item.id,
+      location: item.portHealthServiceCentre,
+      timestamp: formattedDate,
+      currentCount: `${item.currentCardCount}/${item.totalCardCapacity}`,
+      reorderLevel: reorderLevel,
+      filledPercentage: filledPercentage
+    };
+  });
+}
+
+const CardRequests = ({requests}) => {
   const [isOpenAssignBatch, setOpenAssignBatch] = React.useState(false);
+
   const handleAssign = (id: number) => {
     setOpenAssignBatch(true);
+    localStorage.setItem('requestId', id.toString());
   };
 
-  const handleDecline = (id: number) => {
-    toast.success(`Decline clicked for ID: ${id}`);
+  const handleAssignPro = async () => {
+    const id2 = localStorage.getItem('requestId');
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("director/card-request/update", {
+        method: "POST",
+        body: JSON.stringify({
+          requestId: id2,
+          status: "Approved"
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode == 200) {
+        toast.success(`Approved a request!`);
+      }
+
+      return response;
+    } catch (error) {
+      toast.error(error.message || "Failed to approve request.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const [rawData, setRawData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const cardRequests: CardRequest[] = transformCardRequests(requests);
+
+  const handleDecline = async (phs, id) => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("director/card-request/update", {
+        method: "POST",
+        body: JSON.stringify({
+          requestId: id,
+          status: "Declined"
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode == 200) {
+        toast.success(`Declined request from: ${phs}`);
+      }
+
+      return response;
+    } catch (error) {
+      toast.error(error.message || "Failed to decline request.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const newCardContent = (
@@ -122,7 +207,7 @@ const CardRequests: React.FC = () => {
               </Button>
               <Button
                 className="px-4 py-1 border h-8 bg-white text-gray-800 rounded-md hover:bg-background"
-                onClick={() => handleDecline(item.id)}
+                onClick={() => handleDecline(item.location, item.id)}
               >
                 Decline
               </Button>
@@ -133,29 +218,62 @@ const CardRequests: React.FC = () => {
     </Table>
   );
 
+  const handleAssignBatch = async (data) => {
+      setIsLoading(true);
+      try {
+        const response = await apiFetch("director/yellowcard/assign", {
+          method: "POST",
+          body: JSON.stringify({
+            code: data.cardCode,
+            quantity: data.quantity,
+            type: data.type,
+            state: data.state,
+            zone: data.zone,
+            phsc: data.port
+          }),
+        });
+  
+        console.log(response);
+  
+        if (response.statusCode == 200) {
+          setOpenAssignBatch(false);
+          toast.success("The card range has been assigned to "+data.port);
+          handleAssignPro();
+        }
+  
+        return response;
+      } catch (error) {
+        toast.error(error.message || "Failed to assign batch.");
+        console.error(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
   return (
     <>
       <div className="">
+        { isLoading ? <Loading /> : '' }
         <div>
           <Tabs defaultValue="phs" className="-mt-5">
-            <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
+            <TabsList className="grid grid-cols-1 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
               <TabsTrigger
                 value="phs"
                 className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
               >
                 New Card Request
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="state"
                 className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
               >
                 Card info change requests
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
 
             <div className="overflow-x-auto mt-5">
-              <TabsContent value="state">{newCardContent}</TabsContent>
               <TabsContent value="phs">{newCardContent}</TabsContent>
+              {/* <TabsContent value="state">{newCardContent}</TabsContent> */}
             </div>
           </Tabs>
         </div>
@@ -167,7 +285,7 @@ const CardRequests: React.FC = () => {
         title="Assign a Batch of Yellow Cards"
         className="sm:max-w-[712px] bg-white"
       >
-        <AssignBatchOfYellowCards onClose={() => setOpenAssignBatch(false)} />
+        <AssignBatchOfYellowCards onSubmit={handleAssignBatch} onClose={() => setOpenAssignBatch(false)} />
       </AppModal>
     </>
   );

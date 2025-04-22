@@ -10,7 +10,39 @@ const verificationLogs = [
   { name: "NAOMI ANOZIE", ycNumber: "A0704240", status: "approved" },
 ];
 
-export default function VerificationLog() {
+const formatVerificationLogs = (data, limit = 5) => {
+  // Ensure data is an array (your data appears to be objects without the surrounding array)
+  const dataArray = Array.isArray(data) ? data : [data];
+  
+  // Take only the first 'limit' items
+  const limitedData = dataArray.slice(0, limit);
+  
+  // Map the data to the desired format
+  const formattedLogs = limitedData.map(item => {
+    // Extract user information
+    const user = item.user;
+    
+    // Format name in uppercase
+    const name = `${user.firstName} ${user.surName}`.toUpperCase();
+    
+    // Get yellow card number
+    const ycNumber = user.yellowCardNumber;
+    
+    // Assign random status (since your input doesn't have status)
+    // In real implementation, you would use actual status data
+    const status = true ? "approved" : "failed";
+    
+    return {
+      name,
+      ycNumber,
+      status
+    };
+  });
+  
+  return formattedLogs;
+}
+
+export default function VerificationLog({ VerificationLogData }) {
   return (
     <Card className="bg-white p-0 pb-5">
       <CardHeader className="flex-row items-center justify-between py-3 border-b bg-background">
@@ -18,7 +50,7 @@ export default function VerificationLog() {
           Verification Logs
         </CardTitle>
         <span className="bg-black text-white text-sm px-3 py- rounded-lg">
-          {verificationLogs.length}
+          {VerificationLogData.length}
         </span>
       </CardHeader>
 
@@ -30,7 +62,7 @@ export default function VerificationLog() {
           <span>STATUS</span>
         </div>
 
-        {verificationLogs.map((log, index) => (
+        {formatVerificationLogs(VerificationLogData).map((log, index) => (
           <div
             key={index}
             className="grid grid-cols-3 items-center py-5 border-b"

@@ -23,22 +23,25 @@ const ProfileSchema = z.object({
   profileImage: z.any().optional(),
 });
 
-const EditProfile = ({ onClose }: { onClose: () => void }) => {
+const EditProfile = ({ onClose, initialValues = {}, onSubmitData  }: { onClose: () => void, initialValues: any, onSubmitData: (data) => void }) => {
   const [preview, setPreview] = React.useState(null);
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      email: "",
-      profileImage: null,
+      firstName: initialValues.firstName || "",
+      lastName: initialValues.surName || "",
+      phoneNumber: initialValues.phone || "",
+      email: initialValues.email || "",
+      profileImage: initialValues.profileImage || null,
     },
   });
 
-  function onSubmit(data: any) {
-    toast.success("Profile updated successfully!");
+  async function onSubmit(data: any) {
+    // toast.success("Profile updated successfully!");
     console.log(data);
+    if (onSubmitData) {
+      await onSubmitData(data);
+    }
     onClose();
   }
 

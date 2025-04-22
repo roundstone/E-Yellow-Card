@@ -1,6 +1,6 @@
 import useDashboardTitle from "@/hooks/use-dashboard-title";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   ColumnFiltersState,
@@ -16,11 +16,19 @@ import { Button } from "@/components/ui/button";
 import AppTable from "@/components/common/app-table";
 import AppTablePagination from "@/components/common/app-table-pagination";
 import { columns, data } from "../table/y-cards";
+import { apiFetch } from "@/utils/api";
+import Spinner from "@/components/spinner";
 
 const AdminYellowCardRange = () => {
   useDashboardTitle("Yellow Card Range");
 
   const [search, setSearch] = useState("");
+
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [specialCards, setSpecialCards] = useState([]);
+  const [error, setError] = useState(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -31,7 +39,7 @@ const AdminYellowCardRange = () => {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: specialCards,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -48,6 +56,60 @@ const AdminYellowCardRange = () => {
       rowSelection,
     },
   });
+
+  const formatDate = (isoDate: string) => {
+    const date = new Date(isoDate);
+    if (isNaN(date.getTime())) return "Invalid Date";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
+  }
+
+  const formatData = (data) => {
+    return data.map((minidata, index) => {
+      return {
+        id: index+1,
+        code: minidata.code,
+        startCardNumber: minidata.start,
+        endCardNumber: minidata.end,
+        numberOfCards: minidata.quantity,
+        zone: minidata.zone,
+        dateIssued: formatDate(minidata.createdAt),
+      };
+    });
+  };
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch("admin/yellowcard/special/list", {
+        method: "GET",
+      }, true);
+
+      if (response.statusCode !== 200) {
+        throw new Error(response.message || "Something went wrong");
+      }
+
+      setSpecialCards(formatData(response.data));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+    
+  useEffect(() => {
+      fetchData();
+    }, []);
+  
+  if (loading) return <Spinner text="Loading Card Range..." />;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="space-y-10">
@@ -96,7 +158,7 @@ const AdminYellowCardRange = () => {
 
       <div>
         <div className="flex gap-3">
-          <Button className="bg-gray-50 rounded text-black">All Cards</Button>
+          {/* <Button className="bg-gray-50 rounded text-black">All Cards</Button> */}
           <Button className=" text-white">Special Cards</Button>
         </div>
 

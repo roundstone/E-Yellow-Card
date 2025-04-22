@@ -24,11 +24,44 @@ const vaccineData = [
   { name: "CSM", percentage: 4.6, value: 7200 },
 ];
 
-export default function VaccineIssuanceChart() {
+const formatVaccineData = (data) => {
+  // Calculate the total count to determine percentages
+  const totalCount = data.reduce((sum, item) => sum + parseInt(item.count), 0);
+
+  console.log(totalCount);
+  
+  // Map the data to the desired format
+  return data.map(item => {
+    // Convert string count to number
+    const count = parseInt(item.count);
+    
+    // Calculate percentage
+    const percentage = parseFloat(((count / totalCount) * 100).toFixed(1));
+    
+    // Handle "Yellow Fever" special case to match expected output with "Lifetime"
+    let name = item.vaccineName;
+    // if (name === "Yellow Fever") {
+    //   name = "Yellow Fever Lifetime";
+    // }
+    
+    // Map Polio to OPV if needed (based on your example)
+    // if (name === "Polio") {
+    //   name = "Yellow Fever Vaccine";
+    // }
+    
+    return {
+      name,
+      percentage,
+      value: count // Multiplying by 1000 to match scale in example
+    };
+  });
+}
+
+export default function VaccineIssuanceChart({vaccineHistoryData}) {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter data based on search term
-  const filteredData = vaccineData.filter((item) =>
+  const filteredData = formatVaccineData(vaccineHistoryData).filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -80,23 +113,23 @@ export default function VaccineIssuanceChart() {
 
         <Tabs defaultValue="phs" className="">
           <div className="flex justify-between items-center py-5">
-            <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
+            <TabsList className="grid grid-cols-1 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
               <TabsTrigger
                 value="phs"
                 className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
               >
                 By PHS Centres
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="state"
                 className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
               >
                 By States
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
           </div>
-          <TabsContent value="state">{tabContent1}</TabsContent>
-          <TabsContent value="phs">{tabContent2}</TabsContent>
+          {/* <TabsContent value="state">{tabContent2}</TabsContent> */}
+          <TabsContent value="phs">{tabContent1}</TabsContent>
         </Tabs>
       </CardContent>
     </Card>
