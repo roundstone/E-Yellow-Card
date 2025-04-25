@@ -43,6 +43,7 @@ export default function AssignNewYellowCard({
 
   const [formData, setFormData] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [hasPaid, setHasPaid] = useState(true);
   const [availableNumbers, setAvailableNumbers] = useState([]);
 
   const lastSearchedPassport = React.useRef<string>("");
@@ -86,16 +87,21 @@ export default function AssignNewYellowCard({
           throw new Error("Something went wrong!");
         }
 
-        if(!response.data.latestTransaction || !response.data.latestTransaction.rrr) {
-          toast.error("User found, but hasn't completed payment!");
-        } else {
-          toast.success("User found!");
-        }
+        const isPaid = response.data.paid;
+        setHasPaid(isPaid);
+
+        // if(!response.data.latestTransaction || !response.data.latestTransaction.rrr) {
+        //   toast.error("User found, but hasn't completed payment!");
+        // } else {
+        //   toast.success("User found!");
+        // }
 
         setUserData(response.data);
         form.setValue('fullName', response.data.firstName+" "+response.data.surName);
         form.setValue('referenceNumber', response.data.latestTransaction.rrr);
       } catch (error) {
+        setUserData(null);
+        setHasPaid(true); 
         toast.error("User not found!");
         console.error(error.message);
       } finally {
@@ -109,7 +115,7 @@ export default function AssignNewYellowCard({
     try {
       const response = await apiFetch("registrar/yellow-card/list", {
         method: "POST",
-        body: JSON.stringify({
+        body: JSON.stringify({ 
           phsc: user.user.phsLocation
         }),
       }, true);
@@ -188,64 +194,63 @@ export default function AssignNewYellowCard({
             )}
           />
 
-          {/* Vaccinations Received */}
-          {/* <FormField
-            control={form.control}
-            name="vaccinationsReceived"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input placeholder="Vaccinations Received" readOnly {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-
           {/* Yellow Card Number */}
-          <div>
-            {/* <p className="font-medium">Your yellow card number</p> */}
-            <FormField
-              control={form.control}
-              name="yellowCardNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Your yellow card number</FormLabel>
-                  <div className="flex gap-2 my-2 max-h-20 overflow-auto">
-                    {availableNumbers.map((number) => (
-                      <button
-                        key={number}
-                        type="button" // Prevent form submission
-                        onClick={() => {
-                          form.setValue("yellowCardNumber", number); // Set the form value
-                          form.clearErrors("yellowCardNumber"); // Clear any errors
-                        }}
-                        className={`px-3 py-1 rounded-xl border ${
-                          form.watch("yellowCardNumber") === number
-                            ? "bg-green-600 text-white"
-                            : "bg-background text-gray-700"
-                        }`}
-                      >
-                        {number}
-                      </button>
-                    ))}
-                  </div>
-                  <FormControl>
-                    <Input placeholder="Enter Yellow Card Number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {(!userData || hasPaid) && (
+            <div>
+              {/* <p className="font-medium">Your yellow card number</p> */}
+              <FormField
+                control={form.control}
+                name="yellowCardNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Your yellow card number</FormLabel>
+                    <div className="flex gap-2 my-2 max-h-20 overflow-auto">
+                      {availableNumbers.map((number) => (
+                        <button
+                          key={number}
+                          type="button" // Prevent form submission
+                          onClick={() => {
+                            form.setValue("yellowCardNumber", number); // Set the form value
+                            form.clearErrors("yellowCardNumber"); // Clear any errors
+                          }}
+                          className={`px-3 py-1 rounded-xl border ${
+                            form.watch("yellowCardNumber") === number
+                              ? "bg-green-600 text-white"
+                              : "bg-background text-gray-700"
+                          }`}
+                        >
+                          {number}
+                        </button>
+                      ))}
+                    </div>
+                    <FormControl>
+                      <Input placeholder="Enter Yellow Card Number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+
+          {/* Display payment required message if user hasn't paid */}
+          {userData && !hasPaid && (
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800">
+              <p className="font-medium">Payment Required</p>
+              <p className="text-sm">This user hasn't completed payment yet. Yellow card assignment is unavailable until payment is completed.</p>
+            </div>
+          )}
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full bg-green-700 hover:bg-green-800 text-white"
-          >
-            Assign
-          </Button>
+          {/* Submit Button - Hide if user hasn't paid */}
+          {(!userData || hasPaid) && (
+            <Button
+              type="submit"
+              className="w-full bg-green-700 hover:bg-green-800 text-white"
+            >
+              Assign
+            </Button>
+          )}
         </form>
       </Form>
 

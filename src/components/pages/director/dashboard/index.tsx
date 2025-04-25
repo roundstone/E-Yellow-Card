@@ -145,7 +145,7 @@ const DirectorDashboard = (props: Props) => {
             </Card>
             <RegisteredUsers byState={regUserStateData} byPhs={regUserPhsData} />
           </div>
-          <CardIssuance cardAvailability={cardAvailData} cardRequest={dashboardData.cardRequests} />
+          <CardIssuance cardAvailability={cardAvailData} cardRequest={dashboardData.cardRequests} zoneAggregatedData={dashboardData.zoneAggregatedData} />
         </div>
 
         <div className="grid md:grid-cols-4 gap-4 ">

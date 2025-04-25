@@ -86,7 +86,7 @@ const RegisteredUsers = ({ byState, byPhs }) => {
     const sortedData = sortData(normalized);
 
     return (
-      <div className="mt-3">
+      <div className="mt-3 max-h-[400px] overflow-y-auto">
         {sortedData.map((item, index) => (
           <div key={index} className="grid grid-cols-3 items-center py-2">
             <div className={cn("text-text cursor-pointer", index === 0 && "underline")}>

@@ -192,6 +192,12 @@ const RegistrarVaccines = () => {
                   <CardTitle>Vaccines Assigned</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {/* Display payment required message if user hasn't paid */}
+                  {!selectedUser.paid && (
+                    <div className="p-4 mb-4 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800">
+                      <p className="text-sm">This user hasn't completed payment yet. Vaccine assignment is unavailable until payment is completed.</p>
+                    </div>
+                  )}
                   {!isOpenAssignVForm ? (
                     selectedUser && selectedUser.vaccines && selectedUser.vaccines.length > 0 ? (
                       <div className="space-y-4">
@@ -224,6 +230,7 @@ const RegistrarVaccines = () => {
                         <h2 className="text-lg font-medium">No record found</h2>
                         <p>This user currently has no assigned vaccine.</p>
                         <Button
+                          disabled={!selectedUser.paid}
                           onClick={() => setIsOpenAssignVForm(true)}
                           className="mt-4 text-white"
                         >

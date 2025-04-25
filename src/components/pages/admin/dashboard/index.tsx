@@ -179,7 +179,7 @@ const AdminDashboard = (props: Props) => {
 
         <div className="grid md:grid-cols-2 gap-4 ">
           <VaccineIssuanceChart vaccineHistoryData={dashboardData.vaccineIssuance} />
-          <CardIssuance cardAvailability={cardAvailData} cardRequest={dashboardData.cardRequests} />
+          <CardIssuance cardAvailability={cardAvailData} cardRequest={dashboardData.cardRequests} zoneAggregatedData={dashboardData.zoneAggregatedData} />
         </div>
 
         <div>

@@ -80,10 +80,11 @@ interface CardAvailability {
 
 interface CardIssuanceProps {
   cardAvailability: CardAvailability[];
-  cardRequest: any
+  cardRequest: any,
+  zoneAggregatedData: any
 }
 
-const CardIssuance = ({ cardAvailability, cardRequest=[] }: CardIssuanceProps) => {
+const CardIssuance = ({ cardAvailability, cardRequest=[], zoneAggregatedData=[] }: CardIssuanceProps) => {
   const [sortDescending, setSortDescending] = useState(true);
   const [open, setOpen] = useState(false);
 
@@ -114,6 +115,44 @@ const CardIssuance = ({ cardAvailability, cardRequest=[] }: CardIssuanceProps) =
     sortDescending ? a.issueCount! - b.issueCount! : b.issueCount! - a.issueCount!
   );
 
+  function processZoneData(phsCenterData) {
+    // Create a map to store aggregated data by zone
+    const zoneMap = new Map();
+  
+    // Process each entry in the input data
+    phsCenterData.forEach(item => {
+      // Normalize zone name (remove any spaces)
+      const zoneName = item.zone.replace(/\s+/g, '');
+      
+      // Convert string values to numbers
+      const available = parseInt(item.available, 10) || 0;
+      const total = parseInt(item.total, 10) || 0;
+      const issued = total - available;
+      
+      // If the zone already exists in our map, update its values
+      if (zoneMap.has(zoneName)) {
+        const zoneData = zoneMap.get(zoneName);
+        zoneData.issued += issued;
+        zoneData.total += total;
+        zoneData.issueCount += issued > 0 ? 1 : 0;
+      } else {
+        // Otherwise, create a new entry for this zone
+        zoneMap.set(zoneName, {
+          zone: zoneName,
+          issued: issued,
+          total: total,
+          issueCount: issued > 0 ? 1 : 0
+        });
+      }
+    });
+    
+    // Convert map to array and sort by issued count (descending)
+    const result = Array.from(zoneMap.values())
+      .sort((a, b) => b.issued - a.issued);
+    
+    return result;
+  }
+
   const tableStateContent = (
     <Table>
       <TableHeader>
@@ -135,6 +174,61 @@ const CardIssuance = ({ cardAvailability, cardRequest=[] }: CardIssuanceProps) =
                 <span className="text-gray-700 font-semibold">
                   {item.total.toLocaleString()}
                 </span>
+              </span>
+            </TableCell>
+            <TableCell className="w-/4 flex items-center justify-start gap-3">
+              <div className="flex space-x-1">
+                <AppLevelIndicator
+                  indicator={item.issueCount}
+                  filledColor={
+                    item.reorderLevel === "Critical"
+                      ? "bg-red-600"
+                      : "bg-green-600"
+                  }
+                  emptyColor={
+                    item.reorderLevel === "Critical"
+                      ? "bg-red-300"
+                      : "bg-green-300"
+                  }
+                />
+              </div>
+              <span className="ml2 font-medium text-sm">
+                {item.reorderLevel}
+              </span>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
+  const tableZoneContent = (
+    <Table>
+      <TableHeader>
+        <TableRow className="uppercase text-gray-500">
+          <TableHead className="w-[100px]">Zone</TableHead>
+          <TableHead>YC Issued</TableHead>
+          <TableHead>Available Cards</TableHead>
+          <TableHead>Recorder Level</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody className="">
+        {zoneAggregatedData.map((item, i) => (
+          <TableRow key={item.centre} className="space-y-3">
+            <TableCell className={cn("cursor-pointer text-sm hover:underline")}>
+              {item.zone}
+            </TableCell>
+            <TableCell>
+              <span className="w/4 text-center font-medium text-gray-500">
+                {item.issued.toLocaleString()}/
+                <span className="text-gray-700 font-semibold">
+                  {item.totalQuantity.toLocaleString()}
+                </span>
+              </span>
+            </TableCell>
+            <TableCell>
+              <span className="w/4 text-center font-medium text-gray-500">
+                {item.availableQuantity.toLocaleString()}
               </span>
             </TableCell>
             <TableCell className="w-/4 flex items-center justify-start gap-3">
@@ -226,19 +320,19 @@ const CardIssuance = ({ cardAvailability, cardRequest=[] }: CardIssuanceProps) =
 
           <Tabs defaultValue="phs" className="">
             <div className="flex justify-between items-center py-5">
-              <TabsList className="grid grid-cols-1 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
+              <TabsList className="grid grid-cols-2 h-full bg-[#F6F6F6] w-fit rounded-lg p-1">
                 <TabsTrigger
                   value="phs"
                   className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
                 >
                   By PHS Centres
                 </TabsTrigger>
-                {/* <TabsTrigger
-                  value="state"
+                <TabsTrigger
+                  value="zone"
                   className="text-gray-500 bg-transparent data-[state=active]:bg-white data-[state=active]:border data-[state=active]:font-medium data-[state=active]:text-black py-2"
                 >
-                  By States
-                </TabsTrigger> */}
+                  By Zones
+                </TabsTrigger>
               </TabsList>
               <div
                 className="flex justify-end text-gray-500 text-sm cursor-pointer mt2"
@@ -252,8 +346,8 @@ const CardIssuance = ({ cardAvailability, cardRequest=[] }: CardIssuanceProps) =
                 <span>Critical to Great</span>
               </div>
             </div>
-            {/* <TabsContent value="state">{tableStateContent}</TabsContent> */}
             <TabsContent value="phs">{tableStateContent}</TabsContent>
+            <TabsContent value="zone">{tableZoneContent}</TabsContent>
           </Tabs>
         </CardContent>
       </Card>
