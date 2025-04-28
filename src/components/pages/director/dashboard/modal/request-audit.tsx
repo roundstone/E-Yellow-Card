@@ -42,7 +42,7 @@ const serviceCenters = [
   { id: "3", label: "Lekki Deep Sea Port, Lagos" },
 ] as const;
 
-const requestTypes = ["Current Card Number", "Previous Card Number", "Other"];
+const requestTypes = ["Low Issuance Rate", "Audit Check Report Required"];
 
 export default function AuditRequest({ onClose }: { onClose: () => void }) {
   const form = useForm<z.infer<typeof RequestAuditSchema>>({

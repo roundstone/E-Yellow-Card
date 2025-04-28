@@ -26,14 +26,14 @@ const AlertNotifications: React.FC<AlertNotificationsProps> = ({ alertData }) =>
   const [isOpenHighVoidCard, setOpenHighVoidCard] = React.useState(false);
 
   const alerts: Alert[] = alertData.map((alert) => {
-    if (alert.details.includes("since") || alert.details.includes("issuance")) {
-      return { ...alert, onClick: () => setOpenComment(true) };
+    if (alert.type == 'critical' && (alert.details.includes("since") || alert.details.toLowerCase().includes("issuance"))) {
+      return { ...alert, onClick: () => { setOpenComment(true); localStorage.setItem('alertId', alert.id.toString()); } };
     }
-    if (alert.details.toLowerCase().includes("report")) {
-      return { ...alert, onClick: () => setOpenAuditCheck(true) };
+    if (alert.type == 'critical' && (alert.details.toLowerCase().includes("report"))) {
+      return { ...alert, onClick: () => { setOpenAuditCheck(true); localStorage.setItem('alertId', alert.id.toString()); } };
     }
-    if (alert.details.toLowerCase().includes("voided")) {
-      return { ...alert, onClick: () => setOpenHighVoidCard(true) };
+    if (alert.type == 'critical' && (alert.details.toLowerCase().includes("voided"))) {
+      return { ...alert, onClick: () => { setOpenHighVoidCard(true); localStorage.setItem('alertId', alert.id.toString()); } };
     }
     return alert;
   });
@@ -51,7 +51,7 @@ const AlertNotifications: React.FC<AlertNotificationsProps> = ({ alertData }) =>
           <div className="grid grid-cols-3 text-gray-700 font-semibold py-2 text-sm">
             <span className="text-left">TYPE</span>
             <span className="text-left"> DETAILS </span>
-            <span className="text-left">ACTION</span>
+            <span className="text-right">ACTION</span>
           </div>
           {alerts.map((alert, index) => (
             <div
@@ -74,12 +74,13 @@ const AlertNotifications: React.FC<AlertNotificationsProps> = ({ alertData }) =>
               </div>
               <div className="text-gray-600 self-start">{alert.details}</div>
               <div>
-                <p
+                <button
                   onClick={alert.onClick}
-                  className="text-gray-600 underline cursor-pointer"
+                  disabled={!alert.onClick}
+                  className={`${alert.onClick ? 'text-gray-600 underline' : 'text-gray-400'} text-right w-full`}
                 >
-                  {alert.action}
-                </p>
+                  { alert.action }
+                </button>
               </div>
             </div>
           ))}

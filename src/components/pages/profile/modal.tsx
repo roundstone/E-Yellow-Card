@@ -1,3 +1,4 @@
+import Loading from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -8,7 +9,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { userAtom } from "@/stores/user";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Camera } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -24,7 +27,7 @@ const ProfileSchema = z.object({
 });
 
 const EditProfile = ({ onClose, initialValues = {}, onSubmitData  }: { onClose: () => void, initialValues: any, onSubmitData: (data) => void }) => {
-  const [preview, setPreview] = React.useState(null);
+  const [preview, setPreview] = React.useState(initialValues.photo);
   const form = useForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -32,9 +35,53 @@ const EditProfile = ({ onClose, initialValues = {}, onSubmitData  }: { onClose: 
       lastName: initialValues.surName || "",
       phoneNumber: initialValues.phone || "",
       email: initialValues.email || "",
-      profileImage: initialValues.profileImage || null,
+      profileImage: initialValues.photo || null,
     },
   });
+
+  const [isUploading, setIsUploading] = React.useState(false);
+
+  const setUser = useSetAtom(userAtom);
+  const user = useAtomValue(userAtom);
+
+  // Function to upload image to endpoint
+  const uploadImage = async (file) => {
+    if (!file || !(file instanceof File)) {
+      // If no new file was selected, return the existing URL
+      return initialValues.photo;
+    }
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+      const response = await fetch(API_URL+'/admin/photo/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer '+localStorage.getItem('token')
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const data = await response.json();
+      toast.success('Profile image updated!');
+      return data.fileUrl; // Return the URL of the uploaded image
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   async function onSubmit(data: any) {
     // toast.success("Profile updated successfully!");
@@ -45,11 +92,14 @@ const EditProfile = ({ onClose, initialValues = {}, onSubmitData  }: { onClose: 
     onClose();
   }
 
-  function handleImageChange(event) {
+  async function handleImageChange(event) {
     const file = event.target.files[0];
     if (file) {
       setPreview(URL.createObjectURL(file));
       form.setValue("profileImage", file);
+      const imageUrl = await uploadImage(file);
+      user.user.photo = imageUrl;
+      setUser(user);
     }
   }
 
@@ -57,6 +107,7 @@ const EditProfile = ({ onClose, initialValues = {}, onSubmitData  }: { onClose: 
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          { isUploading ? <Loading /> : '' }
           <div className="flex flex- gap-5 items-center mb-10">
             <div className="relative w-28 h-28 rounded-full overflow-hidden border">
               {preview ? (

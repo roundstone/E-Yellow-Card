@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -13,6 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import Loading from "@/components/loading";
+import { apiFetch } from "@/utils/api";
 
 const CommentSchema = z.object({
   commentMessage: z.string().min(6, "Comment message is required"),
@@ -44,10 +46,36 @@ export default function Comment({ type, onClose }: CommentProps) {
     },
   });
 
-  function onSubmit(data: z.infer<typeof CommentSchema>) {
-    toast.success("Commented successfully!");
-    console.log(data);
-    onClose();
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function onSubmit(data: z.infer<typeof CommentSchema>) {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/alert/response", {
+        method: "POST",
+        body: JSON.stringify({
+          alertId: localStorage.getItem('alertId'),
+          response: data.commentMessage
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode == 200) {
+        toast.success("Response sent successfully!");
+        onClose();
+      } else {
+        throw new Error("Something went wrong");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to send request.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+    // toast.success("Commented successfully!");
+    // console.log(data);
+    // onClose();
   }
 
   const { title, description } = messages[type];
@@ -56,6 +84,8 @@ export default function Comment({ type, onClose }: CommentProps) {
     <div className="p-6">
       <h2 className="text-lg font-semibold text-center">{title}</h2>
       <p className="text-sm text-gray-500 text-center">{description}</p>
+
+      { isLoading ? <Loading /> : '' }
 
       <div className="mt-8 w-full">
         <Form {...form}>

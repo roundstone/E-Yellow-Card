@@ -95,7 +95,7 @@ const SharedProfile = (props: Props) => {
         <div className="bg-primary text-white p-6 rounded-lg flex items-start justify-between">
           <div className="flex items-center gap-4">
             <img
-              src='/passport.png' // Replace with actual profile image
+              src={userData.photo ? userData.photo : '/passport.png'} // Replace with actual profile image
               alt="Profile"
               className="w-20 h-20 rounded-full border-4 border-white"
             />

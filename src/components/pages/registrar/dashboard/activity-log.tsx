@@ -55,7 +55,7 @@ const RegistrarActivityLog = () => {
           id: index+1,
           timestamp: minidata.timestamp,
           user: minidata.user.firstName+" "+minidata.user.surName,
-          userAvatar: "/passport.png",
+          userAvatar: minidata.user.photo ? minidata.user.photo : '/passport.png',
           action: minidata.action,
           details: minidata.details,
           ipAddress: minidata.action ?? "192.1******",

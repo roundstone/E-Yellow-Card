@@ -123,7 +123,7 @@ const RegistrarDashboard = (props: Props) => {
               <div className="">
                 {/* div#D9D9D9 */}
                 <img
-                  src="/passport.png"
+                  src={userData.user.photo ? userData.user.photo : '/passport.png'}
                   className="w-[37px] h-[38px] rounded-lg"
                 />
               </div>

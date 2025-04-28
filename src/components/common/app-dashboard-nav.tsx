@@ -43,6 +43,8 @@ export function AppDashboardNav() {
 
   const user = useAtomValue(userAtom);
 
+  // console.log(user);
+
   const { goTo } = useNavigation();
 
   const logout = (setUser) => {
@@ -103,7 +105,7 @@ export function AppDashboardNav() {
         <Popover>
           <PopoverTrigger className="flex gap-3 items-center">
             <img
-              src="/passport.png"
+              src={user.user.photo ? user.user.photo : '/passport.png'}
               alt=""
               className="w-8 h-8 border rounded-full"
             />

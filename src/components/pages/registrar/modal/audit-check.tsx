@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -14,9 +14,11 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { apiFetch } from "@/utils/api";
+import Loading from "@/components/loading";
 
 const AuditSchema = z.object({
-  cardNumber: z.string().min(6, "Comment message is required"),
+  cardNumber: z.string().min(1, "Comment message is required"),
 });
 
 export default function AuditCheck({ onClose }: { onClose: () => void }) {
@@ -27,13 +29,40 @@ export default function AuditCheck({ onClose }: { onClose: () => void }) {
     },
   });
 
-  function onSubmit(data: z.infer<typeof AuditSchema>) {
-    toast.success("Commented successfully!");
-    console.log(data);
-    onClose();
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function onSubmit(data: z.infer<typeof AuditSchema>) {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch("registrar/alert/response", {
+        method: "POST",
+        body: JSON.stringify({
+          alertId: localStorage.getItem('alertId'),
+          response: data.cardNumber
+        }),
+      });
+
+      console.log(response);
+
+      if (response.statusCode == 200) {
+        toast.success("Response sent successfully!");
+        onClose();
+      } else {
+        throw new Error("Something went wrong");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to send request.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+    // console.log(data);
   }
+
+
   return (
     <div className="-6">
+      { isLoading ? <Loading /> : '' }
       <h2 className="text-lg font-semibold text-center">
         Audit Check Required
       </h2>
@@ -53,7 +82,7 @@ export default function AuditCheck({ onClose }: { onClose: () => void }) {
                   <FormControl>
                     <div className="flex gap-3">
                       <Input
-                        type="text"
+                        type="number"
                         placeholder="Enter Number of Cards"
                         {...field}
                       />
