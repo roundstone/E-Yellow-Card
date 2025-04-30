@@ -8,6 +8,9 @@ export interface UserDetails {
     age: number;
     stateOfOrigin: string;
     yellowCardNumber: string;
+    vaccines: any,
+    vaccineList: any,
+    totalVaccineCount: number,
     vaccinations: { name: string; expiresOn: string }[];
     imageUrl: string;
 }
@@ -20,6 +23,9 @@ export const mockUser: UserDetails = {
     age: 28,
     stateOfOrigin: "Nasarawa",
     yellowCardNumber: "A234568",
+    vaccines: [],
+    vaccineList: [],
+    totalVaccineCount: 0,
     vaccinations: [
         { name: "COVID-19", expiresOn: "2/10/2028" },
         { name: "Flu (influenza)", expiresOn: "2/10/2028" },

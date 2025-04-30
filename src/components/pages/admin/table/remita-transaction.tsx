@@ -37,7 +37,7 @@ export const columns: ColumnDef<any>[] = [
       const status = row.original.status;
       const statusColors = {
         Success: "bg-green-100 text-green-700 border-green-500",
-        Pending: "bg-yellow-100 text-yellow-700 border-yellow-500",
+        Pending: "bg-yellow-100 text-yellow-500 border-yellow-500",
         Failed: "bg-red-100 text-red-700 border-red-500",
       };
 
@@ -49,9 +49,9 @@ export const columns: ColumnDef<any>[] = [
           {status === "Success" ? (
             <Check className="text-primary" />
           ) : status === "Failed" ? (
-            <Clock className="text-danger" />
-          ) : (
             <X className="text-danger" />
+          ) : (
+            <Clock className="text-yellow-500" />
           )}{" "}
           {status}
         </Badge>

@@ -11,8 +11,17 @@ interface IVaccine {
   id: number;
   name: string;
   amount: string;
-  status: "In Stock" | "Out of Stock";
+  status: "in_stock" | "out_of_stock";
 }
+
+const formatSnakeCase = (snakeCase: string): string => {
+  if (!snakeCase) return '';
+  
+  return snakeCase
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 export const columns: ColumnDef<IVaccine>[] = [
   {
@@ -40,12 +49,12 @@ export const columns: ColumnDef<IVaccine>[] = [
         <Badge
           variant="outline"
           className={`px-3 py-1 rounded-full ${
-            status === "In Stock"
-              ? "bg-green-100 text-primary border-primary border-[0.5px]"
-              : "bg-red-100 text-danger border-danger border-[0.5px]"
+            status === "in_stock"
+              ? "bg-green-100 text-green-700 border-green-700 border-[0.5px]"
+              : "bg-red-100 text-red-500 border-red-500 border-[0.5px]"
           }`}
         >
-          {status} 
+          { formatSnakeCase(status) } 
           <ChevronDown />
         </Badge>
       );

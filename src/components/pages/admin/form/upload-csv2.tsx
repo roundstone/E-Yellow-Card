@@ -375,7 +375,8 @@ const UploadCSVForm = () => {
               )}
             </p>
           ) : (
-            <p>Validating your file...</p>
+            // <p>Validating your file...</p>
+            ""
           )}
         </div>
 

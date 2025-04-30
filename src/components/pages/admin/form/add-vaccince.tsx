@@ -115,6 +115,7 @@ const AddVaccineForm = ({ initialData = null, onSubmit }) => {
                         <FormControl>
                           <Input
                             type="number"
+                            min={0}
                             placeholder="Enter number distributed"
                             {...field}
                           />

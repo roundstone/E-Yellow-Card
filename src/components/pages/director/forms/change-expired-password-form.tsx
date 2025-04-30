@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Lock } from "lucide-react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigation } from "@/utils/navigation";
 import { ROUTES } from "@/config/route";
@@ -45,6 +45,10 @@ const ChangePasswordForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+  const [showPassword3, setShowPassword3] = useState(false);
 
   const passwordReset = async (credentials) => {
     try {
@@ -87,6 +91,18 @@ const ChangePasswordForm = () => {
     goTo(ROUTES.AUTH.ADMIN.LOGIN);
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const togglePasswordVisibility2 = () => {
+    setShowPassword2(!showPassword2);
+  };
+
+  const togglePasswordVisibility3 = () => {
+    setShowPassword3(!showPassword3);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -106,11 +122,24 @@ const ChangePasswordForm = () => {
                     size={18}
                   />
                   <Input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter current password"
                     className="pl-10"
                     {...field}
                   />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1 text-gray-400 hover:text-gray-500"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </Button>
                 </div>
               </FormControl>
               <FormMessage />
@@ -132,11 +161,24 @@ const ChangePasswordForm = () => {
                     size={18}
                   />
                   <Input
-                    type="password"
+                    type={showPassword2 ? "text" : "password"}
                     placeholder="Enter new password"
                     className="pl-10"
                     {...field}
                   />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1 text-gray-400 hover:text-gray-500"
+                    onClick={togglePasswordVisibility2}
+                  >
+                    {showPassword2 ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </Button>
                 </div>
               </FormControl>
               <FormMessage />
@@ -158,11 +200,24 @@ const ChangePasswordForm = () => {
                     size={18}
                   />
                   <Input
-                    type="password"
+                    type={showPassword3 ? "text" : "password"}
                     placeholder="Confirm new password"
                     className="pl-10"
                     {...field}
                   />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1 text-gray-400 hover:text-gray-500"
+                    onClick={togglePasswordVisibility3}
+                  >
+                    {showPassword3 ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </Button>
                 </div>
               </FormControl>
               <FormMessage />

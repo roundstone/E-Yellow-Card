@@ -9,6 +9,15 @@ const UserQuery = ({ userData }: { userData: any }) => {
   const [query, setQuery] = useState(userData.passportNumber);
   const [user] = useState<UserDetails | null>(mockUser);
 
+  const formatSnakeCase = (snakeCase: string): string => {
+    if (!snakeCase) return '';
+    
+    return snakeCase
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   return (
     <div className="flex justify-center items-center w-full -mt-6">
       <div className=" w-full p6 relative">
@@ -81,7 +90,7 @@ const UserQuery = ({ userData }: { userData: any }) => {
                 <p className=" text-sm">Vaccination</p>
                 <p className="text-gray-600 text-sm">
                   <span className="text-primary font-semibold">
-                    {"4"}/{user.vaccinations.length}
+                  {userData.vaccines.length}/{userData.totalVaccineCount}
                   </span>{" "}
                   taken
                 </p>
@@ -89,14 +98,14 @@ const UserQuery = ({ userData }: { userData: any }) => {
 
               {/* Vaccination Details */}
               <ul className="space-y-1 text-sm text-gray-600">
-                {user.vaccinations.map((vaccine, index) => (
+                {userData.vaccines.map((vaccine, index) => (
                   <li key={index} className="flex justify-between items-center">
-                    <span className="font-semibold">• {vaccine.name}</span>
+                    <span className="font-semibold">• {vaccine.vaccineName}</span>
                     <span className="text-red-600 text-xs font-semibold">
-                      expires on{" "}
+                      Validity:{" "}
                       <span className="text-text font-normal">
                         {" "}
-                        {vaccine.expiresOn}
+                        {formatSnakeCase(vaccine.validty)}
                       </span>
                     </span>
                   </li>

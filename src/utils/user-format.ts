@@ -50,6 +50,9 @@ export const formatUserData = (response: any, img: string) => {
       age: age,
       stateOfOrigin: userData.state || "",
       yellowCardNumber: userData.yellowCardNumber || "",
+      vaccines: userData.vaccines,
+      totalVaccineCount: userData.totalVaccineCount,
+      vaccineList: userData.vaccineList,
       vaccinations: vaccinations,
       // Use a default image if no photo is provided
       imageUrl: userData.photo || img || "", 

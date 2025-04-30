@@ -206,7 +206,7 @@ export default function AssignYellowCard({ onClose, userData }: { onClose: () =>
         title="Assign Vaccines"
         className="sm:max-w-[567px] bg-white"
       >
-        <AssignVaccines onClose={() => setOpenAssignVaccine(false)} />
+        <AssignVaccines userData={user} onClose={() => setOpenAssignVaccine(false)} />
       </AppModal>
     </>
   );

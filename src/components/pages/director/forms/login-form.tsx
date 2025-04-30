@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "@/config/route";
@@ -38,6 +38,8 @@ const LoginForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const setUser = useSetAtom(userAtom);
 
@@ -105,6 +107,10 @@ const LoginForm = () => {
     }
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -150,11 +156,24 @@ const LoginForm = () => {
                     size={18}
                   />
                   <Input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     className="pl-10"
                     {...field}
                   />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1 text-gray-400 hover:text-gray-500"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </Button>
                 </div>
               </FormControl>
               <FormMessage />

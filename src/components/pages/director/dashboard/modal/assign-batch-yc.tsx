@@ -130,6 +130,7 @@ const AssignBatchOfYellowCards = ({ onClose, onSubmit }) => {
                   <FormControl>
                     <Input
                       type="number"
+                      min={0}
                       placeholder="Enter quantity"
                       {...field}
                       isNumber

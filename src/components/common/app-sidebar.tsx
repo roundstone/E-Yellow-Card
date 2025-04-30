@@ -56,11 +56,11 @@ const items = {
       url: ROUTES.DASHBOARD.DIRECTOR.RANGE_LIST,
       icon: FileText,
     },
-    {
-      title: "Reports",
-      url: "#",
-      icon: FileChartColumnIncreasingIcon,
-    },
+    // {
+    //   title: "Reports",
+    //   url: "#",
+    //   icon: FileChartColumnIncreasingIcon,
+    // },
   ],
   REGISTRAR: [
     {
@@ -110,11 +110,11 @@ const items = {
       url: ROUTES.DASHBOARD.SUPERADMIN.REMITA_TRANSACTIONS,
       icon: CreditCard,
     },
-    {
-      title: "State List",
-      url: ROUTES.DASHBOARD.SUPERADMIN.STATE_LIST,
-      icon: FileText,
-    },
+    // {
+    //   title: "State List",
+    //   url: ROUTES.DASHBOARD.SUPERADMIN.STATE_LIST,
+    //   icon: FileText,
+    // },
     {
       title: "PHS Centres",
       url: ROUTES.DASHBOARD.SUPERADMIN.MANAGE_PORTS,

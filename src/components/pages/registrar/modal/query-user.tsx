@@ -10,11 +10,13 @@ import { toast } from "sonner";
 import { formatUserData } from "@/utils/user-format";
 import Spinner from "@/components/spinner";
 import MiniSpinner from "@/components/mini-spinner";
-AssignYellowCard;
+
+// AssignYellowCard;
 export default function QueryUser({ onClose }: { onClose: () => void }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [query, setQuery] = useState("");
   const [user, setUser] = useState<UserDetails | null>(mockUser);
+  const [rawUser, setRawUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const [isOpenAssignYCard, setOpenAssignYCard] = React.useState(false);
@@ -63,6 +65,7 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
 
       if (response.statusCode == 200) {
         setUser(formatUserData(response.data, '/passport.png'));
+        setRawUser(response.data);
       } else {
         setUser(null);
       }
@@ -219,7 +222,7 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
                     <p className="text-sm">Vaccination</p>
                     <p className="text-gray-600 text-sm">
                       <span className="text-primary font-semibold">
-                        {"0"}/{user.vaccinations.length}
+                      {user.vaccines.length}/{user.totalVaccineCount}
                       </span>{" "}
                       <button
                         onClick={() => setOpenAssignVaccine(true)}
@@ -282,7 +285,7 @@ export default function QueryUser({ onClose }: { onClose: () => void }) {
         title="Assign Vaccines"
         className="sm:max-w-[567px] bg-white"
       >
-        <AssignVaccines onClose={() => setOpenAssignVaccine(false)} />
+        <AssignVaccines userData={user} onClose={() => setOpenAssignVaccine(false)} />
       </AppModal>
     </>
   );

@@ -16,6 +16,7 @@ import { toast } from "sonner";
 
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
+import Loading from "@/components/loading";
 
 const AssignVaccinesSchema = z.object({
   vaccines: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -31,8 +32,10 @@ const serviceCenters = [
   { id: "5", label: "OPV" },
 ] as const;
 
-export default function AssignVaccines({ onClose }: { onClose: () => void }) {
-  const [user] = useState<UserDetails | null>(mockUser);
+export default function AssignVaccines({ onClose, userData }: { onClose: () => void, userData: any }) {
+  const [user] = useState<UserDetails | null>(userData);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   // Initialize the form
   const form = useForm<z.infer<typeof AssignVaccinesSchema>>({
@@ -52,6 +55,7 @@ export default function AssignVaccines({ onClose }: { onClose: () => void }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="-mt-6">
+        { isLoading ? <Loading /> : '' }
         <div className="flex justify-center items-center w-full">
           <div className="w-full p6 relative">
             {/* User Details */}
@@ -87,7 +91,7 @@ export default function AssignVaccines({ onClose }: { onClose: () => void }) {
                 name="vaccines"
                 render={() => (
                   <FormItem className="grid grid-cols-2 gap-0">
-                    {serviceCenters.map((item, i) => (
+                    {userData.vaccineList.map((item, i) => (
                       <FormField
                         key={item.id}
                         control={form.control}
@@ -121,7 +125,7 @@ export default function AssignVaccines({ onClose }: { onClose: () => void }) {
                                   />
                                 </FormControl>
                                 <FormLabel className="text-sm font-normal">
-                                  {item.label}
+                                  {item.vaccineName}
                                 </FormLabel>
                               </FormItem>
                             </div>
