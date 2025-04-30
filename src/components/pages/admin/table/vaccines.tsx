@@ -119,20 +119,20 @@ const handleEdit = (vaccine: IVaccine) => {
 };
 
 export const data: IVaccine[] = [
-  { id: 1, name: "OPV", amount: "100,002", status: "In Stock" },
+  { id: 1, name: "OPV", amount: "100,002", status: "in_stock" },
   {
     id: 2,
     name: "Yellow Fever Lifetime",
     amount: "350,000",
-    status: "Out of Stock",
+    status: "out_of_stock",
   },
   {
     id: 3,
     name: "Yellow Fever Vaccine",
     amount: "201,001",
-    status: "In Stock",
+    status: "in_stock",
   },
-  { id: 4, name: "Tetanus", amount: "025000", status: "In Stock" },
-  { id: 5, name: "Small Pox", amount: "600,000", status: "Out of Stock" },
-  { id: 6, name: "CSM", amount: "400,000", status: "Out of Stock" },
+  { id: 4, name: "Tetanus", amount: "025000", status: "in_stock" },
+  { id: 5, name: "Small Pox", amount: "600,000", status: "out_of_stock" },
+  { id: 6, name: "CSM", amount: "400,000", status: "out_of_stock" },
 ];
